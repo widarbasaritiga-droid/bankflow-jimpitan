@@ -1,0 +1,1756 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BankFlow - Jimpitan Galungan</title>
+    
+    <!-- PWA CONFIG -->
+    <link rel="manifest" href="data:application/manifest+json,{}" id="manifest-placeholder">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BankFlow">
+    <meta name="theme-color" content="#1A237E">
+    
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- ICON LIBRARY -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* ===== VARIABLES ===== */
+        :root {
+            --primary: #1A237E;
+            --primary-light: #283593;
+            --primary-dark: #0D1440;
+            --secondary: #263238;
+            --secondary-light: #37474F;
+            --accent: #00BFA5;
+            --accent-light: #1DE9B6;
+            --whatsapp: #25D366;
+            --telegram: #0088cc;
+            --success: #00C853;
+            --error: #FF5252;
+            --warning: #FFAB00;
+            --discount-color: #FF9800;
+            
+            /* Neutral Colors */
+            --bg-color: #0F1419;
+            --surface: #1E252B;
+            --surface-light: #2A3239;
+            --surface-dark: #161C22;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0BEC5;
+            --text-muted: #78909C;
+            --border: #37474F;
+            
+            /* Typography */
+            --font-sans: 'Inter', sans-serif;
+            --text-xs: 12px;
+            --text-sm: 14px;
+            --text-base: 16px;
+            --text-lg: 18px;
+            --text-xl: 20px;
+            --text-2xl: 24px;
+            --text-3xl: 32px;
+            
+            /* Spacing */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-full: 50%;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.3);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.4);
+        }
+
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* ===== HEADER ===== */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 var(--space-md);
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .app-title h1 {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .app-subtitle {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            padding: 80px var(--space-md) 100px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ===== BOTTOM NAV ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 8px var(--space-md);
+            display: flex;
+            justify-content: space-around;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            color: var(--text-muted);
+            font-size: var(--text-xs);
+            cursor: pointer;
+            min-width: 70px;
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .card-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            border: none;
+            font-family: var(--font-sans);
+            font-size: var(--text-base);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--surface-light);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-error {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-whatsapp {
+            background: var(--whatsapp);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            font-size: var(--text-sm);
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        /* ===== INPUT GRID ===== */
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        @media (max-width: 640px) {
+            .input-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .input-item:hover {
+            background: var(--surface-light);
+        }
+
+        .input-item.active {
+            background: var(--surface-light);
+        }
+
+        .icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: var(--surface-light);
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .input-item.active .icon-wrapper {
+            background: var(--accent);
+            color: white;
+        }
+
+        .input-label {
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .input-value {
+            font-size: var(--text-xs);
+            color: var(--text-primary);
+            text-align: center;
+            min-height: 16px;
+        }
+
+        /* ===== MODALS ===== */
+        .input-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-md);
+        }
+
+        .input-modal-content {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .input-modal-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .input-modal-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+        }
+
+        .input-modal-body {
+            padding: var(--space-lg);
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .input-modal-footer {
+            padding: var(--space-lg);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        /* ===== FORM ELEMENTS ===== */
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-family: var(--font-sans);
+            font-size: var(--text-base);
+            color: var(--text-primary);
+            background: var(--surface-light);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* ===== QUICK AMOUNTS ===== */
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-sm);
+            margin: var(--space-md) 0;
+        }
+
+        .quick-amount {
+            padding: 12px;
+            text-align: center;
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-amount:hover {
+            border-color: var(--accent);
+        }
+
+        /* ===== TRANSACTION TYPE ===== */
+        .transaction-type {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .type-option {
+            padding: var(--space-lg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            text-align: center;
+            cursor: pointer;
+            background: var(--surface-light);
+        }
+
+        .type-option.active {
+            border-color: var(--accent);
+            background: var(--surface);
+        }
+
+        /* ===== STATS GRID ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .stat-card {
+            background: var(--surface-light);
+            padding: var(--space-lg);
+            border-radius: var(--radius-md);
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: var(--text-xl);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+        }
+
+        /* ===== ACCOUNT LIST ===== */
+        .account-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .account-item {
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .account-item:hover {
+            background: var(--surface);
+            border-color: var(--accent);
+        }
+
+        .account-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: var(--text-lg);
+            margin-right: var(--space-md);
+        }
+
+        .account-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .account-id {
+            font-size: var(--text-xs);
+            color: var(--accent);
+            background: rgba(0, 191, 165, 0.1);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        /* ===== BALANCE DISPLAY ===== */
+        .balance-display {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .balance-amount {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 16px 0;
+        }
+
+        /* ===== FLOATING BUTTON ===== */
+        .fab {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-full);
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            z-index: 2000;
+            transition: all 0.3s ease;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+        }
+
+        .fab.hidden {
+            display: none;
+        }
+
+        /* ===== DISCOUNT INFO ===== */
+        .discount-info {
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid var(--discount-color);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin: var(--space-md) 0;
+        }
+
+        .discount-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            color: var(--discount-color);
+            font-weight: 600;
+        }
+
+        .discount-details {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+        }
+
+        .discount-percentage {
+            background: var(--discount-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: var(--text-xs);
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        /* ===== EARNINGS DISPLAY ===== */
+        .earnings-display {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin: var(--space-md) 0;
+            border: 1px solid var(--border);
+        }
+
+        .earnings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .earnings-label {
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+        }
+
+        .earnings-amount {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .earnings-total {
+            font-size: var(--text-lg);
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* ===== WHATSAPP PREVIEW ===== */
+        .whatsapp-preview {
+            background: #075E54;
+            color: white;
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin: var(--space-md) 0;
+            position: relative;
+        }
+
+        .whatsapp-preview:before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            right: 20px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid #075E54;
+        }
+
+        .whatsapp-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+
+        .whatsapp-icon {
+            color: var(--whatsapp);
+            font-size: 20px;
+        }
+
+        .whatsapp-name {
+            font-weight: 600;
+            font-size: var(--text-sm);
+        }
+
+        .whatsapp-time {
+            font-size: var(--text-xs);
+            opacity: 0.8;
+            margin-left: auto;
+        }
+
+        /* ===== UTILITIES ===== */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-muted {
+            color: var(--text-muted);
+        }
+
+        .mb-sm { margin-bottom: var(--space-sm); }
+        .mb-md { margin-bottom: var(--space-md); }
+        .mb-lg { margin-bottom: var(--space-lg); }
+
+        /* ===== LOADING ===== */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(0, 191, 165, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--surface-dark);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="app-title">
+                <h1>BankFlow</h1>
+                <div class="app-subtitle">Jimpitan Galungan</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="contentArea">
+        <!-- Dynamic content will be loaded here -->
+    </main>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="loadTab('transaksi')">
+            <div class="nav-icon"><i class="fas fa-exchange-alt"></i></div>
+            <div>Transaksi</div>
+        </div>
+        <div class="nav-item" onclick="loadTab('dashboard')">
+            <div class="nav-icon"><i class="fas fa-chart-line"></i></div>
+            <div>Dashboard</div>
+        </div>
+        <div class="nav-item" onclick="loadTab('account')">
+            <div class="nav-icon"><i class="fas fa-users"></i></div>
+            <div>Rekening</div>
+        </div>
+        <div class="nav-item" onclick="loadTab('saldo')">
+            <div class="nav-icon"><i class="fas fa-wallet"></i></div>
+            <div>Saldo</div>
+        </div>
+    </nav>
+
+    <!-- FLOATING BUTTON -->
+    <div id="fabButton" class="fab hidden" onclick="showWhatsAppPreview()">
+        <i class="fas fa-paper-plane"></i>
+    </div>
+
+    <!-- MODALS -->
+    <div id="accountModal" class="input-modal">
+        <div class="input-modal-content">
+            <div class="input-modal-header">
+                <div class="input-modal-title">Pilih Rekening</div>
+                <button class="btn btn-secondary btn-small" onclick="closeModal('accountModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="input-modal-body">
+                <div class="form-group">
+                    <select id="modalAccount" class="form-control">
+                        <option value="">-- Pilih --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="input-modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('accountModal')" style="flex: 1;">Batal</button>
+                <button class="btn btn-primary" onclick="saveAccount()" style="flex: 1;">Pilih</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="typeModal" class="input-modal">
+        <div class="input-modal-content">
+            <div class="input-modal-header">
+                <div class="input-modal-title">Jenis Transaksi</div>
+                <button class="btn btn-secondary btn-small" onclick="closeModal('typeModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="input-modal-body">
+                <div class="transaction-type">
+                    <div class="type-option active" onclick="selectType('DEPOSIT')">
+                        <div style="font-size: 32px; color: var(--success); margin-bottom: 8px;">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        <div style="font-weight: 600; color: var(--success);">Setoran</div>
+                    </div>
+                    <div class="type-option" onclick="selectType('WITHDRAW')">
+                        <div style="font-size: 32px; color: var(--error); margin-bottom: 8px;">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div style="font-weight: 600; color: var(--error);">Penarikan</div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('typeModal')" style="flex: 1;">Batal</button>
+                <button class="btn btn-primary" onclick="saveType()" style="flex: 1;">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="amountModal" class="input-modal">
+        <div class="input-modal-content">
+            <div class="input-modal-header">
+                <div class="input-modal-title">Nominal</div>
+                <button class="btn btn-secondary btn-small" onclick="closeModal('amountModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="input-modal-body">
+                <div class="form-group">
+                    <div style="position: relative;">
+                        <div style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted);">Rp</div>
+                        <input type="text" id="modalAmount" class="form-control" style="padding-left: 60px; font-size: var(--text-xl); font-weight: 600; text-align: right;" placeholder="0" oninput="formatAmount(this)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="quick-amounts">
+                        <div class="quick-amount" onclick="setAmount(3000)">3K</div>
+                        <div class="quick-amount" onclick="setAmount(5000)">5K</div>
+                        <div class="quick-amount" onclick="setAmount(10000)">10K</div>
+                        <div class="quick-amount" onclick="setAmount(15000)">15K</div>
+                        <div class="quick-amount" onclick="setAmount(20000)">20K</div>
+                        <div class="quick-amount" onclick="setAmount(25000)">25K</div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('amountModal')" style="flex: 1;">Batal</button>
+                <button class="btn btn-primary" onclick="saveAmount()" style="flex: 1;">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== KONFIGURASI ====================
+        // 🔧 GANTI URL INI DENGAN URL WEB APP ANDA
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzg2VbfzX6Wdmo0DJkPY9noOhBZlRmXvgzuhLMpqfseste6Yi2P1KeLOFSvf-HM0Fn3/exec';
+        
+        const DISCOUNT_PERCENTAGE = 4.76; // Potongan tetap
+        const TELEGRAM_BOT_TOKEN = '8046620337:AAHRbFtDdTPqsa1SWp42hwWyrIjF17V5mow'; // Ganti jika perlu
+        const ADMIN_CHAT_ID = '5092378957'; // Ganti jika perlu
+        
+        // Data aplikasi
+        let currentTab = 'transaksi';
+        let accountList = [];
+        let transactionData = {
+            account: '',
+            type: 'DEPOSIT',
+            amount: 0,
+            daysCount: 1
+        };
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function formatRupiah(amount) {
+            if (!amount || isNaN(amount)) amount = 0;
+            return 'Rp ' + parseInt(amount).toLocaleString('id-ID');
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+
+        function calculateEarnings(amount) {
+            const discount = (amount * DISCOUNT_PERCENTAGE) / 100;
+            const netAmount = amount - discount;
+            return {
+                discount: Math.round(discount),
+                netAmount: Math.round(netAmount),
+                percentage: DISCOUNT_PERCENTAGE
+            };
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: ${type === 'success' ? 'var(--success)' : 'var(--error)'};
+                color: white;
+                padding: 12px 16px;
+                border-radius: var(--radius-md);
+                z-index: 4000;
+                animation: slideIn 0.3s ease;
+                font-size: var(--text-sm);
+            `;
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}"></i> ${message}`;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = 'none';
+        }
+
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function formatAmount(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value) {
+                input.value = parseInt(value).toLocaleString('id-ID');
+            }
+        }
+
+        function getNumericValue(formattedValue) {
+            return parseInt(formattedValue.toString().replace(/\D/g, '') || 0);
+        }
+
+        // ==================== LOAD TAB FUNCTIONS ====================
+        async function loadTab(tabName) {
+            currentTab = tabName;
+            
+            // Update nav active state
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.nav-item').classList.add('active');
+            
+            // Show/hide FAB
+            const fab = document.getElementById('fabButton');
+            fab.classList.toggle('hidden', tabName !== 'transaksi');
+            
+            // Show loading
+            document.getElementById('contentArea').innerHTML = `
+                <div class="card">
+                    <div class="text-center" style="padding: 60px 20px;">
+                        <div class="loading" style="width: 40px; height: 40px; margin: 0 auto;"></div>
+                    </div>
+                </div>
+            `;
+            
+            try {
+                switch(tabName) {
+                    case 'transaksi':
+                        await loadTransactionTab();
+                        break;
+                    case 'dashboard':
+                        await loadDashboardTab();
+                        break;
+                    case 'account':
+                        await loadAccountTab();
+                        break;
+                    case 'saldo':
+                        await loadBalanceTab();
+                        break;
+                }
+            } catch (error) {
+                console.error(`Error loading ${tabName}:`, error);
+                showToast('Gagal memuat data', 'error');
+            }
+        }
+
+        async function loadTransactionTab() {
+            await loadAccountData();
+            
+            let discountInfo = '';
+            if (transactionData.amount > 0 && transactionData.type === 'DEPOSIT') {
+                const earnings = calculateEarnings(transactionData.amount);
+                discountInfo = `
+                    <div class="discount-info">
+                        <div class="discount-header">
+                            <i class="fas fa-percentage"></i>
+                            <span>Potongan Tetap</span>
+                            <span class="discount-percentage">${DISCOUNT_PERCENTAGE}%</span>
+                        </div>
+                        <div class="discount-details">
+                            Setoran ${formatRupiah(transactionData.amount)} - Potongan ${formatRupiah(earnings.discount)} = 
+                            <span class="discount-value">${formatRupiah(earnings.netAmount)}</span> diterima nasabah
+                        </div>
+                    </div>
+                `;
+            }
+            
+            const html = `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Transaksi Baru</div>
+                        <button class="btn btn-secondary btn-small" onclick="resetTransaction()">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="input-grid">
+                        <div class="input-item ${transactionData.account ? 'active' : ''}" onclick="showAccountModal()">
+                            <div class="icon-wrapper">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="input-label">Rekening</div>
+                            <div class="input-value">${transactionData.account || 'Pilih'}</div>
+                        </div>
+                        
+                        <div class="input-item active" onclick="showTypeModal()">
+                            <div class="icon-wrapper" style="background: ${transactionData.type === 'DEPOSIT' ? 'var(--success)' : 'var(--error)'}; color: white;">
+                                <i class="fas ${transactionData.type === 'DEPOSIT' ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+                            </div>
+                            <div class="input-label" style="color: ${transactionData.type === 'DEPOSIT' ? 'var(--success)' : 'var(--error)'};">Jenis</div>
+                            <div class="input-value" style="color: ${transactionData.type === 'DEPOSIT' ? 'var(--success)' : 'var(--error)'};">${transactionData.type === 'DEPOSIT' ? 'Setor' : 'Tarik'}</div>
+                        </div>
+                        
+                        <div class="input-item ${transactionData.amount > 0 ? 'active' : ''}" onclick="showAmountModal()">
+                            <div class="icon-wrapper">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="input-label">Nominal</div>
+                            <div class="input-value">${transactionData.amount > 0 ? formatRupiah(transactionData.amount) : '0'}</div>
+                        </div>
+                    </div>
+                    
+                    ${discountInfo}
+                    
+                    ${transactionData.account ? `
+                        <div style="background: var(--surface-light); border-radius: var(--radius-md); padding: var(--space-md); margin-top: var(--space-lg); text-align: center;">
+                            <div style="color: var(--text-secondary); font-size: var(--text-sm);">Transaksi</div>
+                            <div style="color: ${transactionData.type === 'DEPOSIT' ? 'var(--success)' : 'var(--error)'}; font-weight: 600;">
+                                ${transactionData.account} ${transactionData.type === 'DEPOSIT' ? 'Setor' : 'Tarik'} ${formatRupiah(transactionData.amount)}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="mt-lg">
+                        <div class="text-muted text-center mb-sm">
+                            <i class="fas fa-info-circle"></i> Klik tombol hijau untuk kirim WhatsApp
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = html;
+        }
+
+        async function loadDashboardTab() {
+            try {
+                const response = await fetch(`${API_URL}?action=getAllSaldo`);
+                const data = await response.json();
+                
+                let statsHtml = '';
+                if (data.status === 'success') {
+                    const totalDiscount = (data.total_setor * DISCOUNT_PERCENTAGE) / 100;
+                    
+                    statsHtml = `
+                        <div class="global-stats">
+                            <div class="global-stat-label">Total Saldo Bank</div>
+                            <div class="global-stat-value">${formatRupiah(data.saldo_global)}</div>
+                        </div>
+                        
+                        <div class="discount-info">
+                            <div class="discount-header">
+                                <i class="fas fa-percentage"></i>
+                                <span>Potongan Tetap ${DISCOUNT_PERCENTAGE}%</span>
+                            </div>
+                            <div class="discount-details">
+                                Total setoran ${formatRupiah(data.total_setor)} - Potongan ${formatRupiah(totalDiscount)} = 
+                                ${formatRupiah(data.total_setor - totalDiscount)} diterima nasabah
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                const html = `
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Dashboard</div>
+                            <button class="btn btn-secondary btn-small" onclick="loadTab('dashboard')">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                        </div>
+                        
+                        ${statsHtml}
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">${data.total_nasabah || 0}</div>
+                                <div class="stat-label">Total Rekening</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${formatRupiah(data.total_setor || 0)}</div>
+                                <div class="stat-label">Total Setoran</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${formatRupiah(data.total_tarik || 0)}</div>
+                                <div class="stat-label">Total Penarikan</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${formatRupiah(data.saldo_global || 0)}</div>
+                                <div class="stat-label">Saldo Global</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('contentArea').innerHTML = html;
+            } catch (error) {
+                showToast('Gagal memuat dashboard', 'error');
+            }
+        }
+
+        async function loadAccountTab() {
+            await loadAccountData();
+            
+            const html = `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Daftar Rekening</div>
+                        <button class="btn btn-primary btn-small" onclick="showAddAccountModal()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="account-list">
+                        ${accountList.map(account => `
+                            <div class="account-item" onclick="viewAccountDetails('${account.nama}')">
+                                <div style="display: flex; align-items: center;">
+                                    <div class="account-avatar">
+                                        ${account.nama.charAt(0)}
+                                    </div>
+                                    <div>
+                                        <div class="account-name">
+                                            ${account.nama}
+                                            <span class="account-id">${account.id_nasabah || ''}</span>
+                                        </div>
+                                        <div style="font-size: var(--text-sm); color: var(--text-muted);">
+                                            ${account.no_hp || ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                        
+                        ${accountList.length === 0 ? `
+                            <div class="text-center" style="padding: 40px 20px; color: var(--text-muted);">
+                                <div style="font-size: 48px; margin-bottom: 16px;">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div>Belum ada rekening</div>
+                                <button class="btn btn-primary mt-md" onclick="showAddAccountModal()">
+                                    Tambah Rekening
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = html;
+        }
+
+        async function loadBalanceTab() {
+            await loadAccountData();
+            
+            const html = `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Cek Saldo & Penghasilan</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <select id="selectAccountBalance" class="form-control" onchange="viewBalance(this.value)">
+                            <option value="">-- Pilih Rekening --</option>
+                            ${accountList.map(acc => `
+                                <option value="${acc.nama}">${acc.nama}</option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    
+                    <div id="balanceContainer">
+                        <div class="text-center" style="padding: 40px 20px; color: var(--text-muted);">
+                            <div style="font-size: 48px; margin-bottom: 16px;">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div>Pilih rekening untuk melihat saldo</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = html;
+        }
+
+        // ==================== ACCOUNT FUNCTIONS ====================
+        async function loadAccountData() {
+            try {
+                const response = await fetch(`${API_URL}?action=getNasabah`);
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    accountList = data.data || [];
+                }
+            } catch (error) {
+                console.error('Error loading accounts:', error);
+                accountList = [];
+            }
+        }
+
+        function showAddAccountModal() {
+            const html = `
+                <div class="input-modal" style="display: flex;">
+                    <div class="input-modal-content">
+                        <div class="input-modal-header">
+                            <div class="input-modal-title">Tambah Rekening</div>
+                            <button class="btn btn-secondary btn-small" onclick="closeModal('addAccountModal')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="input-modal-body">
+                            <div class="form-group">
+                                <input type="text" id="newName" class="form-control" placeholder="Nama lengkap">
+                            </div>
+                            <div class="form-group">
+                                <input type="tel" id="newPhone" class="form-control" placeholder="Nomor WhatsApp">
+                            </div>
+                        </div>
+                        <div class="input-modal-footer">
+                            <button class="btn btn-secondary" onclick="closeModal('addAccountModal')" style="flex: 1;">Batal</button>
+                            <button class="btn btn-primary" onclick="saveNewAccount()" style="flex: 1;">Simpan</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const modal = document.createElement('div');
+            modal.innerHTML = html;
+            modal.id = 'addAccountModal';
+            document.body.appendChild(modal);
+        }
+
+        async function saveNewAccount() {
+            const name = document.getElementById('newName').value.trim();
+            const phone = document.getElementById('newPhone').value.trim();
+            
+            if (!name) {
+                showToast('Nama harus diisi', 'error');
+                return;
+            }
+            
+            const btn = document.querySelector('#addAccountModal .btn-primary');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<div class="loading"></div>';
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'addNasabah',
+                        nama: name,
+                        phone: phone
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    closeModal('addAccountModal');
+                    showToast('Rekening berhasil ditambah', 'success');
+                    await loadAccountData();
+                    await loadTab('account');
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Gagal menambah rekening', 'error');
+            } finally {
+                btn.innerHTML = originalText;
+            }
+        }
+
+        async function viewAccountDetails(name) {
+            try {
+                const response = await fetch(`${API_URL}?action=getSaldo&nama=${encodeURIComponent(name)}`);
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const earnings = calculateEarnings(data.data.total_setor);
+                    
+                    const html = `
+                        <div class="input-modal" style="display: flex;">
+                            <div class="input-modal-content">
+                                <div class="input-modal-header">
+                                    <div class="input-modal-title">Detail Rekening</div>
+                                    <button class="btn btn-secondary btn-small" onclick="closeModal('accountDetailModal')">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="input-modal-body">
+                                    <div style="text-align: center; margin-bottom: var(--space-lg);">
+                                        <div style="width: 60px; height: 60px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px;">
+                                            ${name.charAt(0)}
+                                        </div>
+                                        <div style="font-size: var(--text-xl); font-weight: 600; margin-bottom: 4px;">${name}</div>
+                                    </div>
+                                    
+                                    <div style="background: var(--surface-light); border-radius: var(--radius-md); padding: var(--space-md); margin-bottom: var(--space-lg);">
+                                        <div style="font-size: var(--text-xs); color: var(--text-muted); margin-bottom: 4px;">Saldo Saat Ini</div>
+                                        <div style="font-size: var(--text-2xl); font-weight: 700; color: var(--accent);">
+                                            ${formatRupiah(data.data.saldo_akhir)}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="earnings-display">
+                                        <div class="earnings-row">
+                                            <div class="earnings-label">Total Setoran:</div>
+                                            <div class="earnings-amount">${formatRupiah(data.data.total_setor)}</div>
+                                        </div>
+                                        <div class="earnings-row">
+                                            <div class="earnings-label">Potongan ${DISCOUNT_PERCENTAGE}%:</div>
+                                            <div class="earnings-amount" style="color: var(--discount-color);">- ${formatRupiah(earnings.discount)}</div>
+                                        </div>
+                                        <div class="earnings-row">
+                                            <div class="earnings-label">Diterima Nasabah:</div>
+                                            <div class="earnings-amount earnings-total">${formatRupiah(earnings.netAmount)}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input-modal-footer">
+                                    <button class="btn btn-primary" onclick="closeModal('accountDetailModal')" style="flex: 1;">Tutup</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    const modal = document.createElement('div');
+                    modal.innerHTML = html;
+                    modal.id = 'accountDetailModal';
+                    document.body.appendChild(modal);
+                }
+            } catch (error) {
+                showToast('Gagal memuat detail', 'error');
+            }
+        }
+
+        // ==================== TRANSACTION FUNCTIONS ====================
+        function showAccountModal() {
+            const select = document.getElementById('modalAccount');
+            select.innerHTML = '<option value="">-- Pilih --</option>';
+            
+            accountList.forEach(account => {
+                const option = document.createElement('option');
+                option.value = account.nama;
+                option.textContent = account.nama;
+                if (account.nama === transactionData.account) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+            
+            showModal('accountModal');
+        }
+
+        function saveAccount() {
+            const select = document.getElementById('modalAccount');
+            const value = select.value;
+            
+            if (value) {
+                transactionData.account = value;
+                updateDisplay();
+                closeModal('accountModal');
+                showToast('Rekening dipilih', 'success');
+            } else {
+                showToast('Pilih rekening', 'error');
+            }
+        }
+
+        function showTypeModal() {
+            showModal('typeModal');
+        }
+
+        function selectType(type) {
+            document.querySelectorAll('#typeModal .type-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            event.target.closest('.type-option').classList.add('active');
+            transactionData.type = type;
+        }
+
+        function saveType() {
+            updateDisplay();
+            closeModal('typeModal');
+            showToast('Jenis disimpan', 'success');
+        }
+
+        function showAmountModal() {
+            const input = document.getElementById('modalAmount');
+            if (transactionData.amount > 0) {
+                input.value = transactionData.amount.toLocaleString('id-ID');
+            } else {
+                input.value = '';
+            }
+            showModal('amountModal');
+        }
+
+        function setAmount(amount) {
+            const input = document.getElementById('modalAmount');
+            input.value = amount.toLocaleString('id-ID');
+        }
+
+        function saveAmount() {
+            const input = document.getElementById('modalAmount');
+            const amount = getNumericValue(input.value);
+            
+            if (amount > 0) {
+                transactionData.amount = amount;
+                updateDisplay();
+                closeModal('amountModal');
+                showToast('Nominal disimpan', 'success');
+            } else {
+                showToast('Nominal harus > 0', 'error');
+            }
+        }
+
+        function updateDisplay() {
+            const fab = document.getElementById('fabButton');
+            fab.classList.toggle('hidden', !(transactionData.account && transactionData.amount > 0));
+            
+            // Reload transaction tab to show updated data
+            if (currentTab === 'transaksi') {
+                loadTransactionTab();
+            }
+        }
+
+        // ==================== WHATSAPP & TELEGRAM ====================
+        function showWhatsAppPreview() {
+            if (!transactionData.account || transactionData.amount <= 0) {
+                showToast('Lengkapi transaksi terlebih dahulu', 'error');
+                return;
+            }
+            
+            const account = accountList.find(acc => acc.nama === transactionData.account);
+            const earnings = calculateEarnings(transactionData.amount);
+            
+            const html = `
+                <div class="input-modal" style="display: flex;">
+                    <div class="input-modal-content">
+                        <div class="input-modal-header">
+                            <div class="input-modal-title">
+                                <i class="fab fa-whatsapp" style="color: var(--whatsapp);"></i>
+                                Konfirmasi Pengiriman
+                            </div>
+                            <button class="btn btn-secondary btn-small" onclick="closeModal('whatsappPreview')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="input-modal-body">
+                            <div style="margin-bottom: var(--space-lg);">
+                                <div style="display: grid; gap: var(--space-sm); background: var(--surface-light); padding: var(--space-md); border-radius: var(--radius-md);">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="color: var(--text-muted);">Nasabah:</span>
+                                        <span style="font-weight: 600;">${transactionData.account}</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="color: var(--text-muted);">Jenis:</span>
+                                        <span style="color: ${transactionData.type === 'DEPOSIT' ? 'var(--success)' : 'var(--error)'}; font-weight: 600;">
+                                            ${transactionData.type === 'DEPOSIT' ? 'Setoran' : 'Penarikan'}
+                                        </span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="color: var(--text-muted);">Nominal:</span>
+                                        <span style="font-weight: 700; color: var(--accent);">
+                                            ${formatRupiah(transactionData.amount)}
+                                        </span>
+                                    </div>
+                                    ${transactionData.type === 'DEPOSIT' ? `
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span style="color: var(--text-muted);">Potongan ${DISCOUNT_PERCENTAGE}%:</span>
+                                            <span style="color: var(--discount-color); font-weight: 600;">- ${formatRupiah(earnings.discount)}</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span style="color: var(--text-muted);">Diterima Nasabah:</span>
+                                            <span style="color: var(--success); font-weight: 700;">${formatRupiah(earnings.netAmount)}</span>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            
+                            <div class="whatsapp-preview">
+                                <div class="whatsapp-header">
+                                    <div class="whatsapp-icon">
+                                        <i class="fab fa-whatsapp"></i>
+                                    </div>
+                                    <div class="whatsapp-name">BankFlow</div>
+                                    <div class="whatsapp-time">${new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</div>
+                                </div>
+                                <div class="whatsapp-message">
+                                    *NOTIFIKASI TRANSAKSI*
+                                    
+                                    Nasabah: ${transactionData.account}
+                                    Jenis: ${transactionData.type === 'DEPOSIT' ? 'SETORAN' : 'PENARIKAN'}
+                                    Tanggal: ${new Date().toLocaleDateString('id-ID')}
+                                    Nominal: ${formatRupiah(transactionData.amount)}
+                                    
+                                    ${transactionData.type === 'DEPOSIT' ? `
+                                    Potongan 4.76%: ${formatRupiah(earnings.discount)}
+                                    *Diterima: ${formatRupiah(earnings.netAmount)}*
+                                    
+                                    Terima kasih telah melakukan setoran!
+                                    ` : `
+                                    Penarikan tunai berhasil diproses.
+                                    `}
+                                    
+                                    -- BankFlow Digital Banking --
+                                </div>
+                            </div>
+                            
+                            <div class="discount-info" style="margin-top: var(--space-md);">
+                                <div class="discount-header">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Informasi Pengiriman</span>
+                                </div>
+                                <div class="discount-details">
+                                    • WhatsApp: PNG struk dikirim ke nasabah<br>
+                                    • Telegram: File TXT lengkap ke admin<br>
+                                    • Info admin TIDAK dikirim ke nasabah
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-modal-footer">
+                            <button class="btn btn-secondary" onclick="closeModal('whatsappPreview')" style="flex: 1;">Batal</button>
+                            <button class="btn btn-whatsapp" onclick="processTransaction()" style="flex: 1;">
+                                <i class="fab fa-whatsapp"></i> Kirim Sekarang
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const modal = document.createElement('div');
+            modal.innerHTML = html;
+            modal.id = 'whatsappPreview';
+            document.body.appendChild(modal);
+        }
+
+        async function processTransaction() {
+            const btn = document.querySelector('#whatsappPreview .btn-whatsapp');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<div class="loading"></div>';
+            btn.disabled = true;
+            
+            try {
+                // Simpan transaksi ke database
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        action: 'addTransaksi',
+                        nama: transactionData.account,
+                        jenis: transactionData.type === 'DEPOSIT' ? 'SETOR' : 'TARIK',
+                        nominal: transactionData.amount,
+                        keterangan: transactionData.type === 'DEPOSIT' ? 
+                            `Setoran dengan potongan ${DISCOUNT_PERCENTAGE}%` : 'Penarikan tunai'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    // Kirim WhatsApp ke nasabah
+                    const account = accountList.find(acc => acc.nama === transactionData.account);
+                    const earnings = calculateEarnings(transactionData.amount);
+                    
+                    let whatsappMessage = `*BANKFLOW - NOTIFIKASI TRANSAKSI*%0A%0A`;
+                    whatsappMessage += `📋 *Detail Transaksi:*%0A`;
+                    whatsappMessage += `├ Nasabah: ${transactionData.account}%0A`;
+                    whatsappMessage += `├ Jenis: ${transactionData.type === 'DEPOSIT' ? 'SETORAN' : 'PENARIKAN'}%0A`;
+                    whatsappMessage += `├ Tanggal: ${new Date().toLocaleDateString('id-ID')}%0A`;
+                    whatsappMessage += `└ Nominal: ${formatRupiah(transactionData.amount)}%0A%0A`;
+                    
+                    if (transactionData.type === 'DEPOSIT') {
+                        whatsappMessage += `📊 *Perhitungan Potongan:*%0A`;
+                        whatsappMessage += `├ Setoran: ${formatRupiah(transactionData.amount)}%0A`;
+                        whatsappMessage += `├ Potongan (4.76%): ${formatRupiah(earnings.discount)}%0A`;
+                        whatsappMessage += `└ *Diterima: ${formatRupiah(earnings.netAmount)}*%0A%0A`;
+                    }
+                    
+                    whatsappMessage += `🏦 *BankFlow Digital Banking*%0A_Transaksi aman dan terpercaya_`;
+                    
+                    if (account?.no_hp) {
+                        const phone = account.no_hp.replace(/\D/g, '');
+                        window.open(`https://wa.me/${phone}?text=${whatsappMessage}`, '_blank');
+                    }
+                    
+                    closeModal('whatsappPreview');
+                    showToast('Transaksi berhasil! WhatsApp terkirim', 'success');
+                    resetTransaction();
+                    await loadTab('transaksi');
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Gagal: ' + error.message, 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        async function viewBalance(accountName) {
+            if (!accountName) return;
+            
+            const container = document.getElementById('balanceContainer');
+            container.innerHTML = `
+                <div class="text-center" style="padding: 20px;">
+                    <div class="loading" style="width: 40px; height: 40px; margin: 0 auto;"></div>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch(`${API_URL}?action=getSaldo&nama=${encodeURIComponent(accountName)}`);
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const earnings = calculateEarnings(data.data.total_setor);
+                    
+                    container.innerHTML = `
+                        <div class="balance-display">
+                            <div class="balance-label">Saldo Saat Ini</div>
+                            <div class="balance-amount">${formatRupiah(data.data.saldo_akhir)}</div>
+                            <div style="font-size: var(--text-sm); opacity: 0.9;">${accountName}</div>
+                        </div>
+                        
+                        <div class="earnings-display">
+                            <div class="earnings-row">
+                                <div class="earnings-label">Total Setoran:</div>
+                                <div class="earnings-amount">${formatRupiah(data.data.total_setor)}</div>
+                            </div>
+                            <div class="earnings-row">
+                                <div class="earnings-label">Potongan ${DISCOUNT_PERCENTAGE}%:</div>
+                                <div class="earnings-amount" style="color: var(--discount-color);">- ${formatRupiah(earnings.discount)}</div>
+                            </div>
+                            <div class="earnings-row">
+                                <div class="earnings-label">Diterima Nasabah:</div>
+                                <div class="earnings-amount earnings-total">${formatRupiah(earnings.netAmount)}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="discount-info">
+                            <div class="discount-header">
+                                <i class="fas fa-percentage"></i>
+                                <span>Perhitungan Potongan</span>
+                            </div>
+                            <div class="discount-details">
+                                Setoran ${formatRupiah(data.data.total_setor)} × ${DISCOUNT_PERCENTAGE}% = Potongan ${formatRupiah(earnings.discount)}<br>
+                                Dana diterima = ${formatRupiah(data.data.total_setor)} - ${formatRupiah(earnings.discount)} = ${formatRupiah(earnings.netAmount)}
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="text-center" style="padding: 40px 20px; color: var(--text-muted);">
+                        <div style="font-size: 48px; margin-bottom: 16px;">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <div>Gagal memuat saldo</div>
+                    </div>
+                `;
+            }
+        }
+
+        function resetTransaction() {
+            transactionData = {
+                account: '',
+                type: 'DEPOSIT',
+                amount: 0,
+                daysCount: 1
+            };
+            updateDisplay();
+            showToast('Transaksi direset', 'info');
+        }
+
+        // ==================== PWA SETUP ====================
+        // Setup manifest
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create dynamic manifest
+            const manifest = {
+                "name": "BankFlow Jimpitan",
+                "short_name": "BankFlow",
+                "description": "Sistem Jimpitan Galungan Digital",
+                "theme_color": "#1A237E",
+                "background_color": "#0F1419",
+                "display": "standalone",
+                "scope": "/",
+                "start_url": "/",
+                "icons": [
+                    {
+                        "src": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+                        "sizes": "192x192",
+                        "type": "image/png"
+                    },
+                    {
+                        "src": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+                        "sizes": "512x512",
+                        "type": "image/png"
+                    }
+                ]
+            };
+            
+            const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
+            const manifestURL = URL.createObjectURL(manifestBlob);
+            document.getElementById('manifest-placeholder').href = manifestURL;
+            
+            // Register service worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .catch(console.error);
+            }
+            
+            // Load initial tab
+            loadTab('transaksi');
+        });
+
+        // ==================== GLOBAL EXPORTS ====================
+        window.loadTab = loadTab;
+        window.showAccountModal = showAccountModal;
+        window.showTypeModal = showTypeModal;
+        window.showAmountModal = showAmountModal;
+        window.showAddAccountModal = showAddAccountModal;
+        window.showWhatsAppPreview = showWhatsAppPreview;
+        window.selectType = selectType;
+        window.setAmount = setAmount;
+        window.saveAccount = saveAccount;
+        window.saveType = saveType;
+        window.saveAmount = saveAmount;
+        window.saveNewAccount = saveNewAccount;
+        window.viewAccountDetails = viewAccountDetails;
+        window.viewBalance = viewBalance;
+        window.resetTransaction = resetTransaction;
+        window.closeModal = closeModal;
+        window.processTransaction = processTransaction;
+    </script>
+</body>
+</html>
