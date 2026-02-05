@@ -7,11 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Favicon dan PWA Icons -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/x-icon" href="#">
+    <link rel="apple-touch-icon" href="#">
+    <link rel="manifest" href="#">
     <meta name="theme-color" content="#0a192f">
     
     <!-- HTML2Canvas untuk render PNG -->
@@ -594,7 +592,7 @@
             font-weight: 500;
         }
         
-        /* RECEIPT STYLING */
+        /* RECEIPT STYLING - HIDDEN */
         .receipt-container {
             position: fixed;
             top: -9999px;
@@ -658,21 +656,6 @@
             padding-top: 15px;
             border-top: 2px solid #000;
         }
-        .receipt-qr {
-            text-align: center;
-            margin: 15px 0;
-            color: #333;
-        }
-        .receipt-wa-button {
-            display: inline-block;
-            background: #25D366;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 10px;
-        }
         
         /* RESPONSIVE */
         @media (max-width: 480px) {
@@ -686,6 +669,22 @@
                 width: 350px;
                 padding: 20px;
             }
+        }
+        
+        /* INSTALL BUTTON */
+        .install-btn {
+            background: var(--yellow);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px auto;
+            justify-content: center;
         }
     </style>
 </head>
@@ -723,7 +722,6 @@
     <script>
         // ====== KONFIGURASI API ======
         const API_URL = 'https://script.google.com/macros/s/AKfycbzg2VbfzX6Wdmo0DJkPY9noOhBZlRmXvgzuhLMpqfseste6Yi2P1KeLOFSvf-HM0Fn3/exec';
-        const RECEIPT_SERVER = 'https://bankflow-receipt.vercel.app/api/generate'; // Server untuk generate struk
         
         // ====== STATE GLOBAL ======
         let state = {
@@ -739,22 +737,14 @@
                 dateFrom: new Date().toISOString().split('T')[0],
                 dateTo: new Date().toISOString().split('T')[0]
             },
-            lastTransactionData: null
+            lastTransactionData: null,
+            deferredPrompt: null
         };
-        
-        // ====== PWA SERVICE WORKER ======
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').then(registration => {
-                    console.log('ServiceWorker registered');
-                }).catch(err => {
-                    console.log('ServiceWorker registration failed:', err);
-                });
-            });
-        }
         
         // ====== INISIALISASI APLIKASI ======
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('BankFlow App Initialized');
+            
             // Setup navigation
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -769,42 +759,37 @@
             loadData();
             loadTab('transaksi');
             
-            // Install button for PWA
-            let deferredPrompt;
+            // PWA Install Prompt
             window.addEventListener('beforeinstallprompt', (e) => {
+                console.log('PWA install prompt available');
                 e.preventDefault();
-                deferredPrompt = e;
-                showToast('Aplikasi dapat diinstall ke perangkat Anda!', false);
+                state.deferredPrompt = e;
+                showInstallButton();
             });
-            
-            // Install PWA function
-            window.installPWA = async () => {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted') {
-                        showToast('Aplikasi berhasil diinstall!');
-                    }
-                    deferredPrompt = null;
-                }
-            };
         });
         
         // ====== LOAD DATA DARI API ======
         async function loadData() {
             try {
+                console.log('Loading data from API...');
+                showToast('Memuat data...');
+                
                 // Load nasabah data
                 const res = await fetch(`${API_URL}?action=getNasabah`);
                 const data = await res.json();
                 state.accounts = data.data || [];
+                console.log('Accounts loaded:', state.accounts.length);
                 
                 // Load global balance
                 const balanceRes = await fetch(`${API_URL}?action=getAllSaldo`);
                 const balanceData = await balanceRes.json();
                 state.globalBalance = balanceData.saldo_global || 0;
+                console.log('Global balance:', state.globalBalance);
                 
                 // Render current tab
                 renderTab();
+                
+                showToast('Data berhasil dimuat');
             } catch (e) {
                 console.error('Load error:', e);
                 showToast('Gagal memuat data', true);
@@ -814,6 +799,7 @@
         // ====== LOAD TAB ======
         async function loadTab(tab) {
             state.tab = tab;
+            console.log('Loading tab:', tab);
             renderTab();
         }
         
@@ -925,25 +911,13 @@
                         </div>
                         
                         <div class="amount-grid">
-                            <button class="amount-btn" data-amount="3000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">3K</span>
-                                3.000
-                            </button>
                             <button class="amount-btn" data-amount="5000" ${state.isProcessing ? 'disabled' : ''}>
                                 <span class="amount-btn-label">5K</span>
                                 5.000
                             </button>
                             <button class="amount-btn" data-amount="10000" ${state.isProcessing ? 'disabled' : ''}>
                                 <span class="amount-btn-label">10K</span>
-                                15.000
-                            </button>
-                            <button class="amount-btn" data-amount="20000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">20K</span>
                                 10.000
-                            </button>
-                            <button class="amount-btn" data-amount="12000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">12K</span>
-                                12.000
                             </button>
                             <button class="amount-btn" data-amount="15000" ${state.isProcessing ? 'disabled' : ''}>
                                 <span class="amount-btn-label">15K</span>
@@ -956,6 +930,18 @@
                             <button class="amount-btn" data-amount="25000" ${state.isProcessing ? 'disabled' : ''}>
                                 <span class="amount-btn-label">25K</span>
                                 25.000
+                            </button>
+                            <button class="amount-btn" data-amount="50000" ${state.isProcessing ? 'disabled' : ''}>
+                                <span class="amount-btn-label">50K</span>
+                                50.000
+                            </button>
+                            <button class="amount-btn" data-amount="100000" ${state.isProcessing ? 'disabled' : ''}>
+                                <span class="amount-btn-label">100K</span>
+                                100.000
+                            </button>
+                            <button class="amount-btn" data-amount="200000" ${state.isProcessing ? 'disabled' : ''}>
+                                <span class="amount-btn-label">200K</span>
+                                200.000
                             </button>
                         </div>
                     </div>
@@ -994,11 +980,13 @@
                         ${btnText}
                     </button>
                     
-                    <div style="text-align: center; margin-top: 10px;">
-                        <button onclick="window.installPWA()" style="background: var(--yellow); color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                            <i class="fas fa-download"></i> Install Aplikasi
-                        </button>
-                    </div>
+                    ${state.deferredPrompt ? `
+                        <div style="text-align: center; margin-top: 15px;">
+                            <button onclick="installPWA()" class="install-btn">
+                                <i class="fas fa-download"></i> Install Aplikasi
+                            </button>
+                        </div>
+                    ` : ''}
                 </div>
             `;
         }
@@ -1347,13 +1335,13 @@
                         </div>
                         
                         <div style="font-size: 13px; color: var(--text-dim); text-align: center; padding: 12px; background: rgba(255, 193, 7, 0.1); border-radius: 8px;">
-                            <i class="fas fa-exclamation-triangle"></i> Data akan disimpan dan struk PNG dikirim via WhatsApp
+                            <i class="fas fa-exclamation-triangle"></i> Data akan disimpan dan struk PNG akan dibuat
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button class="modal-btn modal-cancel" onclick="closeModal()" id="cancelBtn">BATAL</button>
                         <button class="modal-btn modal-confirm" onclick="startProcessingTransaction()" id="confirmBtn">
-                            <i class="fas fa-check"></i> SIMPAN & KIRIM STRUK
+                            <i class="fas fa-check"></i> SIMPAN & BUAT STRUK
                         </button>
                     </div>
                 </div>
@@ -1483,7 +1471,7 @@
             }
         }
         
-        // ====== PROSES TRANSAKSI DAN KIRIM STRUK ======
+        // ====== PROSES TRANSAKSI DAN BUAT STRUK ======
         async function processTransaction() {
             showToast('Menyimpan transaksi ke spreadsheet...');
             
@@ -1516,8 +1504,13 @@
                 if (data.status === 'success') {
                     showToast('Transaksi berhasil! Membuat struk...');
                     
-                    // Generate dan kirim struk
-                    await generateAndSendReceipt();
+                    // Generate struk PNG
+                    await generateReceipt();
+                    
+                    // Reset form
+                    resetTransactionForm();
+                    
+                    showToast('Transaksi selesai! Struk telah dibuat.');
                     
                 } else {
                     showToast('Gagal: ' + (data.message || 'Error'), true);
@@ -1526,6 +1519,7 @@
                     updateTransactionButton();
                 }
             } catch (e) {
+                console.error('Transaction error:', e);
                 showToast('Gagal menyimpan transaksi ke spreadsheet', true);
                 // Reset processing state jika error
                 state.isProcessing = false;
@@ -1533,8 +1527,8 @@
             }
         }
         
-        // ====== GENERATE DAN KIRIM STRUK ======
-        async function generateAndSendReceipt() {
+        // ====== GENERATE STRUK PNG ======
+        async function generateReceipt() {
             try {
                 state.isGeneratingReceipt = true;
                 
@@ -1551,51 +1545,15 @@
                     useCORS: true
                 });
                 
-                // 3. Convert canvas ke blob
-                canvas.toBlob(async (blob) => {
-                    try {
-                        // 4. Create FormData untuk upload
-                        const formData = new FormData();
-                        formData.append('receipt', blob, 'struk-bankflow.png');
-                        formData.append('transactionData', JSON.stringify(state.lastTransactionData));
-                        
-                        // 5. Upload ke server untuk mendapatkan URL
-                        showToast('Mengupload struk ke server...');
-                        
-                        const uploadRes = await fetch(RECEIPT_SERVER, {
-                            method: 'POST',
-                            body: formData
-                        });
-                        
-                        if (!uploadRes.ok) {
-                            throw new Error('Upload gagal');
-                        }
-                        
-                        const uploadData = await uploadRes.json();
-                        const receiptUrl = uploadData.url;
-                        
-                        // 6. Kirim via WhatsApp
-                        await sendToWhatsApp(receiptUrl);
-                        
-                        // 7. Reset form dan state
-                        resetTransactionForm();
-                        
-                        showToast('Transaksi selesai! Struk terkirim ke WhatsApp.');
-                        
-                    } catch (uploadError) {
-                        console.error('Upload error:', uploadError);
-                        // Fallback: download langsung
-                        showToast('Server penuh, mendownload struk...');
-                        downloadReceipt(canvas);
-                        resetTransactionForm();
-                    }
-                    
-                }, 'image/png');
+                // 3. Convert canvas ke data URL
+                const dataUrl = canvas.toDataURL('image/png');
+                
+                // 4. Kirim ke WhatsApp
+                await sendToWhatsApp(dataUrl);
                 
             } catch (error) {
                 console.error('Generate receipt error:', error);
-                showToast('Gagal membuat struk', true);
-                resetTransactionForm();
+                showToast('Gagal membuat struk, tapi transaksi sudah tersimpan', true);
             }
         }
         
@@ -1658,30 +1616,19 @@
                     ${trans.type === 'SETOR' ? 'SETOR' : 'TARIK'}: ${formatRupiah(trans.amount)}
                 </div>
                 
-                <div class="receipt-qr">
-                    <div style="font-size: 12px; margin-bottom: 10px;">Scan untuk verifikasi:</div>
-                    <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px;">
-                        ${transactionId}<br>
-                        BankFlow Digital Receipt
-                    </div>
-                </div>
-                
                 <div class="receipt-footer">
                     <div style="margin-bottom: 10px;">Terima kasih atas kepercayaan Anda</div>
                     <div style="font-size: 10px;">* Transaksi ini telah tercatat di sistem</div>
                     <div style="font-size: 10px;">** Struk digital sah sebagai bukti transaksi</div>
-                    <div style="margin-top: 15px;">
-                        <a href="#" class="receipt-wa-button" style="display: none;">
-                            <i class="fab fa-whatsapp"></i> Kirim ke WhatsApp
-                        </a>
-                    </div>
                 </div>
             `;
         }
         
         // ====== KIRIM KE WHATSAPP ======
-        async function sendToWhatsApp(receiptUrl) {
+        async function sendToWhatsApp(dataUrl) {
             const trans = state.lastTransactionData;
+            
+            // Buat pesan untuk WhatsApp
             const message = `📋 *STRUK TRANSAKSI BANKFLOW*
 
 🏦 *BankFlow Digital Banking*
@@ -1695,29 +1642,35 @@
 📅 *Periode:* ${formatDateDisplay(trans.dateFrom)} - ${formatDateDisplay(trans.dateTo)}
 📆 *Durasi:* ${trans.daysCount} Hari
 
-📎 *Struk Digital:* ${receiptUrl}
-
 _Transaksi ini telah tercatat di sistem BankFlow._
 _Terima kasih atas kepercayaan Anda._`;
             
             // Encode message untuk URL
             const encodedMessage = encodeURIComponent(message);
             
-            // Buat URL WhatsApp
-            const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+            // Untuk mobile, buka WhatsApp langsung
+            if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                // Untuk mobile, buka WhatsApp dengan pesan
+                const whatsappUrl = `whatsapp://send?text=${encodedMessage}`;
+                window.location.href = whatsappUrl;
+            } else {
+                // Untuk desktop, buka WhatsApp Web
+                const whatsappUrl = `https://web.whatsapp.com/send?text=${encodedMessage}`;
+                window.open(whatsappUrl, '_blank');
+            }
             
-            // Buka WhatsApp di tab baru (tanpa popup)
-            window.open(whatsappUrl, '_blank');
-            
-            // Tunggu sebentar agar WhatsApp terbuka
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            // Jika ingin menambahkan image, kita bisa download dulu
+            // karena WhatsApp Web tidak support langsung dari data URL
+            setTimeout(() => {
+                downloadReceiptImage(dataUrl);
+            }, 1000);
         }
         
-        // ====== DOWNLOAD STRUK (FALLBACK) ======
-        function downloadReceipt(canvas) {
+        // ====== DOWNLOAD STRUK IMAGE ======
+        function downloadReceiptImage(dataUrl) {
             const link = document.createElement('a');
-            link.download = `struk-bankflow-${Date.now()}.png`;
-            link.href = canvas.toDataURL('image/png');
+            link.download = `struk-bankflow-${state.lastTransactionData.transactionId}.png`;
+            link.href = dataUrl;
             link.click();
         }
         
@@ -1737,6 +1690,24 @@ _Terima kasih atas kepercayaan Anda._`;
             
             // Refresh data
             loadData();
+        }
+        
+        // ====== PWA INSTALL FUNCTIONS ======
+        function showInstallButton() {
+            // Button akan muncul di renderTransaksi()
+            renderTab();
+        }
+        
+        async function installPWA() {
+            if (state.deferredPrompt) {
+                state.deferredPrompt.prompt();
+                const { outcome } = await state.deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    showToast('Aplikasi berhasil diinstall!');
+                    state.deferredPrompt = null;
+                    renderTab();
+                }
+            }
         }
         
         // ====== UTILITY FUNCTIONS ======
@@ -1804,11 +1775,9 @@ _Terima kasih atas kepercayaan Anda._`;
         
         // ====== EXPOSE FUNCTIONS TO GLOBAL SCOPE ======
         window.closeModal = closeModal;
-        window.processTransaction = processTransaction;
         window.addNasabah = addNasabah;
         window.startProcessingTransaction = startProcessingTransaction;
-        window.installPWA = () => {};
+        window.installPWA = installPWA;
     </script>
 </body>
 </html>
-
