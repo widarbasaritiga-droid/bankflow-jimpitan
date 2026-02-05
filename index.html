@@ -3,1313 +3,1467 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BankFlow - Digital Banking</title>
-    
-    <!-- FAVICON & PWA ICONS -->
-    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/widarbasaritiga-droid/bankflow-jimpitan/main/favicon.ico">
-    <link rel="icon" type="image/png" sizes="16x16" href="https://raw.githubusercontent.com/widarbasaritiga-droid/bankflow-jimpitan/main/favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://raw.githubusercontent.com/widarbasaritiga-droid/bankflow-jimpitan/main/favicon-32x32.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="https://raw.githubusercontent.com/widarbasaritiga-droid/bankflow-jimpitan/main/apple-touch-icon.png">
-    <link rel="manifest" href="https://raw.githubusercontent.com/widarbasaritiga-droid/bankflow-jimpitan/main/manifest.json">
-    <meta name="theme-color" content="#1A237E">
-    <meta name="mobile-web-app-capable" content="yes">
-    
-    <!-- FONTS & ICONS -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>BankFlow</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
+        /* VARIABLES */
         :root {
-            --primary: #1A237E;
-            --accent: #00BFA5;
-            --bg: #0F1419;
-            --surface: #1E252B;
+            --blue-dark: #0a192f;
+            --blue-medium: #1a237e;
+            --green-dark: #1b5e20;
+            --green-light: #4caf50;
+            --red: #c62828;
+            --text-light: #ffffff;
+            --text-medium: #e3f2fd;
+            --text-dim: #90a4ae;
+            --bg-card: rgba(25, 35, 45, 0.95);
+            --input-bg: rgba(255, 255, 255, 0.12);
+            --border-light: rgba(255, 255, 255, 0.25);
+            --border-medium: rgba(255, 255, 255, 0.15);
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: white;
+        /* RESET */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; 
+            background: var(--blue-dark); 
+            color: var(--text-light);
             min-height: 100vh;
-            overflow-x: hidden;
+            line-height: 1.5;
         }
         
-        .app-header {
+        /* HEADER */
+        .header {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             height: 56px;
-            background: var(--surface);
-            border-bottom: 1px solid #37474F;
+            background: var(--blue-medium);
             display: flex;
             align-items: center;
             padding: 0 16px;
-            z-index: 1000;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
-        
-        .app-title h1 {
-            font-size: 17px;
+        .header h1 { 
+            font-size: 18px; 
             font-weight: 600;
+            color: var(--text-light);
         }
         
-        .main-content {
-            padding: 70px 16px 80px;
-            min-height: calc(100vh - 56px);
+        /* MAIN CONTENT */
+        .content {
+            padding: 70px 16px 70px;
+            min-height: 100vh;
         }
         
+        /* CARD */
         .card {
-            background: var(--surface);
-            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-medium);
+            border-radius: 12px;
             padding: 20px;
             margin-bottom: 16px;
-            border: 1px solid #37474F;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         
-        .bottom-nav {
+        /* NAVIGATION */
+        .nav {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--surface);
-            border-top: 1px solid #37474F;
-            padding: 8px 16px;
+            bottom: 0; left: 0; right: 0;
+            background: var(--blue-medium);
             display: flex;
-            justify-content: space-around;
-            z-index: 1000;
+            border-top: 1px solid var(--border-light);
+            height: 56px;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
         }
-        
-        .nav-item {
+        .nav-btn {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #B0BEC5;
+            justify-content: center;
+            color: var(--text-dim);
             font-size: 11px;
-            padding: 8px 12px;
+            border: none;
+            background: transparent;
             cursor: pointer;
-            border-radius: 12px;
-            min-width: 60px;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
         }
-        
-        .nav-item.active {
-            color: var(--accent);
-            background: rgba(0, 191, 165, 0.1);
+        .nav-btn.active {
+            color: var(--text-light);
+            background: rgba(255,255,255,0.15);
+            font-weight: 500;
         }
-        
-        .nav-icon {
-            font-size: 20px;
+        .nav-btn i { 
+            font-size: 18px; 
             margin-bottom: 4px;
         }
         
+        /* BUTTONS */
         .btn {
-            background: var(--accent);
+            background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-light) 100%);
             color: white;
             border: none;
-            padding: 14px 20px;
-            border-radius: 12px;
+            padding: 16px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
-            margin-top: 16px;
-            font-size: 15px;
+            margin-top: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all 0.3s ease;
+            border-radius: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
+        }
+        .btn:disabled { 
+            opacity: 0.4; 
+            cursor: not-allowed;
+            box-shadow: none;
+            background: linear-gradient(135deg, #666666 0%, #888888 100%);
+        }
+        .btn:hover:not(:disabled) { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(27, 94, 32, 0.4);
         }
         
-        .btn:disabled {
-            opacity: 0.5;
+        /* PROCESSING STATE */
+        .btn.processing {
+            background: linear-gradient(135deg, #666666 0%, #888888 100%);
+            color: rgba(255, 255, 255, 0.7);
             cursor: not-allowed;
             transform: none !important;
+            box-shadow: none !important;
         }
         
-        .btn:hover:not(:disabled) {
-            background: #00D6B8;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 191, 165, 0.3);
-        }
-        
-        .btn-process {
-            background: linear-gradient(135deg, #00C853, #00BFA5);
-            font-weight: 700;
-            font-size: 16px;
-            padding: 16px 20px;
-        }
-        
-        .input-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin: 20px 0;
-        }
-        
-        .input-item {
-            background: #2A3239;
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .input-item.completed {
-            border-color: var(--accent);
-            background: rgba(0, 191, 165, 0.1);
-        }
-        
-        .input-item.completed::after {
-            content: '✓';
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: var(--accent);
-            color: white;
+        /* SPINNER */
+        .spinner {
+            display: inline-block;
             width: 20px;
             height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
+            border-top-color: #ffffff;
+            animation: spin 1s ease-in-out infinite;
         }
-        
-        .input-item:hover {
-            transform: translateY(-2px);
-        }
-        
-        .icon-wrapper {
-            width: 40px;
-            height: 40px;
-            background: #37474F;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 8px;
-            transition: all 0.3s ease;
-        }
-        
-        .input-item.completed .icon-wrapper {
-            background: var(--accent);
-        }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top: 3px solid var(--accent);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
         
-        .modal-overlay {
-            position: fixed;
+        /* INPUTS - FIXED CONTRAST */
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 12px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 15px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        input::placeholder, select::placeholder, textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+            opacity: 0.8;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--green-light);
+            background: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+        
+        /* SELECT DROPDOWN FIX */
+        select {
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ffffff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 36px;
+        }
+        select option {
+            background: #1a237e;
+            color: #ffffff;
+            padding: 10px;
+        }
+        
+        /* DATE ROW WITH DAYS COUNT */
+        .date-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            align-items: flex-end;
+        }
+        .date-group {
+            flex: 1;
+            position: relative;
+        }
+        .date-input {
+            width: 100%;
+            padding: 14px 12px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+        .date-input:focus {
+            outline: none;
+            border-color: var(--green-light);
+            background: rgba(255, 255, 255, 0.18);
+        }
+        .date-label {
+            font-size: 13px;
+            color: var(--text-medium);
+            margin-bottom: 6px;
+            display: block;
+            font-weight: 500;
+        }
+        .days-count {
+            position: absolute;
             top: 0;
-            left: 0;
             right: 0;
-            bottom: 0;
+            background: var(--green-light);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 0 8px 0 4px;
+        }
+        
+        /* TRANSACTION INFO DISPLAY */
+        .transaction-info-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .transaction-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .transaction-info-row:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .info-label-rounded {
+            background: rgba(26, 35, 126, 0.5);
+            color: var(--text-medium);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .info-value-rounded {
+            background: rgba(76, 175, 80, 0.2);
+            color: var(--text-light);
+            font-size: 14px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        .transaction-type-badge {
+            background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-light) 100%);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .transaction-type-badge.withdraw {
+            background: linear-gradient(135deg, var(--red) 0%, #ef5350 100%);
+        }
+        
+        /* AMOUNT INPUT CONTAINER - FIXED */
+        .amount-input-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .amount-prefix {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 20px;
+            z-index: 1;
+        }
+        .amount-input {
+            width: 100%;
+            padding: 16px 16px 16px 60px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        .amount-input:focus {
+            outline: none;
+            border-color: var(--green-light);
+            background: rgba(255, 255, 255, 0.18);
+        }
+        
+        /* AMOUNT BUTTONS WITH LABELS */
+        .amount-section {
+            margin-bottom: 20px;
+        }
+        .amount-label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .amount-label {
+            font-size: 13px;
+            color: var(--text-medium);
+            font-weight: 500;
+        }
+        .amount-currency {
+            font-size: 12px;
+            color: var(--text-dim);
+            background: rgba(255,255,255,0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .amount-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .amount-btn {
+            position: relative;
+            padding: 16px 8px;
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.15);
+            color: var(--text-light);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .amount-btn:hover { 
+            background: rgba(76, 175, 80, 0.2);
+            border-color: var(--green-light);
+            transform: translateY(-1px);
+        }
+        .amount-btn-label {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: var(--green-light);
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        /* TYPE SELECTOR */
+        .type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .type-btn {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05);
+            color: var(--text-light);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+        .type-btn.active {
+            border-color: var(--green-dark);
+            color: white;
+            transform: translateY(-1px);
+        }
+        .type-btn.setor.active { 
+            background: rgba(27, 94, 32, 0.25);
+        }
+        .type-btn.tarik.active { 
+            background: rgba(198, 40, 40, 0.25);
+            border-color: var(--red);
+        }
+        
+        /* INFO CARD */
+        .info-card {
+            background: linear-gradient(135deg, rgba(26, 35, 126, 0.4) 0%, rgba(40, 53, 147, 0.4) 100%);
+            padding: 18px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .info-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: #00e676;
+            margin: 10px 0 6px;
+        }
+        .info-label {
+            font-size: 13px;
+            color: var(--text-medium);
+        }
+        
+        /* ACCOUNT LIST */
+        .account-item {
+            padding: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all 0.2s;
+        }
+        .account-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        .account-item:last-child { border-bottom: none; }
+        .account-avatar {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--blue-medium) 0%, #283593 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            font-size: 18px;
+        }
+        
+        /* MODAL */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.8);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 2000;
+            z-index: 1000;
             padding: 20px;
-            animation: fadeIn 0.3s ease;
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
         .modal-content {
-            background: #1E252B;
-            border-radius: 16px;
-            width: 100%;
+            background: var(--bg-card);
+            border-radius: 12px;
             max-width: 400px;
-            max-height: 80vh;
+            width: 100%;
             overflow: hidden;
-            animation: slideUp 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
         }
-        
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        .github-link {
-            position: fixed;
-            bottom: 70px;
-            right: 16px;
-            background: var(--surface);
-            color: white;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
+        .modal-header {
+            padding: 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
             display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 999;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .github-link:hover {
-            background: var(--accent);
-            transform: scale(1.1);
-        }
-        
-        /* Progress indicator */
-        .progress-steps {
-            display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
-            position: relative;
-        }
-        
-        .progress-steps::before {
-            content: '';
-            position: absolute;
-            top: 15px;
-            left: 20px;
-            right: 20px;
-            height: 2px;
-            background: #37474F;
-            z-index: 1;
-        }
-        
-        .step {
-            display: flex;
-            flex-direction: column;
             align-items: center;
-            position: relative;
-            z-index: 2;
         }
-        
-        .step-circle {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #37474F;
+        .modal-body { 
+            padding: 20px; 
+        }
+        .modal-footer {
+            padding: 18px;
+            border-top: 1px solid rgba(255,255,255,0.2);
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            margin-bottom: 8px;
-            transition: all 0.3s ease;
+            gap: 12px;
         }
-        
-        .step.active .step-circle {
-            background: var(--accent);
-            color: white;
-            transform: scale(1.1);
+        .modal-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
         }
-        
-        .step.completed .step-circle {
-            background: #00C853;
+        .modal-cancel {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-light);
+        }
+        .modal-confirm {
+            background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-light) 100%);
             color: white;
         }
         
-        .step-label {
-            font-size: 10px;
-            color: #B0BEC5;
-        }
-        
-        .step.active .step-label {
-            color: var(--accent);
-            font-weight: 500;
-        }
-        
-        @media (max-width: 480px) {
-            .input-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .main-content {
-                padding: 70px 12px 80px;
-            }
-            
-            .progress-steps {
-                padding: 0 10px;
-            }
-            
-            .step-label {
-                font-size: 9px;
-            }
-        }
-        
-        /* Toast Notification */
+        /* TOAST */
         .toast {
             position: fixed;
             top: 70px;
             right: 16px;
-            background: #00C853;
+            background: var(--green-dark);
             color: white;
-            padding: 12px 16px;
-            border-radius: 12px;
-            z-index: 4000;
+            padding: 14px 18px;
+            border-radius: 8px;
+            z-index: 2000;
             animation: slideIn 0.3s ease;
-            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toast.error {
+            background: var(--red);
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        /* SECTION HEADERS */
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 18px;
             display: flex;
             align-items: center;
             gap: 8px;
-            max-width: 300px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
         
-        .toast.error {
-            background: #FF5252;
-        }
-        
-        .toast.info {
-            background: #2196F3;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-        
-        /* Quick amount buttons */
-        .quick-amount {
-            padding: 12px;
-            background: #2A3239;
-            border: 2px solid #37474F;
-            border-radius: 8px;
+        /* ADD ACCOUNT BUTTON */
+        .add-account-btn {
+            background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-light) 100%);
             color: white;
-            cursor: pointer;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
             font-weight: 600;
-            transition: all 0.2s ease;
-        }
-        
-        .quick-amount:hover {
-            border-color: var(--accent);
-            background: rgba(0, 191, 165, 0.1);
-            transform: translateY(-2px);
-        }
-        
-        /* Status indicator */
-        .status-indicator {
-            display: inline-flex;
+            cursor: pointer;
+            display: flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+            margin-bottom: 16px;
+            width: 100%;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .add-account-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
+        }
+        
+        /* FORM LABELS */
+        .form-label {
+            font-size: 13px;
+            color: var(--text-medium);
+            margin-bottom: 6px;
+            display: block;
             font-weight: 500;
-            background: rgba(0, 191, 165, 0.1);
-            color: var(--accent);
-            margin-top: 8px;
         }
         
-        /* Modal button styles */
-        .modal-btn {
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            flex: 1;
-        }
-        
-        .modal-btn-cancel {
-            background: #37474F;
-            color: white;
-        }
-        
-        .modal-btn-cancel:hover {
-            background: #455A64;
-            transform: translateY(-2px);
-        }
-        
-        .modal-btn-confirm {
-            background: linear-gradient(135deg, #00C853, #00BFA5);
-            color: white;
-        }
-        
-        .modal-btn-confirm:hover {
-            background: linear-gradient(135deg, #00E676, #00D6B8);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 200, 83, 0.3);
+        /* RESPONSIVE */
+        @media (max-width: 480px) {
+            .amount-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .content {
+                padding: 70px 12px 70px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- GITHUB LINK -->
-    <a href="https://github.com/widarbasaritiga-droid/bankflow-jimpitan" target="_blank" class="github-link" title="View on GitHub">
-        <i class="fab fa-github"></i>
-    </a>
+    <div class="header">
+        <h1><i class="fas fa-university"></i> BankFlow</h1>
+    </div>
     
-    <!-- APP CONTAINER -->
-    <div id="app">
-        <div class="app-header">
-            <div class="app-title">
-                <h1><i class="fas fa-university"></i> BankFlow</h1>
-            </div>
-        </div>
-        
-        <div class="main-content" id="mainContent">
-            <div class="card">
-                <div style="text-align: center; padding: 40px 20px;">
-                    <div class="spinner"></div>
-                    <div style="margin-top: 20px; color: #B0BEC5;">Loading BankFlow System...</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="bottom-nav" id="bottomNav">
-            <div class="nav-item active" data-tab="transaksi">
-                <div class="nav-icon"><i class="fas fa-exchange-alt"></i></div>
-                <div>Transaksi</div>
-            </div>
-            <div class="nav-item" data-tab="dashboard">
-                <div class="nav-icon"><i class="fas fa-chart-line"></i></div>
-                <div>Dashboard</div>
-            </div>
-            <div class="nav-item" data-tab="account">
-                <div class="nav-icon"><i class="fas fa-users"></i></div>
-                <div>Rekening</div>
-            </div>
-            <div class="nav-item" data-tab="saldo">
-                <div class="nav-icon"><i class="fas fa-wallet"></i></div>
-                <div>Saldo</div>
-            </div>
-        </div>
+    <div class="content" id="content">
+        <!-- Content loaded here -->
+    </div>
+    
+    <div class="nav">
+        <button class="nav-btn active" data-tab="transaksi">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Transaksi</span>
+        </button>
+        <button class="nav-btn" data-tab="dashboard">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard</span>
+        </button>
+        <button class="nav-btn" data-tab="rekening">
+            <i class="fas fa-users"></i>
+            <span>Rekening</span>
+        </button>
+        <button class="nav-btn" data-tab="saldo">
+            <i class="fas fa-wallet"></i>
+            <span>Saldo</span>
+        </button>
     </div>
 
     <script>
-        // ====== GLOBAL STATE ======
+        // ====== KONFIGURASI API ======
         const API_URL = 'https://script.google.com/macros/s/AKfycbzg2VbfzX6Wdmo0DJkPY9noOhBZlRmXvgzuhLMpqfseste6Yi2P1KeLOFSvf-HM0Fn3/exec';
-        let currentTab = 'transaksi';
-        let accountList = [];
-        let transactionData = {
-            account: '',
-            type: 'DEPOSIT',
-            amount: 0
+        
+        // ====== STATE GLOBAL ======
+        let state = {
+            tab: 'transaksi',
+            accounts: [],
+            globalBalance: 0,
+            isProcessing: false,
+            transaction: {
+                account: '',
+                type: 'SETOR',
+                amount: 0,
+                dateFrom: new Date().toISOString().split('T')[0],
+                dateTo: new Date().toISOString().split('T')[0]
+            }
         };
-        let currentStep = 1;
-        let isProcessing = false;
-
-        // ====== EVENT DELEGATION FOR NAV ======
+        
+        // ====== INISIALISASI APLIKASI ======
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('bottomNav').addEventListener('click', (e) => {
-                const navItem = e.target.closest('.nav-item');
-                if (navItem) {
-                    const tab = navItem.dataset.tab;
-                    if (tab) {
-                        loadTab(tab);
-                    }
-                }
+            // Setup navigation
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tab = btn.dataset.tab;
+                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    loadTab(tab);
+                });
             });
-
-            loadTab(currentTab);
-            initApp();
+            
+            // Load initial data and show transaction tab
+            loadData();
+            loadTab('transaksi');
         });
-
-        // ====== TAB MANAGEMENT ======
-        async function loadTab(tabName) {
-            currentTab = tabName;
-            
-            if (tabName === 'transaksi') {
-                resetTransactionProgress();
-            }
-            
-            updateNavigation(tabName);
-            await loadTabData(tabName);
-            renderTab(tabName);
-        }
-
-        function updateNavigation(tabName) {
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.dataset.tab === tabName) {
-                    item.classList.add('active');
-                }
-            });
-        }
-
-        async function loadTabData(tabName) {
+        
+        // ====== LOAD DATA DARI API ======
+        async function loadData() {
             try {
-                if (tabName === 'account' || tabName === 'saldo' || tabName === 'transaksi') {
-                    const response = await fetch(`${API_URL}?action=getNasabah`);
-                    if (response.ok) {
-                        const data = await response.json();
-                        accountList = data.data || [];
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading tab data:', error);
+                // Load nasabah data
+                const res = await fetch(`${API_URL}?action=getNasabah`);
+                const data = await res.json();
+                state.accounts = data.data || [];
+                
+                // Load global balance
+                const balanceRes = await fetch(`${API_URL}?action=getAllSaldo`);
+                const balanceData = await balanceRes.json();
+                state.globalBalance = balanceData.saldo_global || 0;
+                
+                // Render current tab
+                renderTab();
+            } catch (e) {
+                console.error('Load error:', e);
+                showToast('Gagal memuat data', true);
             }
         }
-
-        function renderTab(tabName) {
-            const content = document.getElementById('mainContent');
+        
+        // ====== LOAD TAB ======
+        async function loadTab(tab) {
+            state.tab = tab;
+            renderTab();
+        }
+        
+        // ====== RENDER TAB ======
+        function renderTab() {
+            const content = document.getElementById('content');
             
-            switch(tabName) {
+            switch(state.tab) {
                 case 'transaksi':
-                    content.innerHTML = renderTransactionTab();
-                    attachTransactionEvents();
-                    updateTransactionUI();
+                    content.innerHTML = renderTransaksi();
                     break;
                 case 'dashboard':
-                    content.innerHTML = renderDashboardTab();
-                    loadDashboardData();
+                    content.innerHTML = renderDashboard();
                     break;
-                case 'account':
-                    content.innerHTML = renderAccountTab();
-                    renderAccountList();
+                case 'rekening':
+                    content.innerHTML = renderRekening();
                     break;
                 case 'saldo':
-                    content.innerHTML = renderBalanceTab();
-                    attachBalanceEvents();
+                    content.innerHTML = renderSaldo();
                     break;
             }
+            
+            attachEvents();
         }
-
-        // ====== TRANSACTION FUNCTIONS ======
-        function resetTransactionProgress() {
-            transactionData = {
-                account: '',
-                type: 'DEPOSIT',
-                amount: 0
-            };
-            currentStep = 1;
-            isProcessing = false;
-        }
-
-        function updateTransactionUI() {
-            const accountBtn = document.getElementById('accountBtn');
-            const typeBtn = document.getElementById('typeBtn');
-            const amountBtn = document.getElementById('amountBtn');
-            const saveBtn = document.getElementById('saveBtn');
-            
-            updateStepIndicators();
-            
-            if (accountBtn) {
-                accountBtn.classList.toggle('completed', !!transactionData.account);
-                accountBtn.querySelector('.icon-wrapper').style.background = 
-                    transactionData.account ? '#00BFA5' : '#37474F';
+        
+        // ====== RENDER TRANSAKSI ======
+        function renderTransaksi() {
+            // Tentukan teks tombol berdasarkan state
+            let btnText;
+            if (state.isProcessing) {
+                btnText = '<div class="spinner"></div> Memproses...';
+            } else if (state.transaction.account && state.transaction.amount > 0) {
+                btnText = `${state.transaction.type === 'SETOR' ? 'SETOR' : 'TARIK'} ${formatRupiah(state.transaction.amount)} - ${state.transaction.account}`;
+            } else {
+                btnText = '<i class="fas fa-paper-plane"></i> KIRIM PROSES';
             }
             
-            if (typeBtn) {
-                typeBtn.classList.toggle('completed', !!transactionData.type);
-                typeBtn.querySelector('.icon-wrapper').style.background = 
-                    transactionData.type === 'DEPOSIT' ? '#00C853' : 
-                    transactionData.type === 'WITHDRAW' ? '#FF5252' : '#37474F';
-            }
+            // Hitung jumlah hari
+            const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
             
-            if (amountBtn) {
-                amountBtn.classList.toggle('completed', transactionData.amount > 0);
-                amountBtn.querySelector('.icon-wrapper').style.background = 
-                    transactionData.amount > 0 ? '#00BFA5' : '#37474F';
-            }
-            
-            if (saveBtn) {
-                saveBtn.disabled = !(transactionData.account && transactionData.amount > 0) || isProcessing;
-                saveBtn.innerHTML = isProcessing ? 
-                    '<div class="spinner" style="width: 20px; height: 20px; border-width: 2px;"></div> Memproses...' :
-                    '<i class="fas fa-paper-plane"></i> Proses Transaksi';
-            }
-            
-            if (currentStep === 1 && !transactionData.account) {
-                setTimeout(() => {
-                    if (currentTab === 'transaksi' && currentStep === 1) {
-                        showAccountModal();
-                    }
-                }, 500);
-            }
-        }
-
-        function updateStepIndicators() {
-            const step1 = document.getElementById('step1');
-            const step2 = document.getElementById('step2');
-            const step3 = document.getElementById('step3');
-            
-            if (step1) {
-                step1.className = 'step';
-                if (currentStep >= 1) step1.classList.add('active');
-                if (transactionData.account) step1.classList.add('completed');
-            }
-            
-            if (step2) {
-                step2.className = 'step';
-                if (currentStep >= 2) step2.classList.add('active');
-                if (transactionData.type) step2.classList.add('completed');
-            }
-            
-            if (step3) {
-                step3.className = 'step';
-                if (currentStep >= 3) step3.classList.add('active');
-                if (transactionData.amount > 0) step3.classList.add('completed');
-            }
-        }
-
-        // ====== TAB RENDERERS ======
-        function renderTransactionTab() {
             return `
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h2><i class="fas fa-exchange-alt"></i> Transaksi Baru</h2>
-                        <button id="resetBtn" style="background: none; border: none; color: #00BFA5; cursor: pointer; padding: 8px; border-radius: 8px;" title="Reset Transaksi">
-                            <i class="fas fa-redo"></i>
-                        </button>
+                    <div class="section-title">
+                        <i class="fas fa-exchange-alt"></i> TRANSAKSI BARU
                     </div>
                     
-                    <div class="progress-steps">
-                        <div class="step" id="step1">
-                            <div class="step-circle">1</div>
-                            <div class="step-label">Pilih Rekening</div>
+                    <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+                        <div class="info-card" style="flex: 1;">
+                            <div class="info-label">Total Saldo</div>
+                            <div class="info-value">${formatRupiah(state.globalBalance)}</div>
                         </div>
-                        <div class="step" id="step2">
-                            <div class="step-circle">2</div>
-                            <div class="step-label">Pilih Jenis</div>
-                        </div>
-                        <div class="step" id="step3">
-                            <div class="step-circle">3</div>
-                            <div class="step-label">Masukkan Nominal</div>
+                        <div class="info-card" style="flex: 1;">
+                            <div class="info-label">Jumlah Nasabah</div>
+                            <div class="info-value">${state.accounts.length}</div>
                         </div>
                     </div>
                     
-                    <div class="input-grid">
-                        <div class="input-item ${transactionData.account ? 'completed' : ''}" id="accountBtn">
-                            <div class="icon-wrapper">
-                                <i class="fas fa-user"></i>
+                    <div style="margin-bottom: 16px;">
+                        <div class="form-label">Periode Transaksi</div>
+                        <div class="date-row">
+                            <div class="date-group">
+                                <div class="date-label">Dari Tanggal</div>
+                                <input type="date" class="date-input" id="dateFrom" value="${state.transaction.dateFrom}" ${state.isProcessing ? 'disabled' : ''}>
+                                ${daysCount > 0 ? `<div class="days-count">${daysCount} hari</div>` : ''}
                             </div>
-                            <div>Rekening</div>
-                            <div style="font-size: 12px; margin-top: 4px; color: ${transactionData.account ? '#00BFA5' : '#B0BEC5'}">
-                                ${transactionData.account || 'Pilih Rekening'}
+                            <div class="date-group">
+                                <div class="date-label">Sampai Tanggal</div>
+                                <input type="date" class="date-input" id="dateTo" value="${state.transaction.dateTo}" ${state.isProcessing ? 'disabled' : ''}>
                             </div>
-                            ${transactionData.account ? '<div class="status-indicator"><i class="fas fa-check"></i> Terpilih</div>' : ''}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <div class="form-label">Pilih Nasabah</div>
+                        <select id="selectAccount" ${state.isProcessing ? 'disabled' : ''}>
+                            <option value="">-- Pilih Nasabah --</option>
+                            ${state.accounts.map(a => `<option value="${a.nama}" ${state.transaction.account === a.nama ? 'selected' : ''}>${a.nama}</option>`).join('')}
+                        </select>
+                    </div>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <div class="form-label">Jenis Transaksi</div>
+                        <div class="type-selector">
+                            <button class="type-btn setor ${state.transaction.type === 'SETOR' ? 'active' : ''}" 
+                                    data-type="SETOR" ${state.isProcessing ? 'disabled' : ''}>
+                                <i class="fas fa-arrow-down" style="margin-right: 6px;"></i> SETOR
+                            </button>
+                            <button class="type-btn tarik ${state.transaction.type === 'TARIK' ? 'active' : ''}" 
+                                    data-type="TARIK" ${state.isProcessing ? 'disabled' : ''}>
+                                <i class="fas fa-arrow-up" style="margin-right: 6px;"></i> TARIK
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="amount-section">
+                        <div class="amount-label-row">
+                            <div class="amount-label">Nominal Transaksi</div>
+                            <div class="amount-currency">IDR (Rupiah)</div>
+                        </div>
+                        <div class="amount-input-container">
+                            <div class="amount-prefix">Rp</div>
+                            <input type="text" 
+                                   class="amount-input" 
+                                   id="amountInput" 
+                                   placeholder="0"
+                                   value="${state.transaction.amount > 0 ? formatNumber(state.transaction.amount) : ''}"
+                                   onfocus="this.select()"
+                                   ${state.isProcessing ? 'disabled' : ''}>
                         </div>
                         
-                        <div class="input-item ${transactionData.type ? 'completed' : ''}" id="typeBtn">
-                            <div class="icon-wrapper" style="background: ${transactionData.type === 'DEPOSIT' ? '#00C853' : transactionData.type === 'WITHDRAW' ? '#FF5252' : '#37474F'}">
-                                <i class="fas ${transactionData.type === 'DEPOSIT' ? 'fa-arrow-down' : transactionData.type === 'WITHDRAW' ? 'fa-arrow-up' : 'fa-exchange-alt'}"></i>
-                            </div>
-                            <div>Jenis</div>
-                            <div style="font-size: 12px; margin-top: 4px; color: ${transactionData.type === 'DEPOSIT' ? '#00C853' : transactionData.type === 'WITHDRAW' ? '#FF5252' : '#B0BEC5'}">
-                                ${transactionData.type === 'DEPOSIT' ? 'Setor' : transactionData.type === 'WITHDRAW' ? 'Tarik' : 'Pilih Jenis'}
-                            </div>
-                            ${transactionData.type ? `<div class="status-indicator"><i class="fas fa-check"></i> ${transactionData.type === 'DEPOSIT' ? 'Setoran' : 'Penarikan'}</div>` : ''}
-                        </div>
-                        
-                        <div class="input-item ${transactionData.amount > 0 ? 'completed' : ''}" id="amountBtn">
-                            <div class="icon-wrapper">
-                                <i class="fas fa-money-bill-wave"></i>
-                            </div>
-                            <div>Nominal</div>
-                            <div style="font-size: 12px; margin-top: 4px; color: ${transactionData.amount > 0 ? '#00BFA5' : '#B0BEC5'}">
-                                ${transactionData.amount > 0 ? formatRupiah(transactionData.amount) : 'Rp 0'}
-                            </div>
-                            ${transactionData.amount > 0 ? `<div class="status-indicator"><i class="fas fa-check"></i> ${formatRupiah(transactionData.amount)}</div>` : ''}
+                        <div class="amount-grid">
+                            <button class="amount-btn" data-amount="5000" ${state.isProcessing ? 'disabled' : ''}>
+                                <span class="amount-btn-label">5K</span>
+                                5.000
+                            </button>
+                            <button class="amount-btn" data-amount="10000" ${state.isProcessing ? 'disabled' : ''}>
+                                <span class="amount-btn-label">10K</span>
+                                10.000
+                            </button>
+                            <button class="amount-btn" data-amount="15000" ${state.isProcessing ? 'disabled' : ''}>
+                                <span class="amount-btn-label">15K</span>
+                                15.000
+                            </button>
+                            <button class="amount-btn" data-amount="20000" ${state.isProcessing ? 'disabled' : ''}>
+                                <span class="amount-btn-label">20K</span>
+                                20.000
+                            </button>
+                            <button class="amount-btn" data-amount="25000" ${state.isProcessing ? 'disabled' : ''}>
+                                <span class="amount-btn-label">25K</span>
+                                25.000
+                            </button>
+                            <button class="amount-btn" data-amount="50000" ${state.isProcessing ? 'disabled' : ''}>
+                                <span class="amount-btn-label">50K</span>
+                                50.000
+                            </button>
+                            <button class="amount-btn" data-amount="100000" ${state.isProcessing ? 'disabled' : ''}>
+                                <span class="amount-btn-label">100K</span>
+                                100.000
+                            </button>
+                            <button class="amount-btn" data-amount="200000" ${state.isProcessing ? 'disabled' : ''}>
+                                <span class="amount-btn-label">200K</span>
+                                200.000
+                            </button>
                         </div>
                     </div>
                     
-                    <button id="saveBtn" class="btn btn-process" ${!transactionData.account || transactionData.amount <= 0 ? 'disabled' : ''}>
-                        <i class="fas fa-paper-plane"></i> Proses Transaksi
-                    </button>
-                    
-                    ${isProcessing ? `
-                        <div style="text-align: center; margin-top: 16px; color: #B0BEC5; font-size: 12px;">
-                            <i class="fas fa-spinner fa-spin"></i> Sedang memproses transaksi...
+                    ${state.transaction.account && state.transaction.amount > 0 ? `
+                        <div class="transaction-info-container">
+                            <div class="transaction-info-row">
+                                <span class="info-label-rounded">Nasabah</span>
+                                <span class="info-value-rounded">${state.transaction.account}</span>
+                            </div>
+                            <div class="transaction-info-row">
+                                <span class="info-label-rounded">Jenis Transaksi</span>
+                                <span class="transaction-type-badge ${state.transaction.type === 'TARIK' ? 'withdraw' : ''}">
+                                    <i class="fas fa-${state.transaction.type === 'SETOR' ? 'arrow-down' : 'arrow-up'}"></i>
+                                    ${state.transaction.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}
+                                </span>
+                            </div>
+                            <div class="transaction-info-row">
+                                <span class="info-label-rounded">Nominal</span>
+                                <span class="info-value-rounded">${formatRupiah(state.transaction.amount)}</span>
+                            </div>
+                            <div class="transaction-info-row">
+                                <span class="info-label-rounded">Periode</span>
+                                <span class="info-value-rounded">${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)}</span>
+                            </div>
+                            <div class="transaction-info-row">
+                                <span class="info-label-rounded">Durasi</span>
+                                <span class="info-value-rounded">${daysCount} Hari</span>
+                            </div>
                         </div>
                     ` : ''}
+                    
+                    <button class="btn ${state.isProcessing ? 'processing' : ''}" 
+                            id="submitBtn" 
+                            ${!state.transaction.account || state.transaction.amount <= 0 || state.isProcessing ? 'disabled' : ''}>
+                        ${btnText}
+                    </button>
                 </div>
             `;
         }
-
-        // ====== EVENT ATTACHMENT FUNCTIONS ======
-        function attachTransactionEvents() {
-            // Hapus event listeners lama
-            const accountBtn = document.getElementById('accountBtn');
-            const typeBtn = document.getElementById('typeBtn');
-            const amountBtn = document.getElementById('amountBtn');
-            const saveBtn = document.getElementById('saveBtn');
-            const resetBtn = document.getElementById('resetBtn');
-            
-            // Clone elements untuk menghapus event listeners lama
-            if (accountBtn) {
-                const newAccountBtn = accountBtn.cloneNode(true);
-                accountBtn.parentNode.replaceChild(newAccountBtn, accountBtn);
-                newAccountBtn.addEventListener('click', showAccountModal);
-            }
-            
-            if (typeBtn) {
-                const newTypeBtn = typeBtn.cloneNode(true);
-                typeBtn.parentNode.replaceChild(newTypeBtn, typeBtn);
-                newTypeBtn.addEventListener('click', showTypeModal);
-            }
-            
-            if (amountBtn) {
-                const newAmountBtn = amountBtn.cloneNode(true);
-                amountBtn.parentNode.replaceChild(newAmountBtn, amountBtn);
-                newAmountBtn.addEventListener('click', showAmountModal);
-            }
-            
-            if (saveBtn) {
-                const newSaveBtn = saveBtn.cloneNode(true);
-                saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
-                newSaveBtn.addEventListener('click', showConfirmModal);
-            }
-            
-            if (resetBtn) {
-                const newResetBtn = resetBtn.cloneNode(true);
-                resetBtn.parentNode.replaceChild(newResetBtn, resetBtn);
-                newResetBtn.addEventListener('click', resetFullTransaction);
-            }
-        }
-
-        // ====== MODAL FUNCTIONS (FIXED) ======
-        function showAccountModal() {
-            const modal = createModal('Pilih Rekening');
-            
-            let accountItemsHTML = '';
-            if (accountList.length === 0) {
-                accountItemsHTML = '<div style="text-align: center; padding: 20px; color: #B0BEC5;"><i class="fas fa-users"></i><br>Tidak ada rekening</div>';
-            } else {
-                accountItemsHTML = accountList.map(acc => `
-                    <div class="account-item" onclick="handleSelectAccount('${acc.nama}')" 
-                         style="padding: 12px 16px; margin-bottom: 8px; background: ${acc.nama === transactionData.account ? 'rgba(0, 191, 165, 0.1)' : '#2A3239'}; 
-                                border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; 
-                                border: 2px solid ${acc.nama === transactionData.account ? '#00BFA5' : 'transparent'};">
-                        <div style="width: 36px; height: 36px; background: ${acc.nama === transactionData.account ? '#00BFA5' : '#37474F'}; 
-                             border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: white;">
-                            ${acc.nama.charAt(0)}
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600;">${acc.nama}</div>
-                            <div style="font-size: 11px; color: #B0BEC5;">${acc.id_nasabah || 'Rekening'}</div>
-                        </div>
-                        ${acc.nama === transactionData.account ? 
-                            '<div style="color: #00BFA5; font-size: 18px;"><i class="fas fa-check-circle"></i></div>' : 
-                            '<div style="color: #546E7A;"><i class="fas fa-chevron-right"></i></div>'}
+        
+        // ====== RENDER DASHBOARD ======
+        function renderDashboard() {
+            return `
+                <div class="card">
+                    <div class="section-title">
+                        <i class="fas fa-chart-line"></i> DASHBOARD
                     </div>
-                `).join('');
-            }
-            
-            modal.querySelector('.modal-body').innerHTML = accountItemsHTML;
-            
-            document.body.appendChild(modal);
-        }
-
-        function handleSelectAccount(accountName) {
-            transactionData.account = accountName;
-            currentStep = 2;
-            closeModal();
-            showToast(`${accountName} dipilih`, 'success');
-            updateTransactionUI();
-            
-            setTimeout(() => {
-                if (currentTab === 'transaksi' && currentStep === 2) {
-                    showTypeModal();
-                }
-            }, 500);
-        }
-
-        function showTypeModal() {
-            const modal = createModal('Pilih Jenis Transaksi');
-            
-            modal.querySelector('.modal-body').innerHTML = `
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div onclick="handleSelectType('DEPOSIT')" 
-                         style="padding: 24px; border: 2px solid ${transactionData.type === 'DEPOSIT' ? '#00C853' : '#37474F'}; 
-                                border-radius: 12px; text-align: center; cursor: pointer; 
-                                background: ${transactionData.type === 'DEPOSIT' ? 'rgba(0,200,83,0.1)' : '#2A3239'};
-                                transition: all 0.3s ease;">
-                        <div style="font-size: 32px; color: #00C853; margin-bottom: 8px;">
-                            <i class="fas fa-arrow-down"></i>
+                    
+                    <div class="info-card">
+                        <div class="info-label">SALDO GLOBAL BANK</div>
+                        <div class="info-value">${formatRupiah(state.globalBalance)}</div>
+                        <div style="font-size: 13px; color: var(--text-medium); margin-top: 8px;">
+                            Total dari ${state.accounts.length} nasabah
                         </div>
-                        <div style="font-weight: 600; color: #00C853;">Setoran</div>
-                        <div style="font-size: 11px; color: #B0BEC5; margin-top: 4px;">Uang masuk</div>
                     </div>
-                    <div onclick="handleSelectType('WITHDRAW')" 
-                         style="padding: 24px; border: 2px solid ${transactionData.type === 'WITHDRAW' ? '#FF5252' : '#37474F'}; 
-                                border-radius: 12px; text-align: center; cursor: pointer; 
-                                background: ${transactionData.type === 'WITHDRAW' ? 'rgba(255,82,82,0.1)' : '#2A3239'};
-                                transition: all 0.3s ease;">
-                        <div style="font-size: 32px; color: #FF5252; margin-bottom: 8px;">
-                            <i class="fas fa-arrow-up"></i>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 20px;">
+                        <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+                            <div style="font-size: 28px; font-weight: 700; color: #00e676;">${state.accounts.length}</div>
+                            <div style="font-size: 13px; color: var(--text-medium); margin-top: 6px;">Total Nasabah</div>
                         </div>
-                        <div style="font-weight: 600; color: #FF5252;">Penarikan</div>
-                        <div style="font-size: 11px; color: #B0BEC5; margin-top: 4px;">Uang keluar</div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+                            <div style="font-size: 28px; font-weight: 700; color: #00e676;">${formatRupiah(state.accounts.length > 0 ? Math.round(state.globalBalance/state.accounts.length) : 0)}</div>
+                            <div style="font-size: 13px; color: var(--text-medium); margin-top: 6px;">Rata-rata Saldo</div>
+                        </div>
                     </div>
                 </div>
-                
-                <div style="margin-top: 20px; padding: 12px; background: #2A3239; border-radius: 8px; text-align: center;">
-                    <div style="font-size: 12px; color: #B0BEC5;">Rekening:</div>
-                    <div style="font-weight: 600; color: #00BFA5; font-size: 14px;">${transactionData.account}</div>
-                </div>
             `;
-            
-            const footer = modal.querySelector('.modal-footer');
-            footer.innerHTML = `
-                <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Batal</button>
-                <button class="modal-btn modal-btn-confirm" onclick="handleConfirmType()">Pilih</button>
-            `;
-            
-            document.body.appendChild(modal);
         }
-
-        function handleSelectType(type) {
-            transactionData.type = type;
-            const modal = document.querySelector('.modal-overlay');
-            if (modal) {
-                const depositBtn = modal.querySelector('div[onclick*="DEPOSIT"]');
-                const withdrawBtn = modal.querySelector('div[onclick*="WITHDRAW"]');
-                
-                if (depositBtn) {
-                    depositBtn.style.border = `2px solid ${type === 'DEPOSIT' ? '#00C853' : '#37474F'}`;
-                    depositBtn.style.background = type === 'DEPOSIT' ? 'rgba(0,200,83,0.1)' : '#2A3239';
-                }
-                
-                if (withdrawBtn) {
-                    withdrawBtn.style.border = `2px solid ${type === 'WITHDRAW' ? '#FF5252' : '#37474F'}`;
-                    withdrawBtn.style.background = type === 'WITHDRAW' ? 'rgba(255,82,82,0.1)' : '#2A3239';
-                }
-            }
-        }
-
-        function handleConfirmType() {
-            if (transactionData.type) {
-                currentStep = 3;
-                closeModal();
-                const typeText = transactionData.type === 'DEPOSIT' ? 'Setoran' : 'Penarikan';
-                showToast(`${typeText} dipilih untuk ${transactionData.account}`, 'success');
-                updateTransactionUI();
-                
-                setTimeout(() => {
-                    if (currentTab === 'transaksi' && currentStep === 3) {
-                        showAmountModal();
-                    }
-                }, 500);
-            }
-        }
-
-        function showAmountModal() {
-            const modal = createModal('Masukkan Nominal');
-            
-            modal.querySelector('.modal-body').innerHTML = `
-                <div style="margin-bottom: 16px; text-align: center;">
-                    <div style="font-size: 14px; color: #B0BEC5;">Transaksi untuk:</div>
-                    <div style="font-weight: 600; font-size: 16px; color: #00BFA5;">${transactionData.account}</div>
-                    <div style="font-size: 12px; color: ${transactionData.type === 'DEPOSIT' ? '#00C853' : '#FF5252'};">
-                        <i class="fas ${transactionData.type === 'DEPOSIT' ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
-                        ${transactionData.type === 'DEPOSIT' ? 'Setoran' : 'Penarikan'}
+        
+        // ====== RENDER REKENING ======
+        function renderRekening() {
+            return `
+                <div class="card">
+                    <div class="section-title">
+                        <i class="fas fa-users"></i> DAFTAR REKENING
+                    </div>
+                    
+                    <button class="add-account-btn" id="addAccountBtn">
+                        <i class="fas fa-plus-circle"></i> TAMBAH NASABAH
+                    </button>
+                    
+                    <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+                        <div class="info-card" style="flex: 1;">
+                            <div class="info-label">Total Nasabah</div>
+                            <div class="info-value">${state.accounts.length}</div>
+                        </div>
+                        <div class="info-card" style="flex: 1;">
+                            <div class="info-label">Total Saldo</div>
+                            <div class="info-value">${formatRupiah(state.globalBalance)}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="max-height: 400px; overflow-y: auto; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                        ${state.accounts.length > 0 ? 
+                            state.accounts.map(acc => `
+                                <div class="account-item">
+                                    <div class="account-avatar">${acc.nama.charAt(0).toUpperCase()}</div>
+                                    <div>
+                                        <div style="font-weight: 600; color: var(--text-light);">${acc.nama}</div>
+                                        <div style="font-size: 12px; color: var(--text-dim);">ID: ${acc.id_nasabah || 'N/A'}</div>
+                                    </div>
+                                </div>
+                            `).join('') : 
+                            `<div style="text-align: center; padding: 40px 20px; color: var(--text-dim);">
+                                <i class="fas fa-users" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
+                                <div>Belum ada data nasabah</div>
+                            </div>`
+                        }
                     </div>
                 </div>
-                
-                <div style="position: relative; margin-bottom: 20px;">
-                    <div style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #B0BEC5; font-weight: 600; font-size: 20px;">Rp</div>
-                    <input type="text" id="amountInput" 
-                           value="${transactionData.amount > 0 ? transactionData.amount.toLocaleString('id-ID') : ''}" 
-                           style="width: 100%; padding: 16px 16px 16px 60px; font-size: 32px; font-weight: 700; 
-                                  background: #2A3239; color: white; border: 2px solid #37474F; border-radius: 12px; 
-                                  text-align: center; letter-spacing: 1px;" 
-                           placeholder="0" autofocus>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px;">
-                    <button class="quick-amount" onclick="handleSetAmount(3000)">3K</button>
-                    <button class="quick-amount" onclick="handleSetAmount(5000)">5K</button>
-                    <button class="quick-amount" onclick="handleSetAmount(10000)">10K</button>
-                    <button class="quick-amount" onclick="handleSetAmount(15000)">15K</button>
-                    <button class="quick-amount" onclick="handleSetAmount(20000)">20K</button>
-                    <button class="quick-amount" onclick="handleSetAmount(25000)">25K</button>
-                </div>
-                
-                <div style="font-size: 11px; color: #B0BEC5; text-align: center;">
-                    <i class="fas fa-keyboard"></i> Ketik manual atau pilih nominal cepat
+            `;
+        }
+        
+        // ====== RENDER SALDO ======
+        function renderSaldo() {
+            return `
+                <div class="card">
+                    <div class="section-title">
+                        <i class="fas fa-wallet"></i> CEK SALDO
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-label">SALDO GLOBAL BANK</div>
+                        <div class="info-value">${formatRupiah(state.globalBalance)}</div>
+                        <div style="font-size: 13px; color: var(--text-medium); margin-top: 8px;">
+                            Akumulasi semua rekening
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <div class="form-label">Pilih Nasabah</div>
+                        <select id="saldoAccount">
+                            <option value="">-- Pilih Nasabah --</option>
+                            ${state.accounts.map(a => `<option value="${a.nama}">${a.nama}</option>`).join('')}
+                        </select>
+                    </div>
+                    
+                    <div id="saldoResult" style="text-align: center; padding: 40px 20px; color: var(--text-dim);">
+                        <i class="fas fa-wallet" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
+                        <div>Pilih nasabah untuk melihat saldo</div>
+                    </div>
                 </div>
             `;
-            
-            const footer = modal.querySelector('.modal-footer');
-            footer.innerHTML = `
-                <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Batal</button>
-                <button class="modal-btn modal-btn-confirm" onclick="handleSaveAmount()">Simpan</button>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            const amountInput = document.getElementById('amountInput');
-            if (amountInput) {
-                amountInput.addEventListener('input', function() {
-                    handleFormatAmount(this);
+        }
+        
+        // ====== ATTACH EVENTS ======
+        function attachEvents() {
+            // Events untuk halaman transaksi
+            if (state.tab === 'transaksi') {
+                // Date inputs
+                document.getElementById('dateFrom')?.addEventListener('change', (e) => {
+                    state.transaction.dateFrom = e.target.value;
+                    updateTransactionDisplay();
+                    updateTransactionButton();
                 });
-                amountInput.focus();
-                amountInput.select();
-            }
-        }
-
-        function handleSetAmount(amount) {
-            const input = document.getElementById('amountInput');
-            if (input) {
-                input.value = amount.toLocaleString('id-ID');
-                input.focus();
-                input.select();
-            }
-        }
-
-        function handleFormatAmount(input) {
-            let value = input.value.replace(/\D/g, '');
-            if (value) {
-                if (value.length > 10) {
-                    value = value.substring(0, 10);
+                document.getElementById('dateTo')?.addEventListener('change', (e) => {
+                    state.transaction.dateTo = e.target.value;
+                    updateTransactionDisplay();
+                    updateTransactionButton();
+                });
+                
+                // Account selection
+                document.getElementById('selectAccount')?.addEventListener('change', (e) => {
+                    state.transaction.account = e.target.value;
+                    updateTransactionDisplay();
+                    updateTransactionButton();
+                });
+                
+                // Type buttons
+                document.querySelectorAll('.type-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        if (state.isProcessing) return;
+                        state.transaction.type = btn.dataset.type;
+                        document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        updateTransactionDisplay();
+                        updateTransactionButton();
+                    });
+                });
+                
+                // Amount input
+                const amountInput = document.getElementById('amountInput');
+                if (amountInput) {
+                    amountInput.addEventListener('input', (e) => {
+                        if (state.isProcessing) return;
+                        let value = e.target.value.replace(/\D/g, '');
+                        state.transaction.amount = parseInt(value) || 0;
+                        e.target.value = value ? formatNumber(value) : '';
+                        updateTransactionDisplay();
+                        updateTransactionButton();
+                    });
+                    
+                    amountInput.addEventListener('focus', function() {
+                        setTimeout(() => this.select(), 100);
+                    });
                 }
-                input.value = parseInt(value).toLocaleString('id-ID');
-            } else {
-                input.value = '';
+                
+                // Quick amount buttons
+                document.querySelectorAll('.amount-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        if (state.isProcessing) return;
+                        const amount = parseInt(btn.dataset.amount);
+                        state.transaction.amount = amount;
+                        const input = document.getElementById('amountInput');
+                        if (input) input.value = formatNumber(amount);
+                        updateTransactionDisplay();
+                        updateTransactionButton();
+                    });
+                });
+                
+                // Submit button
+                document.getElementById('submitBtn')?.addEventListener('click', confirmTransaction);
             }
-        }
-
-        function handleSaveAmount() {
-            const input = document.getElementById('amountInput');
-            if (input && input.value) {
-                const amount = parseInt(input.value.replace(/\D/g, '')) || 0;
-                if (amount > 0) {
-                    if (amount > 9999999999) {
-                        showToast('Nominal terlalu besar (max 9.999.999.999)', 'error');
+            
+            // Events untuk halaman rekening (tambah nasabah)
+            if (state.tab === 'rekening') {
+                document.getElementById('addAccountBtn')?.addEventListener('click', showAddNasabahModal);
+            }
+            
+            // Events untuk halaman saldo
+            if (state.tab === 'saldo') {
+                document.getElementById('saldoAccount')?.addEventListener('change', async (e) => {
+                    const account = e.target.value;
+                    const resultDiv = document.getElementById('saldoResult');
+                    
+                    if (!account) {
+                        resultDiv.innerHTML = `
+                            <i class="fas fa-wallet" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
+                            <div>Pilih nasabah untuk melihat saldo</div>
+                        `;
                         return;
                     }
                     
-                    transactionData.amount = amount;
-                    closeModal();
-                    showToast(`Nominal ${formatRupiah(amount)} disimpan`, 'success');
-                    updateTransactionUI();
+                    resultDiv.innerHTML = `
+                        <div style="width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--green-light); border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
+                        <div>Memuat saldo...</div>
+                    `;
                     
-                    setTimeout(() => {
-                        document.getElementById('saveBtn')?.focus();
-                    }, 300);
-                } else {
-                    showToast('Masukkan nominal yang valid', 'error');
-                    document.getElementById('amountInput')?.focus();
-                }
-            } else {
-                showToast('Masukkan nominal terlebih dahulu', 'error');
-                document.getElementById('amountInput')?.focus();
-            }
-        }
-
-        // ====== FIXED CONFIRM MODAL ======
-        function showConfirmModal() {
-            if (!transactionData.account || transactionData.amount <= 0) {
-                showToast('Lengkapi data terlebih dahulu', 'error');
-                return;
-            }
-            
-            if (isProcessing) {
-                showToast('Sedang memproses transaksi sebelumnya...', 'info');
-                return;
-            }
-            
-            const modal = createModal('Konfirmasi Transaksi');
-            
-            modal.querySelector('.modal-body').innerHTML = `
-                <div style="background: #2A3239; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
-                    <div style="text-align: center; margin-bottom: 16px;">
-                        <div style="font-size: 24px; font-weight: 700; color: ${transactionData.type === 'DEPOSIT' ? '#00C853' : '#FF5252'};">
-                            ${formatRupiah(transactionData.amount)}
-                        </div>
-                        <div style="font-size: 12px; color: #B0BEC5; margin-top: 4px;">
-                            ${transactionData.type === 'DEPOSIT' ? 'Setoran' : 'Penarikan'}
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #37474F;">
-                        <span style="color: #B0BEC5;">Rekening:</span>
-                        <span style="font-weight: 600; color: #00BFA5;">${transactionData.account}</span>
-                    </div>
-                    
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                        <span style="color: #B0BEC5;">Jenis:</span>
-                        <span style="color: ${transactionData.type === 'DEPOSIT' ? '#00C853' : '#FF5252'}; font-weight: 600;">
-                            ${transactionData.type === 'DEPOSIT' ? 'Setoran' : 'Penarikan'}
-                        </span>
-                    </div>
-                    
-                    <div style="display: flex; justify-content: space-between;">
-                        <span style="color: #B0BEC5;">Tanggal:</span>
-                        <span>${new Date().toLocaleDateString('id-ID')} ${new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'})}</span>
-                    </div>
-                </div>
-                
-                <div style="font-size: 12px; color: #B0BEC5; text-align: center; padding: 12px; background: rgba(255, 193, 7, 0.1); border-radius: 8px; border-left: 3px solid #FFC107;">
-                    <i class="fas fa-exclamation-triangle"></i> Pastikan data sudah benar. Transaksi tidak dapat dibatalkan.
-                </div>
-            `;
-            
-            const footer = modal.querySelector('.modal-footer');
-            footer.innerHTML = `
-                <button class="modal-btn modal-btn-cancel" id="cancelBtn">Batal</button>
-                <button class="modal-btn modal-btn-confirm" id="confirmBtn">Ya, Kirim</button>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            // ATTACH EVENT LISTENERS DENGAN CARA YANG BENAR
-            document.getElementById('cancelBtn').addEventListener('click', function() {
-                closeModal();
-                showToast('Transaksi dibatalkan', 'info');
-            });
-            
-            document.getElementById('confirmBtn').addEventListener('click', function() {
-                closeModal();
-                processTransaction();
-            });
-            
-            // Auto focus confirm button
-            setTimeout(() => {
-                document.getElementById('confirmBtn')?.focus();
-            }, 300);
-        }
-
-        async function processTransaction() {
-            isProcessing = true;
-            updateTransactionUI();
-            
-            try {
-                showToast('Mengirim transaksi...', 'info');
-                
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
-                        action: 'addTransaksi',
-                        nama: transactionData.account,
-                        jenis: transactionData.type === 'DEPOSIT' ? 'SETOR' : 'TARIK',
-                        nominal: transactionData.amount,
-                        keterangan: transactionData.type === 'DEPOSIT' ? 'Setoran tunai' : 'Penarikan tunai'
-                    })
+                    try {
+                        const res = await fetch(`${API_URL}?action=getSaldo&nama=${encodeURIComponent(account)}`);
+                        const data = await res.json();
+                        const saldo = data.data?.saldo_akhir || 0;
+                        
+                        resultDiv.innerHTML = `
+                            <div class="info-card" style="background: linear-gradient(135deg, rgba(27, 94, 32, 0.4) 0%, rgba(76, 175, 80, 0.4) 100%);">
+                                <div class="info-label">SALDO ${account.toUpperCase()}</div>
+                                <div class="info-value">${formatRupiah(saldo)}</div>
+                                <div style="font-size: 13px; color: var(--text-medium); margin-top: 8px;">Status: Aktif</div>
+                            </div>
+                        `;
+                    } catch (e) {
+                        resultDiv.innerHTML = `
+                            <div style="color: var(--red); text-align: center;">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 16px;"></i>
+                                <div>Gagal memuat saldo</div>
+                            </div>
+                        `;
+                    }
                 });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    showToast('Transaksi berhasil dikirim!', 'success');
-                    
-                    setTimeout(() => {
-                        const completedAccount = transactionData.account;
-                        const completedAmount = transactionData.amount;
-                        resetFullTransaction();
-                        showToast(`Transaksi ${completedAccount} senilai ${formatRupiah(completedAmount)} selesai. Form telah direset.`, 'info');
-                    }, 1500);
-                    
-                } else {
-                    showToast(result.message || 'Gagal mengirim transaksi', 'error');
-                }
-            } catch (error) {
-                console.error('Transaction error:', error);
-                showToast('Gagal mengirim transaksi', 'error');
-            } finally {
-                isProcessing = false;
-                updateTransactionUI();
             }
         }
-
-        function resetFullTransaction() {
-            const prevAccount = transactionData.account;
-            const prevAmount = transactionData.amount;
+        
+        // ====== UPDATE TRANSACTION DISPLAY ======
+        function updateTransactionDisplay() {
+            // Re-render hanya bagian transaction info jika ada data
+            if (state.transaction.account && state.transaction.amount > 0) {
+                const transactionInfoContainer = document.querySelector('.transaction-info-container');
+                if (transactionInfoContainer) {
+                    const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
+                    
+                    transactionInfoContainer.innerHTML = `
+                        <div class="transaction-info-row">
+                            <span class="info-label-rounded">Nasabah</span>
+                            <span class="info-value-rounded">${state.transaction.account}</span>
+                        </div>
+                        <div class="transaction-info-row">
+                            <span class="info-label-rounded">Jenis Transaksi</span>
+                            <span class="transaction-type-badge ${state.transaction.type === 'TARIK' ? 'withdraw' : ''}">
+                                <i class="fas fa-${state.transaction.type === 'SETOR' ? 'arrow-down' : 'arrow-up'}"></i>
+                                ${state.transaction.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}
+                            </span>
+                        </div>
+                        <div class="transaction-info-row">
+                            <span class="info-label-rounded">Nominal</span>
+                            <span class="info-value-rounded">${formatRupiah(state.transaction.amount)}</span>
+                        </div>
+                        <div class="transaction-info-row">
+                            <span class="info-label-rounded">Periode</span>
+                            <span class="info-value-rounded">${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)}</span>
+                        </div>
+                        <div class="transaction-info-row">
+                            <span class="info-label-rounded">Durasi</span>
+                            <span class="info-value-rounded">${daysCount} Hari</span>
+                        </div>
+                    `;
+                }
+                
+                // Update days count badge
+                const daysCountElement = document.querySelector('.days-count');
+                const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
+                if (daysCountElement) {
+                    daysCountElement.textContent = `${daysCount} hari`;
+                } else if (daysCount > 0) {
+                    const dateFromGroup = document.querySelector('.date-group:first-child');
+                    if (dateFromGroup) {
+                        const daysBadge = document.createElement('div');
+                        daysBadge.className = 'days-count';
+                        daysBadge.textContent = `${daysCount} hari`;
+                        dateFromGroup.appendChild(daysBadge);
+                    }
+                }
+            }
+        }
+        
+        // ====== UPDATE TRANSACTION BUTTON ======
+        function updateTransactionButton() {
+            const btn = document.getElementById('submitBtn');
+            if (!btn) return;
             
-            transactionData = {
-                account: '',
-                type: 'DEPOSIT',
-                amount: 0
-            };
-            currentStep = 1;
-            isProcessing = false;
+            // Update status disabled
+            btn.disabled = !(state.transaction.account && state.transaction.amount > 0) || state.isProcessing;
             
-            updateTransactionUI();
-            
-            if (prevAccount && prevAmount > 0) {
-                setTimeout(() => {
-                    showToast(`Transaksi ${prevAccount} senilai ${formatRupiah(prevAmount)} telah selesai. Form direset.`, 'info');
-                }, 100);
+            // Update kelas untuk styling
+            if (state.isProcessing) {
+                btn.classList.add('processing');
+            } else {
+                btn.classList.remove('processing');
             }
             
-            setTimeout(() => {
-                if (currentTab === 'transaksi') {
-                    showAccountModal();
-                }
-            }, 800);
+            // Update teks tombol
+            if (state.isProcessing) {
+                btn.innerHTML = '<div class="spinner"></div> Memproses...';
+            } else if (state.transaction.account && state.transaction.amount > 0) {
+                btn.innerHTML = `${state.transaction.type === 'SETOR' ? 'SETOR' : 'TARIK'} ${formatRupiah(state.transaction.amount)} - ${state.transaction.account}`;
+            } else {
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> KIRIM PROSES';
+            }
         }
-
-        // ====== UTILITY FUNCTIONS ======
-        function createModal(title) {
+        
+        // ====== KONFIRMASI TRANSAKSI ======
+        function confirmTransaction() {
             const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.onclick = (e) => {
-                if (e.target === modal) closeModal();
-            };
+            modal.className = 'modal';
+            
+            const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
             
             modal.innerHTML = `
-                <div class="modal-content" onclick="event.stopPropagation()">
-                    <div style="padding: 20px; border-bottom: 1px solid #37474F; display: flex; justify-content: space-between; align-items: center;">
-                        <h3>${title}</h3>
-                        <button class="close-modal" style="background: none; border: none; color: #B0BEC5; cursor: pointer; padding: 4px; border-radius: 4px;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-check-circle"></i> KONFIRMASI TRANSAKSI</h3>
+                        <button onclick="closeModal()" style="background: none; border: none; color: var(--text-medium); cursor: pointer;">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
-                    <div class="modal-body" style="padding: 20px; max-height: 50vh; overflow-y: auto;"></div>
-                    <div class="modal-footer" style="padding: 20px; border-top: 1px solid #37474F; display: flex; gap: 12px;"></div>
+                    <div class="modal-body">
+                        <div style="text-align: center; margin-bottom: 24px;">
+                            <div style="font-size: 36px; font-weight: bold; color: ${state.transaction.type === 'SETOR' ? 'var(--green-light)' : 'var(--red)'};">${formatRupiah(state.transaction.amount)}</div>
+                            <div style="color: var(--text-medium); font-size: 14px;">${state.transaction.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}</div>
+                        </div>
+                        
+                        <div class="transaction-info-container" style="margin-bottom: 20px;">
+                            <div class="transaction-info-row">
+                                <span class="info-label-rounded">Nasabah</span>
+                                <span class="info-value-rounded">${state.transaction.account}</span>
+                            </div>
+                            <div class="transaction-info-row">
+                                <span class="info-label-rounded">Jenis Transaksi</span>
+                                <span class="transaction-type-badge ${state.transaction.type === 'TARIK' ? 'withdraw' : ''}">
+                                    <i class="fas fa-${state.transaction.type === 'SETOR' ? 'arrow-down' : 'arrow-up'}"></i>
+                                    ${state.transaction.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}
+                                </span>
+                            </div>
+                            <div class="transaction-info-row">
+                                <span class="info-label-rounded">Periode</span>
+                                <span class="info-value-rounded">${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)}</span>
+                            </div>
+                            <div class="transaction-info-row">
+                                <span class="info-label-rounded">Durasi</span>
+                                <span class="info-value-rounded">${daysCount} Hari</span>
+                            </div>
+                        </div>
+                        
+                        <div style="font-size: 13px; color: var(--text-dim); text-align: center; padding: 12px; background: rgba(255, 193, 7, 0.1); border-radius: 8px;">
+                            <i class="fas fa-exclamation-triangle"></i> Data periode transaksi akan disimpan di spreadsheet
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="modal-btn modal-cancel" onclick="closeModal()" id="cancelBtn">BATAL</button>
+                        <button class="modal-btn modal-confirm" onclick="startProcessingTransaction()" id="confirmBtn">
+                            <i class="fas fa-check"></i> SIMPAN KE SPREADSHEET
+                        </button>
+                    </div>
                 </div>
             `;
-            
-            // Attach close button event
-            modal.querySelector('.close-modal').addEventListener('click', closeModal);
-            
-            return modal;
+            document.body.appendChild(modal);
         }
-
-        function formatRupiah(amount) {
-            if (!amount || isNaN(amount)) amount = 0;
-            return 'Rp ' + parseInt(amount).toLocaleString('id-ID');
-        }
-
-        function showToast(message, type = 'success') {
-            const existingToast = document.querySelector('.toast');
-            if (existingToast) existingToast.remove();
+        
+        // ====== MULAI PROSES TRANSAKSI ======
+        function startProcessingTransaction() {
+            // Tutup modal
+            closeModal();
             
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-                <span>${message}</span>
+            // Set state processing ke true
+            state.isProcessing = true;
+            
+            // Update UI untuk menunjukkan sedang memproses
+            updateTransactionButton();
+            
+            // Mulai proses transaksi
+            processTransaction();
+        }
+        
+        // ====== TAMBAH NASABAH MODAL ======
+        function showAddNasabahModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-user-plus"></i> TAMBAH NASABAH BARU</h3>
+                        <button onclick="closeModal()" style="background: none; border: none; color: var(--text-medium); cursor: pointer;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-label">Nama Lengkap *</div>
+                        <input type="text" id="namaNasabah" placeholder="Masukkan nama lengkap">
+                        
+                        <div class="form-label">Nomor HP *</div>
+                        <input type="tel" id="hpNasabah" placeholder="Contoh: 081234567890">
+                        
+                        <div class="form-label">Alamat</div>
+                        <input type="text" id="alamatNasabah" placeholder="Masukkan alamat lengkap">
+                        
+                        <div class="form-label">Email</div>
+                        <input type="email" id="emailNasabah" placeholder="contoh@email.com">
+                        
+                        <div style="font-size: 12px; color: var(--text-dim); margin-top: 16px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 6px;">
+                            <i class="fas fa-info-circle"></i> Data akan disimpan ke spreadsheet setelah dikonfirmasi
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="modal-btn modal-cancel" onclick="closeModal()">BATAL</button>
+                        <button class="modal-btn modal-confirm" onclick="addNasabah()">
+                            <i class="fas fa-save"></i> SIMPAN KE SPREADSHEET
+                        </button>
+                    </div>
+                </div>
             `;
+            document.body.appendChild(modal);
             
+            // Focus ke input pertama
+            setTimeout(() => {
+                document.getElementById('namaNasabah')?.focus();
+            }, 300);
+        }
+        
+        // ====== PROSES TAMBAH NASABAH ======
+        async function addNasabah() {
+            const nama = document.getElementById('namaNasabah')?.value.trim();
+            const hp = document.getElementById('hpNasabah')?.value.trim();
+            const alamat = document.getElementById('alamatNasabah')?.value.trim();
+            const email = document.getElementById('emailNasabah')?.value.trim();
+            
+            if (!nama) {
+                showToast('Nama nasabah wajib diisi', true);
+                document.getElementById('namaNasabah')?.focus();
+                return;
+            }
+            
+            if (!hp) {
+                showToast('Nomori HP wajib diisi', true);
+                document.getElementById('hpNasabah')?.focus();
+                return;
+            }
+            
+            // Validasi nomor HP (hanya angka, minimal 10 digit)
+            const cleanHP = hp.replace(/\D/g, '');
+            if (cleanHP.length < 10) {
+                showToast('Nomor HP minimal 10 digit', true);
+                document.getElementById('hpNasabah')?.focus();
+                return;
+            }
+            
+            showToast('Menyimpan data nasabah ke spreadsheet...');
+            
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        action: 'addNasabah',
+                        nama: nama,
+                        no_hp: cleanHP,
+                        alamat: alamat,
+                        email: email || ''
+                    })
+                });
+                
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    showToast('Nasabah berhasil ditambahkan ke spreadsheet!');
+                    closeModal();
+                    
+                    // Refresh data dan kembali ke halaman rekening
+                    await loadData();
+                    loadTab('rekening');
+                    
+                } else {
+                    showToast('Gagal: ' + (data.message || 'Error'), true);
+                }
+            } catch (e) {
+                showToast('Gagal menyimpan data ke spreadsheet', true);
+            }
+        }
+        
+        // ====== PROSES TRANSAKSI ======
+        async function processTransaction() {
+            showToast('Menyimpan transaksi ke spreadsheet...');
+            
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        action: 'addTransaksi',
+                        nama: state.transaction.account,
+                        jenis: state.transaction.type,
+                        nominal: state.transaction.amount,
+                        keterangan: `Transaksi periode ${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)} (${calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo)} hari)`
+                    })
+                });
+                
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    showToast('Transaksi berhasil disimpan ke spreadsheet!');
+                    
+                    // Reset form transaksi
+                    state.transaction = {
+                        account: '',
+                        type: 'SETOR',
+                        amount: 0,
+                        dateFrom: new Date().toISOString().split('T')[0],
+                        dateTo: new Date().toISOString().split('T')[0]
+                    };
+                    
+                    // Reset processing state
+                    state.isProcessing = false;
+                    
+                    // Refresh semua data
+                    await loadData();
+                    
+                } else {
+                    showToast('Gagal: ' + (data.message || 'Error'), true);
+                    // Reset processing state jika gagal
+                    state.isProcessing = false;
+                    updateTransactionButton();
+                }
+            } catch (e) {
+                showToast('Gagal menyimpan transaksi ke spreadsheet', true);
+                // Reset processing state jika error
+                state.isProcessing = false;
+                updateTransactionButton();
+            }
+        }
+        
+        // ====== UTILITY FUNCTIONS ======
+        function formatRupiah(amount) {
+            return 'Rp ' + (amount || 0).toLocaleString('id-ID');
+        }
+        
+        function formatNumber(num) {
+            const n = parseInt(num) || 0;
+            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+        
+        function formatDateDisplay(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('id-ID', { 
+                day: '2-digit', 
+                month: 'short', 
+                year: 'numeric' 
+            });
+        }
+        
+        function calculateDaysBetweenDates(dateFrom, dateTo) {
+            try {
+                const from = new Date(dateFrom);
+                const to = new Date(dateTo);
+                
+                // Validasi tanggal
+                if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+                    return 0;
+                }
+                
+                // Hitung selisih dalam milidetik
+                const timeDiff = to.getTime() - from.getTime();
+                
+                // Konversi ke hari
+                const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
+                
+                // Tambah 1 karena termasuk hari pertama
+                return Math.max(0, daysDiff + 1);
+            } catch (error) {
+                return 0;
+            }
+        }
+        
+        function showToast(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.className = 'toast' + (isError ? ' error' : '');
+            toast.innerHTML = `
+                <i class="fas fa-${isError ? 'exclamation-circle' : 'check-circle'}"></i>
+                ${message}
+            `;
             document.body.appendChild(toast);
             
             setTimeout(() => {
-                toast.style.animation = 'slideOut 0.3s ease';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
-
+        
         function closeModal() {
-            const modal = document.querySelector('.modal-overlay');
+            const modal = document.querySelector('.modal');
             if (modal) modal.remove();
         }
-
-        // ====== OTHER TAB FUNCTIONS (simplified) ======
-        function renderDashboardTab() {
-            return `
-                <div class="card">
-                    <h2><i class="fas fa-chart-line"></i> Dashboard</h2>
-                    <div style="text-align: center; padding: 40px 20px;">
-                        <div class="spinner"></div>
-                        <div style="margin-top: 20px; color: #B0BEC5;">Loading dashboard data...</div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderAccountTab() {
-            return `
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h2><i class="fas fa-users"></i> Daftar Rekening</h2>
-                        <button id="addAccountBtn" style="background: #00BFA5; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                            <i class="fas fa-plus"></i> Tambah
-                        </button>
-                    </div>
-                    <div id="accountListContainer">
-                        <div style="text-align: center; padding: 40px 20px; color: #B0BEC5;">
-                            <div class="spinner"></div>
-                            <div style="margin-top: 20px;">Loading rekening...</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderBalanceTab() {
-            return `
-                <div class="card">
-                    <h2><i class="fas fa-wallet"></i> Cek Saldo</h2>
-                    <div style="margin-bottom: 20px;">
-                        <select id="selectAccount" style="width: 100%; padding: 12px 16px; border-radius: 12px; background: #2A3239; color: white; border: 2px solid #37474F; font-size: 14px;">
-                            <option value="">-- Pilih Rekening --</option>
-                            ${accountList.map(acc => `
-                                <option value="${acc.nama}">${acc.nama}</option>
-                            `).join('')}
-                        </select>
-                    </div>
-                    <div id="balanceResult">
-                        <div style="text-align: center; padding: 40px 20px; color: #B0BEC5;">
-                            <div style="font-size: 48px; margin-bottom: 16px; color: #37474F;">
-                                <i class="fas fa-wallet"></i>
-                            </div>
-                            <div style="font-size: 16px;">Pilih rekening untuk melihat saldo</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // ====== INITIALIZATION ======
-        function initApp() {
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideIn {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                @keyframes slideOut {
-                    from { transform: translateX(0); opacity: 1; }
-                    to { transform: translateX(100%); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            setTimeout(() => {
-                showToast('Selamat datang di BankFlow!', 'info');
-            }, 1000);
-        }
-
-        // ====== WINDOW EXPORTS ======
-        window.loadTab = loadTab;
-        window.showAccountModal = showAccountModal;
-        window.showTypeModal = showTypeModal;
-        window.showAmountModal = showAmountModal;
-        window.showConfirmModal = showConfirmModal;
-        window.handleSelectAccount = handleSelectAccount;
-        window.handleSelectType = handleSelectType;
-        window.handleConfirmType = handleConfirmType;
-        window.handleSetAmount = handleSetAmount;
-        window.handleFormatAmount = handleFormatAmount;
-        window.handleSaveAmount = handleSaveAmount;
-        window.processTransaction = processTransaction;
-        window.resetFullTransaction = resetFullTransaction;
-        window.formatRupiah = formatRupiah;
+        
+        // ====== EXPOSE FUNCTIONS TO GLOBAL SCOPE ======
         window.closeModal = closeModal;
+        window.processTransaction = processTransaction;
+        window.addNasabah = addNasabah;
+        window.startProcessingTransaction = startProcessingTransaction;
     </script>
 </body>
 </html>
