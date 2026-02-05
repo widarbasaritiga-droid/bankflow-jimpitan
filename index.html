@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BankFlow</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Favicon dan PWA Icons -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a192f">
+    
+    <!-- HTML2Canvas untuk render PNG -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
     <style>
         /* VARIABLES */
         :root {
@@ -13,6 +25,7 @@
             --green-dark: #1b5e20;
             --green-light: #4caf50;
             --red: #c62828;
+            --yellow: #ff9800;
             --text-light: #ffffff;
             --text-medium: #e3f2fd;
             --text-dim: #90a4ae;
@@ -581,6 +594,86 @@
             font-weight: 500;
         }
         
+        /* RECEIPT STYLING */
+        .receipt-container {
+            position: fixed;
+            top: -9999px;
+            left: -9999px;
+            width: 400px;
+            background: white;
+            color: black;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            font-family: 'Courier New', monospace;
+        }
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .receipt-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #1a237e;
+        }
+        .receipt-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .receipt-details {
+            margin-bottom: 20px;
+        }
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #ddd;
+        }
+        .receipt-label {
+            font-weight: bold;
+            color: #333;
+        }
+        .receipt-value {
+            font-weight: 600;
+        }
+        .receipt-total {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .receipt-footer {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 2px solid #000;
+        }
+        .receipt-qr {
+            text-align: center;
+            margin: 15px 0;
+            color: #333;
+        }
+        .receipt-wa-button {
+            display: inline-block;
+            background: #25D366;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
         /* RESPONSIVE */
         @media (max-width: 480px) {
             .amount-grid {
@@ -588,6 +681,10 @@
             }
             .content {
                 padding: 70px 12px 70px;
+            }
+            .receipt-container {
+                width: 350px;
+                padding: 20px;
             }
         }
     </style>
@@ -620,9 +717,13 @@
         </button>
     </div>
 
+    <!-- Hidden receipt container for PNG generation -->
+    <div id="receiptContainer" class="receipt-container"></div>
+
     <script>
         // ====== KONFIGURASI API ======
         const API_URL = 'https://script.google.com/macros/s/AKfycbzg2VbfzX6Wdmo0DJkPY9noOhBZlRmXvgzuhLMpqfseste6Yi2P1KeLOFSvf-HM0Fn3/exec';
+        const RECEIPT_SERVER = 'https://bankflow-receipt.vercel.app/api/generate'; // Server untuk generate struk
         
         // ====== STATE GLOBAL ======
         let state = {
@@ -630,14 +731,27 @@
             accounts: [],
             globalBalance: 0,
             isProcessing: false,
+            isGeneratingReceipt: false,
             transaction: {
                 account: '',
                 type: 'SETOR',
                 amount: 0,
                 dateFrom: new Date().toISOString().split('T')[0],
                 dateTo: new Date().toISOString().split('T')[0]
-            }
+            },
+            lastTransactionData: null
         };
+        
+        // ====== PWA SERVICE WORKER ======
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(registration => {
+                    console.log('ServiceWorker registered');
+                }).catch(err => {
+                    console.log('ServiceWorker registration failed:', err);
+                });
+            });
+        }
         
         // ====== INISIALISASI APLIKASI ======
         document.addEventListener('DOMContentLoaded', () => {
@@ -654,6 +768,26 @@
             // Load initial data and show transaction tab
             loadData();
             loadTab('transaksi');
+            
+            // Install button for PWA
+            let deferredPrompt;
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                showToast('Aplikasi dapat diinstall ke perangkat Anda!', false);
+            });
+            
+            // Install PWA function
+            window.installPWA = async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        showToast('Aplikasi berhasil diinstall!');
+                    }
+                    deferredPrompt = null;
+                }
+            };
         });
         
         // ====== LOAD DATA DARI API ======
@@ -791,25 +925,13 @@
                         </div>
                         
                         <div class="amount-grid">
-                            <button class="amount-btn" data-amount="3000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">3K</span>
-                                3.000
-                            </button>
                             <button class="amount-btn" data-amount="5000" ${state.isProcessing ? 'disabled' : ''}>
                                 <span class="amount-btn-label">5K</span>
                                 5.000
                             </button>
-                            <button class="amount-btn" data-amount="7000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">7K</span>
-                                7.000
-                            </button>
                             <button class="amount-btn" data-amount="10000" ${state.isProcessing ? 'disabled' : ''}>
                                 <span class="amount-btn-label">10K</span>
                                 10.000
-                            </button>
-                            <button class="amount-btn" data-amount="12000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">12K</span>
-                                12.000
                             </button>
                             <button class="amount-btn" data-amount="15000" ${state.isProcessing ? 'disabled' : ''}>
                                 <span class="amount-btn-label">15K</span>
@@ -822,6 +944,18 @@
                             <button class="amount-btn" data-amount="25000" ${state.isProcessing ? 'disabled' : ''}>
                                 <span class="amount-btn-label">25K</span>
                                 25.000
+                            </button>
+                            <button class="amount-btn" data-amount="50000" ${state.isProcessing ? 'disabled' : ''}>
+                                <span class="amount-btn-label">50K</span>
+                                50.000
+                            </button>
+                            <button class="amount-btn" data-amount="100000" ${state.isProcessing ? 'disabled' : ''}>
+                                <span class="amount-btn-label">100K</span>
+                                100.000
+                            </button>
+                            <button class="amount-btn" data-amount="200000" ${state.isProcessing ? 'disabled' : ''}>
+                                <span class="amount-btn-label">200K</span>
+                                200.000
                             </button>
                         </div>
                     </div>
@@ -859,6 +993,12 @@
                             ${!state.transaction.account || state.transaction.amount <= 0 || state.isProcessing ? 'disabled' : ''}>
                         ${btnText}
                     </button>
+                    
+                    <div style="text-align: center; margin-top: 10px;">
+                        <button onclick="window.installPWA()" style="background: var(--yellow); color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                            <i class="fas fa-download"></i> Install Aplikasi
+                        </button>
+                    </div>
                 </div>
             `;
         }
@@ -1207,13 +1347,13 @@
                         </div>
                         
                         <div style="font-size: 13px; color: var(--text-dim); text-align: center; padding: 12px; background: rgba(255, 193, 7, 0.1); border-radius: 8px;">
-                            <i class="fas fa-exclamation-triangle"></i> Data periode transaksi akan disimpan di spreadsheet
+                            <i class="fas fa-exclamation-triangle"></i> Data akan disimpan dan struk PNG dikirim via WhatsApp
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button class="modal-btn modal-cancel" onclick="closeModal()" id="cancelBtn">BATAL</button>
                         <button class="modal-btn modal-confirm" onclick="startProcessingTransaction()" id="confirmBtn">
-                            <i class="fas fa-check"></i> SIMPAN KE SPREADSHEET
+                            <i class="fas fa-check"></i> SIMPAN & KIRIM STRUK
                         </button>
                     </div>
                 </div>
@@ -1343,11 +1483,20 @@
             }
         }
         
-        // ====== PROSES TRANSAKSI ======
+        // ====== PROSES TRANSAKSI DAN KIRIM STRUK ======
         async function processTransaction() {
             showToast('Menyimpan transaksi ke spreadsheet...');
             
             try {
+                // Simpan data transaksi untuk digunakan nanti
+                state.lastTransactionData = {
+                    ...state.transaction,
+                    transactionId: 'TRX-' + Date.now(),
+                    timestamp: new Date().toISOString(),
+                    daysCount: calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo)
+                };
+                
+                // Kirim ke spreadsheet
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
@@ -1365,22 +1514,10 @@
                 const data = await res.json();
                 
                 if (data.status === 'success') {
-                    showToast('Transaksi berhasil disimpan ke spreadsheet!');
+                    showToast('Transaksi berhasil! Membuat struk...');
                     
-                    // Reset form transaksi
-                    state.transaction = {
-                        account: '',
-                        type: 'SETOR',
-                        amount: 0,
-                        dateFrom: new Date().toISOString().split('T')[0],
-                        dateTo: new Date().toISOString().split('T')[0]
-                    };
-                    
-                    // Reset processing state
-                    state.isProcessing = false;
-                    
-                    // Refresh semua data
-                    await loadData();
+                    // Generate dan kirim struk
+                    await generateAndSendReceipt();
                     
                 } else {
                     showToast('Gagal: ' + (data.message || 'Error'), true);
@@ -1394,6 +1531,212 @@
                 state.isProcessing = false;
                 updateTransactionButton();
             }
+        }
+        
+        // ====== GENERATE DAN KIRIM STRUK ======
+        async function generateAndSendReceipt() {
+            try {
+                state.isGeneratingReceipt = true;
+                
+                // 1. Generate HTML untuk struk
+                const receiptHTML = generateReceiptHTML();
+                const receiptContainer = document.getElementById('receiptContainer');
+                receiptContainer.innerHTML = receiptHTML;
+                
+                // 2. Convert ke PNG menggunakan html2canvas
+                const canvas = await html2canvas(receiptContainer, {
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    useCORS: true
+                });
+                
+                // 3. Convert canvas ke blob
+                canvas.toBlob(async (blob) => {
+                    try {
+                        // 4. Create FormData untuk upload
+                        const formData = new FormData();
+                        formData.append('receipt', blob, 'struk-bankflow.png');
+                        formData.append('transactionData', JSON.stringify(state.lastTransactionData));
+                        
+                        // 5. Upload ke server untuk mendapatkan URL
+                        showToast('Mengupload struk ke server...');
+                        
+                        const uploadRes = await fetch(RECEIPT_SERVER, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        if (!uploadRes.ok) {
+                            throw new Error('Upload gagal');
+                        }
+                        
+                        const uploadData = await uploadRes.json();
+                        const receiptUrl = uploadData.url;
+                        
+                        // 6. Kirim via WhatsApp
+                        await sendToWhatsApp(receiptUrl);
+                        
+                        // 7. Reset form dan state
+                        resetTransactionForm();
+                        
+                        showToast('Transaksi selesai! Struk terkirim ke WhatsApp.');
+                        
+                    } catch (uploadError) {
+                        console.error('Upload error:', uploadError);
+                        // Fallback: download langsung
+                        showToast('Server penuh, mendownload struk...');
+                        downloadReceipt(canvas);
+                        resetTransactionForm();
+                    }
+                    
+                }, 'image/png');
+                
+            } catch (error) {
+                console.error('Generate receipt error:', error);
+                showToast('Gagal membuat struk', true);
+                resetTransactionForm();
+            }
+        }
+        
+        // ====== GENERATE HTML STRUK ======
+        function generateReceiptHTML() {
+            const trans = state.lastTransactionData;
+            const transactionId = trans.transactionId || 'TRX-' + Date.now();
+            const now = new Date();
+            const receiptDate = now.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+            });
+            const receiptTime = now.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            return `
+                <div class="receipt-header">
+                    <div class="receipt-title">BANKFLOW</div>
+                    <div class="receipt-subtitle">Digital Banking System</div>
+                    <div style="font-size: 12px; color: #666;">Jl. Digital No. 123, Jakarta</div>
+                </div>
+                
+                <div class="receipt-details">
+                    <div class="receipt-row">
+                        <span class="receipt-label">ID Transaksi:</span>
+                        <span class="receipt-value">${transactionId}</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Tanggal:</span>
+                        <span class="receipt-value">${receiptDate}</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Waktu:</span>
+                        <span class="receipt-value">${receiptTime}</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Nasabah:</span>
+                        <span class="receipt-value">${trans.account}</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Jenis:</span>
+                        <span class="receipt-value" style="color: ${trans.type === 'SETOR' ? 'green' : 'red'}; font-weight: bold;">
+                            ${trans.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}
+                        </span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Periode:</span>
+                        <span class="receipt-value">${formatDateDisplay(trans.dateFrom)} - ${formatDateDisplay(trans.dateTo)}</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Durasi:</span>
+                        <span class="receipt-value">${trans.daysCount} Hari</span>
+                    </div>
+                </div>
+                
+                <div class="receipt-total" style="color: ${trans.type === 'SETOR' ? 'green' : 'red'};">
+                    ${trans.type === 'SETOR' ? 'SETOR' : 'TARIK'}: ${formatRupiah(trans.amount)}
+                </div>
+                
+                <div class="receipt-qr">
+                    <div style="font-size: 12px; margin-bottom: 10px;">Scan untuk verifikasi:</div>
+                    <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px;">
+                        ${transactionId}<br>
+                        BankFlow Digital Receipt
+                    </div>
+                </div>
+                
+                <div class="receipt-footer">
+                    <div style="margin-bottom: 10px;">Terima kasih atas kepercayaan Anda</div>
+                    <div style="font-size: 10px;">* Transaksi ini telah tercatat di sistem</div>
+                    <div style="font-size: 10px;">** Struk digital sah sebagai bukti transaksi</div>
+                    <div style="margin-top: 15px;">
+                        <a href="#" class="receipt-wa-button" style="display: none;">
+                            <i class="fab fa-whatsapp"></i> Kirim ke WhatsApp
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // ====== KIRIM KE WHATSAPP ======
+        async function sendToWhatsApp(receiptUrl) {
+            const trans = state.lastTransactionData;
+            const message = `📋 *STRUK TRANSAKSI BANKFLOW*
+
+🏦 *BankFlow Digital Banking*
+📅 *Tanggal:* ${new Date().toLocaleDateString('id-ID')}
+⏰ *Waktu:* ${new Date().toLocaleTimeString('id-ID')}
+
+👤 *Nasabah:* ${trans.account}
+🔢 *ID Transaksi:* ${trans.transactionId}
+📊 *Jenis:* ${trans.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}
+💰 *Nominal:* ${formatRupiah(trans.amount)}
+📅 *Periode:* ${formatDateDisplay(trans.dateFrom)} - ${formatDateDisplay(trans.dateTo)}
+📆 *Durasi:* ${trans.daysCount} Hari
+
+📎 *Struk Digital:* ${receiptUrl}
+
+_Transaksi ini telah tercatat di sistem BankFlow._
+_Terima kasih atas kepercayaan Anda._`;
+            
+            // Encode message untuk URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Buat URL WhatsApp
+            const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+            
+            // Buka WhatsApp di tab baru (tanpa popup)
+            window.open(whatsappUrl, '_blank');
+            
+            // Tunggu sebentar agar WhatsApp terbuka
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+        
+        // ====== DOWNLOAD STRUK (FALLBACK) ======
+        function downloadReceipt(canvas) {
+            const link = document.createElement('a');
+            link.download = `struk-bankflow-${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        // ====== RESET FORM TRANSAKSI ======
+        function resetTransactionForm() {
+            state.transaction = {
+                account: '',
+                type: 'SETOR',
+                amount: 0,
+                dateFrom: new Date().toISOString().split('T')[0],
+                dateTo: new Date().toISOString().split('T')[0]
+            };
+            
+            state.isProcessing = false;
+            state.isGeneratingReceipt = false;
+            state.lastTransactionData = null;
+            
+            // Refresh data
+            loadData();
         }
         
         // ====== UTILITY FUNCTIONS ======
@@ -1464,7 +1807,7 @@
         window.processTransaction = processTransaction;
         window.addNasabah = addNasabah;
         window.startProcessingTransaction = startProcessingTransaction;
+        window.installPWA = () => {};
     </script>
 </body>
 </html>
-
