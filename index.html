@@ -397,19 +397,6 @@
             to { transform: translateX(100%); opacity: 0; }
         }
         
-        /* Amount input styling */
-        .amount-input {
-            font-size: 32px !important;
-            font-weight: 700 !important;
-            text-align: center !important;
-            letter-spacing: 1px;
-        }
-        
-        .amount-input::placeholder {
-            color: #546E7A !important;
-            font-size: 20px;
-        }
-        
         /* Quick amount buttons */
         .quick-amount {
             padding: 12px;
@@ -440,6 +427,38 @@
             background: rgba(0, 191, 165, 0.1);
             color: var(--accent);
             margin-top: 8px;
+        }
+        
+        /* Modal button styles */
+        .modal-btn {
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        .modal-btn-cancel {
+            background: #37474F;
+            color: white;
+        }
+        
+        .modal-btn-cancel:hover {
+            background: #455A64;
+            transform: translateY(-2px);
+        }
+        
+        .modal-btn-confirm {
+            background: linear-gradient(135deg, #00C853, #00BFA5);
+            color: white;
+        }
+        
+        .modal-btn-confirm:hover {
+            background: linear-gradient(135deg, #00E676, #00D6B8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 200, 83, 0.3);
         }
     </style>
 </head>
@@ -496,82 +515,8 @@
             type: 'DEPOSIT',
             amount: 0
         };
-        let currentStep = 1; // 1: Pilih rekening, 2: Pilih jenis, 3: Masukkan nominal
+        let currentStep = 1;
         let isProcessing = false;
-
-        // ====== SERVICE WORKER REGISTRATION ======
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('https://raw.githubusercontent.com/widarbasaritiga-droid/bankflow-jimpitan/main/sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registered from GitHub:', registration.scope);
-                        showToast('Aplikasi siap digunakan offline', 'info');
-                    })
-                    .catch(error => {
-                        console.log('GitHub SW failed, trying local:', error);
-                        registerDynamicServiceWorker();
-                    });
-            });
-        }
-
-        function registerDynamicServiceWorker() {
-            const swCode = `
-                const CACHE_NAME = 'bankflow-jimpitan-v1';
-                const urlsToCache = [
-                    '/',
-                    'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap',
-                    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-                    'https://raw.githubusercontent.com/widarbasaritiga-droid/bankflow-jimpitan/main/favicon.ico',
-                    'https://raw.githubusercontent.com/widarbasaritiga-droid/bankflow-jimpitan/main/favicon-16x16.png',
-                    'https://raw.githubusercontent.com/widarbasaritiga-droid/bankflow-jimpitan/main/favicon-32x32.png',
-                    'https://raw.githubusercontent.com/widarbasaritiga-droid/bankflow-jimpitan/main/apple-touch-icon.png'
-                ];
-
-                self.addEventListener('install', event => {
-                    event.waitUntil(
-                        caches.open(CACHE_NAME)
-                            .then(cache => cache.addAll(urlsToCache))
-                    );
-                });
-
-                self.addEventListener('fetch', event => {
-                    event.respondWith(
-                        caches.match(event.request)
-                            .then(response => {
-                                if (response) {
-                                    return response;
-                                }
-                                return fetch(event.request);
-                            })
-                    );
-                });
-
-                self.addEventListener('activate', event => {
-                    event.waitUntil(
-                        caches.keys().then(cacheNames => {
-                            return Promise.all(
-                                cacheNames.map(cacheName => {
-                                    if (cacheName !== CACHE_NAME) {
-                                        return caches.delete(cacheName);
-                                    }
-                                })
-                            );
-                        })
-                    );
-                });
-            `;
-
-            const blob = new Blob([swCode], { type: 'application/javascript' });
-            const swUrl = URL.createObjectURL(blob);
-            
-            navigator.serviceWorker.register(swUrl)
-                .then(registration => {
-                    console.log('Dynamic ServiceWorker registered');
-                })
-                .catch(error => {
-                    console.log('ServiceWorker registration failed:', error);
-                });
-        }
 
         // ====== EVENT DELEGATION FOR NAV ======
         document.addEventListener('DOMContentLoaded', () => {
@@ -649,7 +594,7 @@
             }
         }
 
-        // ====== TRANSACTION PROGRESS MANAGEMENT ======
+        // ====== TRANSACTION FUNCTIONS ======
         function resetTransactionProgress() {
             transactionData = {
                 account: '',
@@ -658,17 +603,6 @@
             };
             currentStep = 1;
             isProcessing = false;
-        }
-
-        function goToNextStep() {
-            if (currentStep === 1 && transactionData.account) {
-                currentStep = 2;
-                setTimeout(() => showTypeModal(), 300);
-            } else if (currentStep === 2 && transactionData.type) {
-                currentStep = 3;
-                setTimeout(() => showAmountModal(), 300);
-            }
-            updateTransactionUI();
         }
 
         function updateTransactionUI() {
@@ -705,7 +639,6 @@
                     '<i class="fas fa-paper-plane"></i> Proses Transaksi';
             }
             
-            // Auto open modal based on current step
             if (currentStep === 1 && !transactionData.account) {
                 setTimeout(() => {
                     if (currentTab === 'transaksi' && currentStep === 1) {
@@ -813,161 +746,87 @@
             `;
         }
 
-        function renderDashboardTab() {
-            return `
-                <div class="card">
-                    <h2><i class="fas fa-chart-line"></i> Dashboard</h2>
-                    <div style="text-align: center; padding: 40px 20px;">
-                        <div class="spinner"></div>
-                        <div style="margin-top: 20px; color: #B0BEC5;">Loading dashboard data...</div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderAccountTab() {
-            return `
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h2><i class="fas fa-users"></i> Daftar Rekening</h2>
-                        <button id="addAccountBtn" style="background: #00BFA5; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                            <i class="fas fa-plus"></i> Tambah
-                        </button>
-                    </div>
-                    
-                    <div id="accountListContainer">
-                        <div style="text-align: center; padding: 40px 20px; color: #B0BEC5;">
-                            <div class="spinner"></div>
-                            <div style="margin-top: 20px;">Loading rekening...</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderBalanceTab() {
-            return `
-                <div class="card">
-                    <h2><i class="fas fa-wallet"></i> Cek Saldo</h2>
-                    
-                    <div style="margin-bottom: 20px;">
-                        <select id="selectAccount" style="width: 100%; padding: 12px 16px; border-radius: 12px; background: #2A3239; color: white; border: 2px solid #37474F; font-size: 14px;">
-                            <option value="">-- Pilih Rekening --</option>
-                            ${accountList.map(acc => `
-                                <option value="${acc.nama}">${acc.nama}</option>
-                            `).join('')}
-                        </select>
-                    </div>
-                    
-                    <div id="balanceResult">
-                        <div style="text-align: center; padding: 40px 20px; color: #B0BEC5;">
-                            <div style="font-size: 48px; margin-bottom: 16px; color: #37474F;">
-                                <i class="fas fa-wallet"></i>
-                            </div>
-                            <div style="font-size: 16px;">Pilih rekening untuk melihat saldo</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
         // ====== EVENT ATTACHMENT FUNCTIONS ======
         function attachTransactionEvents() {
+            // Hapus event listeners lama
             const accountBtn = document.getElementById('accountBtn');
             const typeBtn = document.getElementById('typeBtn');
             const amountBtn = document.getElementById('amountBtn');
             const saveBtn = document.getElementById('saveBtn');
             const resetBtn = document.getElementById('resetBtn');
             
-            if (accountBtn) accountBtn.addEventListener('click', showAccountModal);
-            if (typeBtn) typeBtn.addEventListener('click', showTypeModal);
-            if (amountBtn) amountBtn.addEventListener('click', showAmountModal);
-            if (saveBtn) saveBtn.addEventListener('click', processTransaction);
-            if (resetBtn) resetBtn.addEventListener('click', resetFullTransaction);
-        }
-
-        function attachAccountEvents() {
-            document.getElementById('addAccountBtn')?.addEventListener('click', showAddAccountModal);
+            // Clone elements untuk menghapus event listeners lama
+            if (accountBtn) {
+                const newAccountBtn = accountBtn.cloneNode(true);
+                accountBtn.parentNode.replaceChild(newAccountBtn, accountBtn);
+                newAccountBtn.addEventListener('click', showAccountModal);
+            }
             
-            const container = document.getElementById('accountListContainer');
-            if (container) {
-                container.addEventListener('click', (e) => {
-                    const accountItem = e.target.closest('[data-account-name]');
-                    if (accountItem) {
-                        const accountName = accountItem.dataset.accountName;
-                        viewAccount(accountName);
-                    }
-                });
+            if (typeBtn) {
+                const newTypeBtn = typeBtn.cloneNode(true);
+                typeBtn.parentNode.replaceChild(newTypeBtn, typeBtn);
+                newTypeBtn.addEventListener('click', showTypeModal);
+            }
+            
+            if (amountBtn) {
+                const newAmountBtn = amountBtn.cloneNode(true);
+                amountBtn.parentNode.replaceChild(newAmountBtn, amountBtn);
+                newAmountBtn.addEventListener('click', showAmountModal);
+            }
+            
+            if (saveBtn) {
+                const newSaveBtn = saveBtn.cloneNode(true);
+                saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+                newSaveBtn.addEventListener('click', showConfirmModal);
+            }
+            
+            if (resetBtn) {
+                const newResetBtn = resetBtn.cloneNode(true);
+                resetBtn.parentNode.replaceChild(newResetBtn, resetBtn);
+                newResetBtn.addEventListener('click', resetFullTransaction);
             }
         }
 
-        function attachBalanceEvents() {
-            document.getElementById('selectAccount')?.addEventListener('change', function() {
-                viewBalance(this.value);
-            });
-        }
-
-        // ====== MODAL FUNCTIONS ======
+        // ====== MODAL FUNCTIONS (FIXED) ======
         function showAccountModal() {
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.onclick = (e) => {
-                if (e.target === modal) closeModal();
-            };
+            const modal = createModal('Pilih Rekening');
             
-            modal.innerHTML = `
-                <div class="modal-content" onclick="event.stopPropagation()">
-                    <div style="padding: 20px; border-bottom: 1px solid #37474F; display: flex; justify-content: space-between; align-items: center;">
-                        <h3><i class="fas fa-user"></i> Pilih Rekening</h3>
-                        <button id="closeModal" style="background: none; border: none; color: #B0BEC5; cursor: pointer; padding: 4px; border-radius: 4px;">
-                            <i class="fas fa-times"></i>
-                        </button>
+            let accountItemsHTML = '';
+            if (accountList.length === 0) {
+                accountItemsHTML = '<div style="text-align: center; padding: 20px; color: #B0BEC5;"><i class="fas fa-users"></i><br>Tidak ada rekening</div>';
+            } else {
+                accountItemsHTML = accountList.map(acc => `
+                    <div class="account-item" onclick="handleSelectAccount('${acc.nama}')" 
+                         style="padding: 12px 16px; margin-bottom: 8px; background: ${acc.nama === transactionData.account ? 'rgba(0, 191, 165, 0.1)' : '#2A3239'}; 
+                                border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; 
+                                border: 2px solid ${acc.nama === transactionData.account ? '#00BFA5' : 'transparent'};">
+                        <div style="width: 36px; height: 36px; background: ${acc.nama === transactionData.account ? '#00BFA5' : '#37474F'}; 
+                             border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: white;">
+                            ${acc.nama.charAt(0)}
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600;">${acc.nama}</div>
+                            <div style="font-size: 11px; color: #B0BEC5;">${acc.id_nasabah || 'Rekening'}</div>
+                        </div>
+                        ${acc.nama === transactionData.account ? 
+                            '<div style="color: #00BFA5; font-size: 18px;"><i class="fas fa-check-circle"></i></div>' : 
+                            '<div style="color: #546E7A;"><i class="fas fa-chevron-right"></i></div>'}
                     </div>
-                    
-                    <div style="padding: 20px; max-height: 50vh; overflow-y: auto;">
-                        ${accountList.length === 0 ? 
-                            '<div style="text-align: center; padding: 20px; color: #B0BEC5;"><i class="fas fa-users"></i><br>Tidak ada rekening</div>' :
-                            accountList.map(acc => `
-                                <div class="account-item" onclick="selectAccount('${acc.nama}')" 
-                                     style="padding: 12px 16px; margin-bottom: 8px; background: ${acc.nama === transactionData.account ? 'rgba(0, 191, 165, 0.1)' : '#2A3239'}; 
-                                            border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; 
-                                            border: 2px solid ${acc.nama === transactionData.account ? '#00BFA5' : 'transparent'};">
-                                    <div style="width: 36px; height: 36px; background: ${acc.nama === transactionData.account ? '#00BFA5' : '#37474F'}; 
-                                         border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: white;">
-                                        ${acc.nama.charAt(0)}
-                                    </div>
-                                    <div style="flex: 1;">
-                                        <div style="font-weight: 600;">${acc.nama}</div>
-                                        <div style="font-size: 11px; color: #B0BEC5;">${acc.id_nasabah || 'Rekening'}</div>
-                                    </div>
-                                    ${acc.nama === transactionData.account ? 
-                                        '<div style="color: #00BFA5; font-size: 18px;"><i class="fas fa-check-circle"></i></div>' : 
-                                        '<div style="color: #546E7A;"><i class="fas fa-chevron-right"></i></div>'}
-                                </div>
-                            `).join('')
-                        }
-                    </div>
-                    
-                    <div style="padding: 20px; border-top: 1px solid #37474F; display: flex; gap: 12px;">
-                        <button onclick="closeModal()" style="flex: 1; background: #37474F; color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer;">
-                            Batal
-                        </button>
-                    </div>
-                </div>
-            `;
+                `).join('');
+            }
+            
+            modal.querySelector('.modal-body').innerHTML = accountItemsHTML;
             
             document.body.appendChild(modal);
-            document.getElementById('closeModal')?.addEventListener('click', closeModal);
         }
 
-        function selectAccount(accountName) {
+        function handleSelectAccount(accountName) {
             transactionData.account = accountName;
             currentStep = 2;
             closeModal();
             showToast(`${accountName} dipilih`, 'success');
             updateTransactionUI();
             
-            // Auto open type modal after 500ms
             setTimeout(() => {
                 if (currentTab === 'transaksi' && currentStep === 2) {
                     showTypeModal();
@@ -976,69 +835,50 @@
         }
 
         function showTypeModal() {
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.onclick = (e) => {
-                if (e.target === modal) closeModal();
-            };
+            const modal = createModal('Pilih Jenis Transaksi');
             
-            modal.innerHTML = `
-                <div class="modal-content" onclick="event.stopPropagation()">
-                    <div style="padding: 20px; border-bottom: 1px solid #37474F; display: flex; justify-content: space-between; align-items: center;">
-                        <h3><i class="fas fa-exchange-alt"></i> Pilih Jenis Transaksi</h3>
-                        <button id="closeModal" style="background: none; border: none; color: #B0BEC5; cursor: pointer; padding: 4px; border-radius: 4px;">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    
-                    <div style="padding: 20px;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                            <div onclick="selectType('DEPOSIT')" 
-                                 style="padding: 24px; border: 2px solid ${transactionData.type === 'DEPOSIT' ? '#00C853' : '#37474F'}; 
-                                        border-radius: 12px; text-align: center; cursor: pointer; 
-                                        background: ${transactionData.type === 'DEPOSIT' ? 'rgba(0,200,83,0.1)' : '#2A3239'};
-                                        transition: all 0.3s ease;">
-                                <div style="font-size: 32px; color: #00C853; margin-bottom: 8px;">
-                                    <i class="fas fa-arrow-down"></i>
-                                </div>
-                                <div style="font-weight: 600; color: #00C853;">Setoran</div>
-                                <div style="font-size: 11px; color: #B0BEC5; margin-top: 4px;">Uang masuk</div>
-                            </div>
-                            <div onclick="selectType('WITHDRAW')" 
-                                 style="padding: 24px; border: 2px solid ${transactionData.type === 'WITHDRAW' ? '#FF5252' : '#37474F'}; 
-                                        border-radius: 12px; text-align: center; cursor: pointer; 
-                                        background: ${transactionData.type === 'WITHDRAW' ? 'rgba(255,82,82,0.1)' : '#2A3239'};
-                                        transition: all 0.3s ease;">
-                                <div style="font-size: 32px; color: #FF5252; margin-bottom: 8px;">
-                                    <i class="fas fa-arrow-up"></i>
-                                </div>
-                                <div style="font-weight: 600; color: #FF5252;">Penarikan</div>
-                                <div style="font-size: 11px; color: #B0BEC5; margin-top: 4px;">Uang keluar</div>
-                            </div>
+            modal.querySelector('.modal-body').innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div onclick="handleSelectType('DEPOSIT')" 
+                         style="padding: 24px; border: 2px solid ${transactionData.type === 'DEPOSIT' ? '#00C853' : '#37474F'}; 
+                                border-radius: 12px; text-align: center; cursor: pointer; 
+                                background: ${transactionData.type === 'DEPOSIT' ? 'rgba(0,200,83,0.1)' : '#2A3239'};
+                                transition: all 0.3s ease;">
+                        <div style="font-size: 32px; color: #00C853; margin-bottom: 8px;">
+                            <i class="fas fa-arrow-down"></i>
                         </div>
-                        
-                        <div style="margin-top: 20px; padding: 12px; background: #2A3239; border-radius: 8px; text-align: center;">
-                            <div style="font-size: 12px; color: #B0BEC5;">Rekening:</div>
-                            <div style="font-weight: 600; color: #00BFA5; font-size: 14px;">${transactionData.account}</div>
+                        <div style="font-weight: 600; color: #00C853;">Setoran</div>
+                        <div style="font-size: 11px; color: #B0BEC5; margin-top: 4px;">Uang masuk</div>
+                    </div>
+                    <div onclick="handleSelectType('WITHDRAW')" 
+                         style="padding: 24px; border: 2px solid ${transactionData.type === 'WITHDRAW' ? '#FF5252' : '#37474F'}; 
+                                border-radius: 12px; text-align: center; cursor: pointer; 
+                                background: ${transactionData.type === 'WITHDRAW' ? 'rgba(255,82,82,0.1)' : '#2A3239'};
+                                transition: all 0.3s ease;">
+                        <div style="font-size: 32px; color: #FF5252; margin-bottom: 8px;">
+                            <i class="fas fa-arrow-up"></i>
                         </div>
+                        <div style="font-weight: 600; color: #FF5252;">Penarikan</div>
+                        <div style="font-size: 11px; color: #B0BEC5; margin-top: 4px;">Uang keluar</div>
                     </div>
-                    
-                    <div style="padding: 20px; border-top: 1px solid #37474F; display: flex; gap: 12px;">
-                        <button onclick="closeModal()" style="flex: 1; background: #37474F; color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer;">
-                            Batal
-                        </button>
-                        <button onclick="confirmType()" style="flex: 1; background: #00BFA5; color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600;">
-                            <i class="fas fa-check"></i> Pilih
-                        </button>
-                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 12px; background: #2A3239; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 12px; color: #B0BEC5;">Rekening:</div>
+                    <div style="font-weight: 600; color: #00BFA5; font-size: 14px;">${transactionData.account}</div>
                 </div>
             `;
             
+            const footer = modal.querySelector('.modal-footer');
+            footer.innerHTML = `
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Batal</button>
+                <button class="modal-btn modal-btn-confirm" onclick="handleConfirmType()">Pilih</button>
+            `;
+            
             document.body.appendChild(modal);
-            document.getElementById('closeModal')?.addEventListener('click', closeModal);
         }
 
-        function selectType(type) {
+        function handleSelectType(type) {
             transactionData.type = type;
             const modal = document.querySelector('.modal-overlay');
             if (modal) {
@@ -1057,7 +897,7 @@
             }
         }
 
-        function confirmType() {
+        function handleConfirmType() {
             if (transactionData.type) {
                 currentStep = 3;
                 closeModal();
@@ -1065,7 +905,6 @@
                 showToast(`${typeText} dipilih untuk ${transactionData.account}`, 'success');
                 updateTransactionUI();
                 
-                // Auto open amount modal after 500ms
                 setTimeout(() => {
                     if (currentTab === 'transaksi' && currentStep === 3) {
                         showAmountModal();
@@ -1075,80 +914,61 @@
         }
 
         function showAmountModal() {
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.onclick = (e) => {
-                if (e.target === modal) closeModal();
-            };
+            const modal = createModal('Masukkan Nominal');
             
-            modal.innerHTML = `
-                <div class="modal-content" onclick="event.stopPropagation()">
-                    <div style="padding: 20px; border-bottom: 1px solid #37474F; display: flex; justify-content: space-between; align-items: center;">
-                        <h3><i class="fas fa-money-bill-wave"></i> Masukkan Nominal</h3>
-                        <button id="closeModal" style="background: none; border: none; color: #B0BEC5; cursor: pointer; padding: 4px; border-radius: 4px;">
-                            <i class="fas fa-times"></i>
-                        </button>
+            modal.querySelector('.modal-body').innerHTML = `
+                <div style="margin-bottom: 16px; text-align: center;">
+                    <div style="font-size: 14px; color: #B0BEC5;">Transaksi untuk:</div>
+                    <div style="font-weight: 600; font-size: 16px; color: #00BFA5;">${transactionData.account}</div>
+                    <div style="font-size: 12px; color: ${transactionData.type === 'DEPOSIT' ? '#00C853' : '#FF5252'};">
+                        <i class="fas ${transactionData.type === 'DEPOSIT' ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+                        ${transactionData.type === 'DEPOSIT' ? 'Setoran' : 'Penarikan'}
                     </div>
-                    
-                    <div style="padding: 20px;">
-                        <div style="margin-bottom: 16px; text-align: center;">
-                            <div style="font-size: 14px; color: #B0BEC5;">Transaksi untuk:</div>
-                            <div style="font-weight: 600; font-size: 16px; color: #00BFA5;">${transactionData.account}</div>
-                            <div style="font-size: 12px; color: ${transactionData.type === 'DEPOSIT' ? '#00C853' : '#FF5252'};">
-                                <i class="fas ${transactionData.type === 'DEPOSIT' ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
-                                ${transactionData.type === 'DEPOSIT' ? 'Setoran' : 'Penarikan'}
-                            </div>
-                        </div>
-                        
-                        <div style="position: relative; margin-bottom: 20px;">
-                            <div style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #B0BEC5; font-weight: 600; font-size: 20px;">Rp</div>
-                            <input type="text" id="amountInput" 
-                                   value="${transactionData.amount > 0 ? transactionData.amount.toLocaleString('id-ID') : ''}" 
-                                   style="width: 100%; padding: 16px 16px 16px 60px; font-size: 32px; font-weight: 700; 
-                                          background: #2A3239; color: white; border: 2px solid #37474F; border-radius: 12px; 
-                                          text-align: center; letter-spacing: 1px;" 
-                                   placeholder="0" autofocus>
-                        </div>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px;">
-                            <button onclick="setAmount(50000)" class="quick-amount">50K</button>
-                            <button onclick="setAmount(100000)" class="quick-amount">100K</button>
-                            <button onclick="setAmount(200000)" class="quick-amount">200K</button>
-                            <button onclick="setAmount(500000)" class="quick-amount">500K</button>
-                            <button onclick="setAmount(1000000)" class="quick-amount">1M</button>
-                            <button onclick="setAmount(2000000)" class="quick-amount">2M</button>
-                        </div>
-                        
-                        <div style="font-size: 11px; color: #B0BEC5; text-align: center;">
-                            <i class="fas fa-keyboard"></i> Ketik manual atau pilih nominal cepat
-                        </div>
-                    </div>
-                    
-                    <div style="padding: 20px; border-top: 1px solid #37474F; display: flex; gap: 12px;">
-                        <button onclick="closeModal()" style="flex: 1; background: #37474F; color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer;">
-                            Batal
-                        </button>
-                        <button onclick="saveAmount()" style="flex: 1; background: #00BFA5; color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600;">
-                            <i class="fas fa-save"></i> Simpan
-                        </button>
-                    </div>
+                </div>
+                
+                <div style="position: relative; margin-bottom: 20px;">
+                    <div style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #B0BEC5; font-weight: 600; font-size: 20px;">Rp</div>
+                    <input type="text" id="amountInput" 
+                           value="${transactionData.amount > 0 ? transactionData.amount.toLocaleString('id-ID') : ''}" 
+                           style="width: 100%; padding: 16px 16px 16px 60px; font-size: 32px; font-weight: 700; 
+                                  background: #2A3239; color: white; border: 2px solid #37474F; border-radius: 12px; 
+                                  text-align: center; letter-spacing: 1px;" 
+                           placeholder="0" autofocus>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px;">
+                    <button class="quick-amount" onclick="handleSetAmount(3000)">3K</button>
+                    <button class="quick-amount" onclick="handleSetAmount(5000)">5K</button>
+                    <button class="quick-amount" onclick="handleSetAmount(10000)">10K</button>
+                    <button class="quick-amount" onclick="handleSetAmount(15000)">15K</button>
+                    <button class="quick-amount" onclick="handleSetAmount(20000)">20K</button>
+                    <button class="quick-amount" onclick="handleSetAmount(25000)">25K</button>
+                </div>
+                
+                <div style="font-size: 11px; color: #B0BEC5; text-align: center;">
+                    <i class="fas fa-keyboard"></i> Ketik manual atau pilih nominal cepat
                 </div>
             `;
             
+            const footer = modal.querySelector('.modal-footer');
+            footer.innerHTML = `
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Batal</button>
+                <button class="modal-btn modal-btn-confirm" onclick="handleSaveAmount()">Simpan</button>
+            `;
+            
             document.body.appendChild(modal);
-            document.getElementById('closeModal')?.addEventListener('click', closeModal);
             
             const amountInput = document.getElementById('amountInput');
             if (amountInput) {
                 amountInput.addEventListener('input', function() {
-                    formatAmount(this);
+                    handleFormatAmount(this);
                 });
                 amountInput.focus();
                 amountInput.select();
             }
         }
 
-        function setAmount(amount) {
+        function handleSetAmount(amount) {
             const input = document.getElementById('amountInput');
             if (input) {
                 input.value = amount.toLocaleString('id-ID');
@@ -1157,10 +977,9 @@
             }
         }
 
-        function formatAmount(input) {
+        function handleFormatAmount(input) {
             let value = input.value.replace(/\D/g, '');
             if (value) {
-                // Limit to 10 digits (max 9,999,999,999)
                 if (value.length > 10) {
                     value = value.substring(0, 10);
                 }
@@ -1170,7 +989,7 @@
             }
         }
 
-        function saveAmount() {
+        function handleSaveAmount() {
             const input = document.getElementById('amountInput');
             if (input && input.value) {
                 const amount = parseInt(input.value.replace(/\D/g, '')) || 0;
@@ -1185,7 +1004,6 @@
                     showToast(`Nominal ${formatRupiah(amount)} disimpan`, 'success');
                     updateTransactionUI();
                     
-                    // Focus save button after delay
                     setTimeout(() => {
                         document.getElementById('saveBtn')?.focus();
                     }, 300);
@@ -1199,7 +1017,8 @@
             }
         }
 
-        async function processTransaction() {
+        // ====== FIXED CONFIRM MODAL ======
+        function showConfirmModal() {
             if (!transactionData.account || transactionData.amount <= 0) {
                 showToast('Lengkapi data terlebih dahulu', 'error');
                 return;
@@ -1210,11 +1029,68 @@
                 return;
             }
             
-            // Show confirmation
-            const confirmed = await showConfirmModal();
-            if (!confirmed) return;
+            const modal = createModal('Konfirmasi Transaksi');
             
-            // Set processing state
+            modal.querySelector('.modal-body').innerHTML = `
+                <div style="background: #2A3239; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                    <div style="text-align: center; margin-bottom: 16px;">
+                        <div style="font-size: 24px; font-weight: 700; color: ${transactionData.type === 'DEPOSIT' ? '#00C853' : '#FF5252'};">
+                            ${formatRupiah(transactionData.amount)}
+                        </div>
+                        <div style="font-size: 12px; color: #B0BEC5; margin-top: 4px;">
+                            ${transactionData.type === 'DEPOSIT' ? 'Setoran' : 'Penarikan'}
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #37474F;">
+                        <span style="color: #B0BEC5;">Rekening:</span>
+                        <span style="font-weight: 600; color: #00BFA5;">${transactionData.account}</span>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                        <span style="color: #B0BEC5;">Jenis:</span>
+                        <span style="color: ${transactionData.type === 'DEPOSIT' ? '#00C853' : '#FF5252'}; font-weight: 600;">
+                            ${transactionData.type === 'DEPOSIT' ? 'Setoran' : 'Penarikan'}
+                        </span>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #B0BEC5;">Tanggal:</span>
+                        <span>${new Date().toLocaleDateString('id-ID')} ${new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'})}</span>
+                    </div>
+                </div>
+                
+                <div style="font-size: 12px; color: #B0BEC5; text-align: center; padding: 12px; background: rgba(255, 193, 7, 0.1); border-radius: 8px; border-left: 3px solid #FFC107;">
+                    <i class="fas fa-exclamation-triangle"></i> Pastikan data sudah benar. Transaksi tidak dapat dibatalkan.
+                </div>
+            `;
+            
+            const footer = modal.querySelector('.modal-footer');
+            footer.innerHTML = `
+                <button class="modal-btn modal-btn-cancel" id="cancelBtn">Batal</button>
+                <button class="modal-btn modal-btn-confirm" id="confirmBtn">Ya, Kirim</button>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // ATTACH EVENT LISTENERS DENGAN CARA YANG BENAR
+            document.getElementById('cancelBtn').addEventListener('click', function() {
+                closeModal();
+                showToast('Transaksi dibatalkan', 'info');
+            });
+            
+            document.getElementById('confirmBtn').addEventListener('click', function() {
+                closeModal();
+                processTransaction();
+            });
+            
+            // Auto focus confirm button
+            setTimeout(() => {
+                document.getElementById('confirmBtn')?.focus();
+            }, 300);
+        }
+
+        async function processTransaction() {
             isProcessing = true;
             updateTransactionUI();
             
@@ -1240,11 +1116,11 @@
                 if (result.status === 'success') {
                     showToast('Transaksi berhasil dikirim!', 'success');
                     
-                    // RESET COMPLETE dengan delay 1.5 detik
                     setTimeout(() => {
                         const completedAccount = transactionData.account;
+                        const completedAmount = transactionData.amount;
                         resetFullTransaction();
-                        showToast(`Transaksi ${completedAccount} selesai. Form telah direset.`, 'info');
+                        showToast(`Transaksi ${completedAccount} senilai ${formatRupiah(completedAmount)} selesai. Form telah direset.`, 'info');
                     }, 1500);
                     
                 } else {
@@ -1259,99 +1135,10 @@
             }
         }
 
-        function showConfirmModal() {
-            return new Promise((resolve) => {
-                const modal = document.createElement('div');
-                modal.className = 'modal-overlay';
-                modal.onclick = (e) => {
-                    if (e.target === modal) {
-                        closeModal();
-                        resolve(false);
-                    }
-                };
-                
-                modal.innerHTML = `
-                    <div class="modal-content" onclick="event.stopPropagation()">
-                        <div style="padding: 20px; border-bottom: 1px solid #37474F; display: flex; justify-content: space-between; align-items: center;">
-                            <h3><i class="fas fa-check-circle"></i> Konfirmasi Transaksi</h3>
-                            <button id="closeModal" style="background: none; border: none; color: #B0BEC5; cursor: pointer; padding: 4px; border-radius: 4px;">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        
-                        <div style="padding: 20px;">
-                            <div style="background: #2A3239; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
-                                <div style="text-align: center; margin-bottom: 16px;">
-                                    <div style="font-size: 24px; font-weight: 700; color: ${transactionData.type === 'DEPOSIT' ? '#00C853' : '#FF5252'};">
-                                        ${formatRupiah(transactionData.amount)}
-                                    </div>
-                                    <div style="font-size: 12px; color: #B0BEC5; margin-top: 4px;">
-                                        ${transactionData.type === 'DEPOSIT' ? 'Setoran' : 'Penarikan'}
-                                    </div>
-                                </div>
-                                
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #37474F;">
-                                    <span style="color: #B0BEC5;">Rekening:</span>
-                                    <span style="font-weight: 600; color: #00BFA5;">${transactionData.account}</span>
-                                </div>
-                                
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                                    <span style="color: #B0BEC5;">Jenis:</span>
-                                    <span style="color: ${transactionData.type === 'DEPOSIT' ? '#00C853' : '#FF5252'}; font-weight: 600;">
-                                        ${transactionData.type === 'DEPOSIT' ? 'Setoran' : 'Penarikan'}
-                                    </span>
-                                </div>
-                                
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span style="color: #B0BEC5;">Tanggal:</span>
-                                    <span>${new Date().toLocaleDateString('id-ID')} ${new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'})}</span>
-                                </div>
-                            </div>
-                            
-                            <div style="font-size: 12px; color: #B0BEC5; text-align: center; padding: 12px; background: rgba(255, 193, 7, 0.1); border-radius: 8px; border-left: 3px solid #FFC107;">
-                                <i class="fas fa-exclamation-triangle"></i> Pastikan data sudah benar. Transaksi tidak dapat dibatalkan.
-                            </div>
-                        </div>
-                        
-                        <div style="padding: 20px; border-top: 1px solid #37474F; display: flex; gap: 12px;">
-                            <button onclick="closeModalAndCancel()" style="flex: 1; background: #37474F; color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600;">
-                                Batal
-                            </button>
-                            <button onclick="closeModalAndConfirm()" style="flex: 1; background: ${transactionData.type === 'DEPOSIT' ? '#00C853' : '#FF5252'}; color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600;">
-                                <i class="fas fa-check"></i> Ya, Kirim
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-                document.body.appendChild(modal);
-                
-                function closeModalAndCancel() {
-                    closeModal();
-                    resolve(false);
-                }
-                
-                function closeModalAndConfirm() {
-                    closeModal();
-                    resolve(true);
-                }
-                
-                document.getElementById('closeModal')?.addEventListener('click', closeModalAndCancel);
-                
-                // Auto focus confirm button
-                setTimeout(() => {
-                    const confirmBtn = modal.querySelector('button[onclick*="closeModalAndConfirm"]');
-                    confirmBtn?.focus();
-                }, 300);
-            });
-        }
-
         function resetFullTransaction() {
-            // Simpan info untuk pesan
             const prevAccount = transactionData.account;
             const prevAmount = transactionData.amount;
             
-            // Reset semua data
             transactionData = {
                 account: '',
                 type: 'DEPOSIT',
@@ -1360,17 +1147,14 @@
             currentStep = 1;
             isProcessing = false;
             
-            // Update UI
             updateTransactionUI();
             
-            // Show reset message if there was a transaction
             if (prevAccount && prevAmount > 0) {
                 setTimeout(() => {
                     showToast(`Transaksi ${prevAccount} senilai ${formatRupiah(prevAmount)} telah selesai. Form direset.`, 'info');
                 }, 100);
             }
             
-            // Auto open account modal setelah reset
             setTimeout(() => {
                 if (currentTab === 'transaksi') {
                     showAccountModal();
@@ -1378,53 +1162,8 @@
             }, 800);
         }
 
-        // ====== ACCOUNT MANAGEMENT ======
-        function renderAccountList() {
-            const container = document.getElementById('accountListContainer');
-            if (!container) return;
-
-            if (accountList.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px 20px; color: #B0BEC5;">
-                        <div style="font-size: 48px; margin-bottom: 16px; color: #37474F;">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div style="margin-bottom: 20px; font-size: 16px;">Belum ada rekening terdaftar</div>
-                        <button id="addFirstAccountBtn" style="background: #00BFA5; color: white; border: none; padding: 12px 24px; border-radius: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 auto;">
-                            <i class="fas fa-plus"></i> Tambah Rekening Pertama
-                        </button>
-                    </div>
-                `;
-                
-                document.getElementById('addFirstAccountBtn')?.addEventListener('click', showAddAccountModal);
-                return;
-            }
-
-            container.innerHTML = accountList.map((account, index) => `
-                <div data-account-name="${account.nama}" style="background: #2A3239; border-radius: 12px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s ease;" 
-                     onmouseover="this.style.transform='translateX(4px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)'" 
-                     onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='none'">
-                    <div style="display: flex; align-items: center;">
-                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #00BFA5, #1A237E); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-weight: 700; font-size: 18px; color: white;">
-                            ${account.nama.charAt(0)}
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600; margin-bottom: 4px;">${account.nama}</div>
-                            <div style="font-size: 12px; color: #B0BEC5;">
-                                <i class="fas fa-hashtag"></i> ${account.id_nasabah || account.nomor_urut || 'ID-' + (index + 1)}
-                            </div>
-                        </div>
-                        <div style="color: #00BFA5;">
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
-            attachAccountEvents();
-        }
-
-        function showAddAccountModal() {
+        // ====== UTILITY FUNCTIONS ======
+        function createModal(title) {
             const modal = document.createElement('div');
             modal.className = 'modal-overlay';
             modal.onclick = (e) => {
@@ -1434,270 +1173,22 @@
             modal.innerHTML = `
                 <div class="modal-content" onclick="event.stopPropagation()">
                     <div style="padding: 20px; border-bottom: 1px solid #37474F; display: flex; justify-content: space-between; align-items: center;">
-                        <h3><i class="fas fa-user-plus"></i> Tambah Rekening Baru</h3>
-                        <button id="closeModal" style="background: none; border: none; color: #B0BEC5; cursor: pointer; padding: 4px; border-radius: 4px;">
+                        <h3>${title}</h3>
+                        <button class="close-modal" style="background: none; border: none; color: #B0BEC5; cursor: pointer; padding: 4px; border-radius: 4px;">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
-                    
-                    <div style="padding: 20px;">
-                        <div style="margin-bottom: 16px;">
-                            <label style="display: block; margin-bottom: 8px; color: #B0BEC5;">Nama Lengkap *</label>
-                            <input type="text" id="newName" style="width: 100%; padding: 12px 16px; border-radius: 12px; background: #2A3239; color: white; border: 2px solid #37474F;" 
-                                   placeholder="Masukkan nama lengkap" autofocus>
-                        </div>
-                        
-                        <div style="margin-bottom: 16px;">
-                            <label style="display: block; margin-bottom: 8px; color: #B0BEC5;">Nomor HP (Opsional)</label>
-                            <input type="tel" id="newPhone" style="width: 100%; padding: 12px 16px; border-radius: 12px; background: #2A3239; color: white; border: 2px solid #37474F;" 
-                                   placeholder="08xxxxxxxxxx">
-                        </div>
-                        
-                        <div style="font-size: 12px; color: #B0BEC5; background: rgba(0, 191, 165, 0.1); padding: 12px; border-radius: 8px; border-left: 3px solid #00BFA5;">
-                            <i class="fas fa-info-circle"></i> Rekening baru akan dibuat dengan saldo awal Rp 0
-                        </div>
-                    </div>
-                    
-                    <div style="padding: 20px; border-top: 1px solid #37474F; display: flex; gap: 12px;">
-                        <button onclick="closeModal()" style="flex: 1; background: #37474F; color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer;">
-                            Batal
-                        </button>
-                        <button onclick="addAccount()" style="flex: 1; background: #00BFA5; color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600;">
-                            <i class="fas fa-save"></i> Simpan
-                        </button>
-                    </div>
+                    <div class="modal-body" style="padding: 20px; max-height: 50vh; overflow-y: auto;"></div>
+                    <div class="modal-footer" style="padding: 20px; border-top: 1px solid #37474F; display: flex; gap: 12px;"></div>
                 </div>
             `;
             
-            document.body.appendChild(modal);
-            document.getElementById('closeModal')?.addEventListener('click', closeModal);
-            document.getElementById('newName')?.focus();
+            // Attach close button event
+            modal.querySelector('.close-modal').addEventListener('click', closeModal);
+            
+            return modal;
         }
 
-        async function addAccount() {
-            const name = document.getElementById('newName')?.value?.trim();
-            
-            if (!name) {
-                showToast('Nama harus diisi', 'error');
-                document.getElementById('newName')?.focus();
-                return;
-            }
-            
-            closeModal();
-            showToast('Menambah rekening...', 'info');
-            
-            try {
-                const phone = document.getElementById('newPhone')?.value?.trim() || '';
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
-                        action: 'addNasabah',
-                        nama: name,
-                        phone: phone
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    showToast('Rekening berhasil ditambah', 'success');
-                    accountList = [];
-                    loadTab('account');
-                } else {
-                    showToast(result.message, 'error');
-                }
-            } catch (error) {
-                showToast('Gagal menambah rekening', 'error');
-            }
-        }
-
-        async function viewAccount(name) {
-            showToast('Memuat data rekening...', 'info');
-            
-            try {
-                const response = await fetch(`${API_URL}?action=getSaldo&nama=${encodeURIComponent(name)}`);
-                const data = await response.json();
-                
-                const modal = document.createElement('div');
-                modal.className = 'modal-overlay';
-                modal.onclick = (e) => {
-                    if (e.target === modal) closeModal();
-                };
-                
-                modal.innerHTML = `
-                    <div class="modal-content" onclick="event.stopPropagation()">
-                        <div style="padding: 20px; border-bottom: 1px solid #37474F; display: flex; justify-content: space-between; align-items: center;">
-                            <h3><i class="fas fa-user-circle"></i> Detail Rekening</h3>
-                            <button onclick="closeModal()" style="background: none; border: none; color: #B0BEC5; cursor: pointer; padding: 4px; border-radius: 4px;">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        
-                        <div style="padding: 20px;">
-                            <div style="text-align: center; margin-bottom: 24px;">
-                                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #00BFA5, #1A237E); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px; font-weight: 700; color: white;">
-                                    ${name.charAt(0)}
-                                </div>
-                                <div style="font-size: 20px; font-weight: 600; margin-bottom: 4px;">${name}</div>
-                                <div style="font-size: 12px; color: #B0BEC5;">Rekening BankFlow</div>
-                            </div>
-                            
-                            <div style="background: linear-gradient(135deg, #1A237E, #283593); border-radius: 12px; padding: 20px; margin-bottom: 16px; text-align: center; box-shadow: 0 4px 20px rgba(26, 35, 126, 0.3);">
-                                <div style="font-size: 12px; color: rgba(255,255,255,0.8); margin-bottom: 8px;">Saldo Saat Ini</div>
-                                <div style="font-size: 28px; font-weight: 700; margin: 8px 0;">
-                                    ${formatRupiah(data.data?.saldo_akhir || 0)}
-                                </div>
-                                <div style="font-size: 11px; color: rgba(255,255,255,0.6);">Update: ${new Date().toLocaleDateString('id-ID')}</div>
-                            </div>
-                            
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                                <div style="background: #2A3239; border-radius: 12px; padding: 16px; text-align: center; border-left: 3px solid #00C853;">
-                                    <div style="font-size: 12px; color: #B0BEC5; margin-bottom: 8px;">
-                                        <i class="fas fa-arrow-down"></i> Total Setor
-                                    </div>
-                                    <div style="font-size: 18px; font-weight: 600; color: #00C853;">
-                                        ${formatRupiah(data.data?.total_setor || 0)}
-                                    </div>
-                                </div>
-                                <div style="background: #2A3239; border-radius: 12px; padding: 16px; text-align: center; border-left: 3px solid #FF5252;">
-                                    <div style="font-size: 12px; color: #B0BEC5; margin-bottom: 8px;">
-                                        <i class="fas fa-arrow-up"></i> Total Tarik
-                                    </div>
-                                    <div style="font-size: 18px; font-weight: 600; color: #FF5252;">
-                                        ${formatRupiah(data.data?.total_tarik || 0)}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div style="padding: 20px; border-top: 1px solid #37474F;">
-                            <button onclick="closeModal()" style="width: 100%; background: #00BFA5; color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600;">
-                                <i class="fas fa-times"></i> Tutup
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-                document.body.appendChild(modal);
-                
-            } catch (error) {
-                showToast('Gagal memuat detail rekening', 'error');
-            }
-        }
-
-        async function viewBalance(name) {
-            if (!name) return;
-            
-            const container = document.getElementById('balanceResult');
-            container.innerHTML = `
-                <div style="text-align: center; padding: 40px 20px;">
-                    <div class="spinner"></div>
-                    <div style="margin-top: 20px; color: #B0BEC5;">Memuat saldo ${name}...</div>
-                </div>
-            `;
-            
-            try {
-                const response = await fetch(`${API_URL}?action=getSaldo&nama=${encodeURIComponent(name)}`);
-                const data = await response.json();
-                
-                if (data.status === 'success') {
-                    const saldo = data.data;
-                    container.innerHTML = `
-                        <div style="background: linear-gradient(135deg, #1A237E, #283593); border-radius: 16px; padding: 24px; color: white; text-align: center; margin-bottom: 20px; box-shadow: 0 8px 32px rgba(26, 35, 126, 0.3);">
-                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                                <i class="fas fa-user"></i> ${name}
-                            </div>
-                            <div style="font-size: 32px; font-weight: 700; margin: 8px 0;">
-                                ${formatRupiah(saldo.saldo_akhir || 0)}
-                            </div>
-                            <div style="font-size: 12px; opacity: 0.7;">Saldo Tersedia</div>
-                        </div>
-                        
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-                            <div style="background: #2A3239; border-radius: 12px; padding: 16px; text-align: center; border-left: 4px solid #00C853;">
-                                <div style="font-size: 12px; color: #B0BEC5; margin-bottom: 8px;">Total Setor</div>
-                                <div style="font-size: 18px; font-weight: 600; color: #00C853;">
-                                    ${formatRupiah(saldo.total_setor || 0)}
-                                </div>
-                            </div>
-                            <div style="background: #2A3239; border-radius: 12px; padding: 16px; text-align: center; border-left: 4px solid #FF5252;">
-                                <div style="font-size: 12px; color: #B0BEC5; margin-bottom: 8px;">Total Tarik</div>
-                                <div style="font-size: 18px; font-weight: 600; color: #FF5252;">
-                                    ${formatRupiah(saldo.total_tarik || 0)}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-            } catch (error) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px 20px; color: #B0BEC5;">
-                        <div style="font-size: 48px; margin-bottom: 16px; color: #FF5252;">
-                            <i class="fas fa-exclamation-circle"></i>
-                        </div>
-                        <div style="font-size: 16px; margin-bottom: 20px;">Gagal memuat saldo</div>
-                    </div>
-                `;
-            }
-        }
-
-        async function loadDashboardData() {
-            try {
-                const response = await fetch(`${API_URL}?action=getAllSaldo`);
-                const data = await response.json();
-                
-                const content = document.getElementById('mainContent');
-                content.innerHTML = `
-                    <div class="card">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                            <h2><i class="fas fa-chart-line"></i> Dashboard</h2>
-                            <button id="refreshDashboard" style="background: none; border: none; color: #00BFA5; cursor: pointer; padding: 8px; border-radius: 8px;" title="Refresh">
-                                <i class="fas fa-redo"></i>
-                            </button>
-                        </div>
-                        
-                        <div style="background: linear-gradient(135deg, #1A237E, #283593); border-radius: 16px; padding: 24px; color: white; text-align: center; margin-bottom: 20px;">
-                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">
-                                <i class="fas fa-university"></i> Total Saldo Bank
-                            </div>
-                            <div style="font-size: 32px; font-weight: 700; margin: 8px 0;">
-                                ${formatRupiah(data.saldo_global || 0)}
-                            </div>
-                            <div style="font-size: 14px;">
-                                <i class="fas fa-users"></i> ${data.total_nasabah || 0} Rekening Aktif
-                            </div>
-                        </div>
-                        
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-                            <div style="background: #2A3239; border-radius: 12px; padding: 16px; text-align: center; border-left: 4px solid #00C853;">
-                                <div style="font-size: 12px; color: #B0BEC5; margin-bottom: 8px;">Total Setor</div>
-                                <div style="font-size: 18px; font-weight: 600; color: #00C853;">
-                                    ${formatRupiah(data.total_setor || 0)}
-                                </div>
-                            </div>
-                            <div style="background: #2A3239; border-radius: 12px; padding: 16px; text-align: center; border-left: 4px solid #FF5252;">
-                                <div style="font-size: 12px; color: #B0BEC5; margin-bottom: 8px;">Total Tarik</div>
-                                <div style="font-size: 18px; font-weight: 600; color: #FF5252;">
-                                    ${formatRupiah(data.total_tarik || 0)}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                document.getElementById('refreshDashboard')?.addEventListener('click', () => {
-                    loadTab('dashboard');
-                });
-                
-            } catch (error) {
-                console.error('Error loading dashboard:', error);
-            }
-        }
-
-        // ====== UTILITY FUNCTIONS ======
         function formatRupiah(amount) {
             if (!amount || isNaN(amount)) amount = 0;
             return 'Rp ' + parseInt(amount).toLocaleString('id-ID');
@@ -1727,6 +1218,62 @@
             if (modal) modal.remove();
         }
 
+        // ====== OTHER TAB FUNCTIONS (simplified) ======
+        function renderDashboardTab() {
+            return `
+                <div class="card">
+                    <h2><i class="fas fa-chart-line"></i> Dashboard</h2>
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <div class="spinner"></div>
+                        <div style="margin-top: 20px; color: #B0BEC5;">Loading dashboard data...</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAccountTab() {
+            return `
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2><i class="fas fa-users"></i> Daftar Rekening</h2>
+                        <button id="addAccountBtn" style="background: #00BFA5; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                            <i class="fas fa-plus"></i> Tambah
+                        </button>
+                    </div>
+                    <div id="accountListContainer">
+                        <div style="text-align: center; padding: 40px 20px; color: #B0BEC5;">
+                            <div class="spinner"></div>
+                            <div style="margin-top: 20px;">Loading rekening...</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderBalanceTab() {
+            return `
+                <div class="card">
+                    <h2><i class="fas fa-wallet"></i> Cek Saldo</h2>
+                    <div style="margin-bottom: 20px;">
+                        <select id="selectAccount" style="width: 100%; padding: 12px 16px; border-radius: 12px; background: #2A3239; color: white; border: 2px solid #37474F; font-size: 14px;">
+                            <option value="">-- Pilih Rekening --</option>
+                            ${accountList.map(acc => `
+                                <option value="${acc.nama}">${acc.nama}</option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    <div id="balanceResult">
+                        <div style="text-align: center; padding: 40px 20px; color: #B0BEC5;">
+                            <div style="font-size: 48px; margin-bottom: 16px; color: #37474F;">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div style="font-size: 16px;">Pilih rekening untuk melihat saldo</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         // ====== INITIALIZATION ======
         function initApp() {
             const style = document.createElement('style');
@@ -1752,16 +1299,14 @@
         window.showAccountModal = showAccountModal;
         window.showTypeModal = showTypeModal;
         window.showAmountModal = showAmountModal;
-        window.selectAccount = selectAccount;
-        window.selectType = selectType;
-        window.confirmType = confirmType;
-        window.setAmount = setAmount;
-        window.saveAmount = saveAmount;
+        window.showConfirmModal = showConfirmModal;
+        window.handleSelectAccount = handleSelectAccount;
+        window.handleSelectType = handleSelectType;
+        window.handleConfirmType = handleConfirmType;
+        window.handleSetAmount = handleSetAmount;
+        window.handleFormatAmount = handleFormatAmount;
+        window.handleSaveAmount = handleSaveAmount;
         window.processTransaction = processTransaction;
-        window.showAddAccountModal = showAddAccountModal;
-        window.addAccount = addAccount;
-        window.viewAccount = viewAccount;
-        window.viewBalance = viewBalance;
         window.resetFullTransaction = resetFullTransaction;
         window.formatRupiah = formatRupiah;
         window.closeModal = closeModal;
