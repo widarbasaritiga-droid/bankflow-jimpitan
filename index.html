@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BankFlow</title>
+    <title>JIMPITAN MANG RESTI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Favicon dan PWA Icons -->
@@ -1000,7 +1000,7 @@
                     </div>
                     
                     <div class="info-card">
-                        <div class="info-label">SALDO GLOBAL BANK</div>
+                        <div class="info-label">SALDO GLOBAL JIMPITAN</div>
                         <div class="info-value">${formatRupiah(state.globalBalance)}</div>
                         <div style="font-size: 13px; color: var(--text-medium); margin-top: 8px;">
                             Total dari ${state.accounts.length} nasabah
@@ -1390,13 +1390,13 @@
                         <input type="email" id="emailNasabah" placeholder="contoh@email.com">
                         
                         <div style="font-size: 12px; color: var(--text-dim); margin-top: 16px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 6px;">
-                            <i class="fas fa-info-circle"></i> Data akan disimpan ke spreadsheet setelah dikonfirmasi
+                            <i class="fas fa-info-circle"></i> Data akan disimpan setelah dikonfirmasi
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button class="modal-btn modal-cancel" onclick="closeModal()">BATAL</button>
                         <button class="modal-btn modal-confirm" onclick="addNasabah()">
-                            <i class="fas fa-save"></i> SIMPAN KE SPREADSHEET
+                            <i class="fas fa-save"></i> SIMPAN KE DATABASE
                         </button>
                     </div>
                 </div>
@@ -1436,7 +1436,7 @@
                 return;
             }
             
-            showToast('Menyimpan data nasabah ke spreadsheet...');
+            showToast('Menyimpan data nasabah ke database...');
             
             try {
                 const res = await fetch(API_URL, {
@@ -1456,7 +1456,7 @@
                 const data = await res.json();
                 
                 if (data.status === 'success') {
-                    showToast('Nasabah berhasil ditambahkan ke spreadsheet!');
+                    showToast('Nasabah berhasil ditambahkan ke database!');
                     closeModal();
                     
                     // Refresh data dan kembali ke halaman rekening
@@ -1467,13 +1467,13 @@
                     showToast('Gagal: ' + (data.message || 'Error'), true);
                 }
             } catch (e) {
-                showToast('Gagal menyimpan data ke spreadsheet', true);
+                showToast('Gagal menyimpan data ke database', true);
             }
         }
         
         // ====== PROSES TRANSAKSI DAN BUAT STRUK ======
         async function processTransaction() {
-            showToast('Menyimpan transaksi ke spreadsheet...');
+            showToast('Menyimpan transaksi ke database...');
             
             try {
                 // Simpan data transaksi untuk digunakan nanti
@@ -1484,7 +1484,7 @@
                     daysCount: calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo)
                 };
                 
-                // Kirim ke spreadsheet
+                // Kirim ke database
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
@@ -1520,7 +1520,7 @@
                 }
             } catch (e) {
                 console.error('Transaction error:', e);
-                showToast('Gagal menyimpan transaksi ke spreadsheet', true);
+                showToast('Gagal menyimpan transaksi ke database', true);
                 // Reset processing state jika error
                 state.isProcessing = false;
                 updateTransactionButton();
@@ -1574,8 +1574,8 @@
             
             return `
                 <div class="receipt-header">
-                    <div class="receipt-title">BANKFLOW</div>
-                    <div class="receipt-subtitle">Digital Banking System</div>
+                    <div class="receipt-title">JIMPITAN MANG RESTI</div>
+                    <div class="receipt-subtitle">Digital Jimpitan System</div>
                     <div style="font-size: 12px; color: #666;">Jl. Digital No. 123, Jakarta</div>
                 </div>
                 
@@ -1619,7 +1619,7 @@
                 <div class="receipt-footer">
                     <div style="margin-bottom: 10px;">Terima kasih atas kepercayaan Anda</div>
                     <div style="font-size: 10px;">* Transaksi ini telah tercatat di sistem</div>
-                    <div style="font-size: 10px;">** Struk digital sah sebagai bukti transaksi</div>
+                    <div style="font-size: 10px;">** Padang Bulia</div>
                 </div>
             `;
         }
@@ -1629,9 +1629,9 @@
             const trans = state.lastTransactionData;
             
             // Buat pesan untuk WhatsApp
-            const message = `📋 *STRUK TRANSAKSI BANKFLOW*
+            const message = `📋 *STRUK TRANSAKSI JIMPITAN*
 
-🏦 *BankFlow Digital Banking*
+🏦 *Jimpitan Digital Banking*
 📅 *Tanggal:* ${new Date().toLocaleDateString('id-ID')}
 ⏰ *Waktu:* ${new Date().toLocaleTimeString('id-ID')}
 
@@ -1642,7 +1642,7 @@
 📅 *Periode:* ${formatDateDisplay(trans.dateFrom)} - ${formatDateDisplay(trans.dateTo)}
 📆 *Durasi:* ${trans.daysCount} Hari
 
-_Transaksi ini telah tercatat di sistem BankFlow._
+_Transaksi ini telah tercatat di sistem._
 _Terima kasih atas kepercayaan Anda._`;
             
             // Encode message untuk URL
