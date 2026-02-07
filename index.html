@@ -674,490 +674,493 @@
             margin-top: 10px;
         }
 
-/* Animasi efek kilauan utama */
-@keyframes shimmer3D {
-    0% {
-        transform: translateX(-100%) skewX(-15deg);
-    }
-    100% {
-        transform: translateX(200%) skewX(-15deg);
-    }
-}
+        /* ====== EFEK KILAUAN 3D UNTUK SEMUA TOMBOL ====== */
 
-@keyframes borderGlow {
-    0%, 100% {
-        opacity: 0.3;
-    }
-    50% {
-        opacity: 0.8;
-    }
-}
+        /* Animasi efek kilauan utama */
+        @keyframes shimmer3D {
+            0% {
+                transform: translateX(-100%) skewX(-15deg);
+            }
+            100% {
+                transform: translateX(200%) skewX(-15deg);
+            }
+        }
 
-/* Tombol utama (btn) */
-.btn {
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-    box-shadow: 
-        0 4px 12px rgba(27, 94, 32, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
+        @keyframes borderGlow {
+            0%, 100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
 
-.btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.4),
-        rgba(255, 255, 255, 0.6),
-        rgba(255, 255, 255, 0.4),
-        transparent
-    );
-    animation: shimmer3D 2.5s infinite;
-    z-index: 1;
-}
+        /* Tombol utama (btn) */
+        .btn {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 
+                0 4px 12px rgba(27, 94, 32, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
 
-.btn::after {
-    content: '';
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    right: 1px;
-    height: 30%;
-    background: linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0.1),
-        transparent
-    );
-    border-radius: 7px 7px 0 0;
-    pointer-events: none;
-    z-index: 1;
-}
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.4),
+                rgba(255, 255, 255, 0.6),
+                rgba(255, 255, 255, 0.4),
+                transparent
+            );
+            animation: shimmer3D 2.5s infinite;
+            z-index: 1;
+        }
 
-/* Tombol amount */
-.amount-btn {
-    position: relative;
-    overflow: hidden;
-    box-shadow: 
-        inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        0 2px 4px rgba(0, 0, 0, 0.2);
-}
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            right: 1px;
+            height: 30%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            border-radius: 7px 7px 0 0;
+            pointer-events: none;
+            z-index: 1;
+        }
 
-.amount-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 40%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.2),
-        rgba(255, 255, 255, 0.3),
-        rgba(255, 255, 255, 0.2),
-        transparent
-    );
-    animation: shimmer3D 3s infinite 0.5s;
-    z-index: 1;
-}
+        /* Tombol amount */
+        .amount-btn {
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 2px 4px rgba(0, 0, 0, 0.2);
+        }
 
-.amount-btn::after {
-    content: '';
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    right: 1px;
-    height: 25%;
-    background: linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0.08),
-        transparent
-    );
-    border-radius: 6px 6px 0 0;
-    pointer-events: none;
-    z-index: 1;
-}
+        .amount-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                rgba(255, 255, 255, 0.3),
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            animation: shimmer3D 3s infinite 0.5s;
+            z-index: 1;
+        }
 
-/* Tombol type selector */
-.type-btn {
-    position: relative;
-    overflow: hidden;
-    box-shadow: 
-        inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        0 2px 4px rgba(0, 0, 0, 0.1);
-}
+        .amount-btn::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            right: 1px;
+            height: 25%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.08),
+                transparent
+            );
+            border-radius: 6px 6px 0 0;
+            pointer-events: none;
+            z-index: 1;
+        }
 
-.type-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 35%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.15),
-        rgba(255, 255, 255, 0.25),
-        rgba(255, 255, 255, 0.15),
-        transparent
-    );
-    animation: shimmer3D 3.5s infinite 1s;
-    z-index: 1;
-}
+        /* Tombol type selector */
+        .type-btn {
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+        }
 
-.type-btn::after {
-    content: '';
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    right: 1px;
-    height: 25%;
-    background: linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0.08),
-        transparent
-    );
-    border-radius: 6px 6px 0 0;
-    pointer-events: none;
-    z-index: 1;
-}
+        .type-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 35%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.15),
+                rgba(255, 255, 255, 0.25),
+                rgba(255, 255, 255, 0.15),
+                transparent
+            );
+            animation: shimmer3D 3.5s infinite 1s;
+            z-index: 1;
+        }
 
-.type-btn.active::before {
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.25),
-        rgba(255, 255, 255, 0.4),
-        rgba(255, 255, 255, 0.25),
-        transparent
-    );
-    animation-duration: 2s;
-}
+        .type-btn::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            right: 1px;
+            height: 25%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.08),
+                transparent
+            );
+            border-radius: 6px 6px 0 0;
+            pointer-events: none;
+            z-index: 1;
+        }
 
-.type-btn.active::after {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    border-radius: 10px;
-    background: linear-gradient(45deg, 
-        transparent, 
-        rgba(255, 255, 255, 0.1), 
-        transparent, 
-        rgba(255, 255, 255, 0.1), 
-        transparent);
-    z-index: 0;
-    animation: borderGlow 2s linear infinite;
-}
+        .type-btn.active::before {
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.25),
+                rgba(255, 255, 255, 0.4),
+                rgba(255, 255, 255, 0.25),
+                transparent
+            );
+            animation-duration: 2s;
+        }
 
-.type-btn.setor.active {
-    box-shadow: 
-        inset 0 1px 0 rgba(255, 255, 255, 0.2),
-        0 0 0 1px rgba(27, 94, 32, 0.3),
-        0 3px 8px rgba(27, 94, 32, 0.4);
-}
+        .type-btn.active::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 10px;
+            background: linear-gradient(45deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.1), 
+                transparent, 
+                rgba(255, 255, 255, 0.1), 
+                transparent);
+            z-index: 0;
+            animation: borderGlow 2s linear infinite;
+        }
 
-.type-btn.tarik.active {
-    box-shadow: 
-        inset 0 1px 0 rgba(255, 255, 255, 0.2),
-        0 0 0 1px rgba(198, 40, 40, 0.3),
-        0 3px 8px rgba(198, 40, 40, 0.4);
-}
+        .type-btn.setor.active {
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 0 1px rgba(27, 94, 32, 0.3),
+                0 3px 8px rgba(27, 94, 32, 0.4);
+        }
 
-/* Tombol navigasi */
-.nav-btn {
-    position: relative;
-    overflow: hidden;
-}
+        .type-btn.tarik.active {
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 0 1px rgba(198, 40, 40, 0.3),
+                0 3px 8px rgba(198, 40, 40, 0.4);
+        }
 
-.nav-btn.active::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 30%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.2),
-        rgba(255, 255, 255, 0.3),
-        rgba(255, 255, 255, 0.2),
-        transparent
-    );
-    animation: shimmer3D 4s infinite;
-    z-index: 1;
-}
+        /* Tombol navigasi */
+        .nav-btn {
+            position: relative;
+            overflow: hidden;
+        }
 
-.nav-btn.active::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.4),
-        transparent
-    );
-    animation: shimmer3D 2s infinite;
-}
+        .nav-btn.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 30%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                rgba(255, 255, 255, 0.3),
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            animation: shimmer3D 4s infinite;
+            z-index: 1;
+        }
 
-/* Tombol modal */
-.modal-btn {
-    position: relative;
-    overflow: hidden;
-    box-shadow: 
-        inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        0 2px 4px rgba(0, 0, 0, 0.2);
-}
+        .nav-btn.active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.4),
+                transparent
+            );
+            animation: shimmer3D 2s infinite;
+        }
 
-.modal-confirm::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 45%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.25),
-        rgba(255, 255, 255, 0.4),
-        rgba(255, 255, 255, 0.25),
-        transparent
-    );
-    animation: shimmer3D 2.8s infinite;
-    z-index: 1;
-}
+        /* Tombol modal */
+        .modal-btn {
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 2px 4px rgba(0, 0, 0, 0.2);
+        }
 
-.modal-cancel::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 40%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.15),
-        rgba(255, 255, 255, 0.25),
-        rgba(255, 255, 255, 0.15),
-        transparent
-    );
-    animation: shimmer3D 3.2s infinite 0.8s;
-    z-index: 1;
-}
+        .modal-confirm::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 45%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.25),
+                rgba(255, 255, 255, 0.4),
+                rgba(255, 255, 255, 0.25),
+                transparent
+            );
+            animation: shimmer3D 2.8s infinite;
+            z-index: 1;
+        }
 
-.modal-btn::after {
-    content: '';
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    right: 1px;
-    height: 30%;
-    background: linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0.1),
-        transparent
-    );
-    border-radius: 7px 7px 0 0;
-    pointer-events: none;
-    z-index: 1;
-}
+        .modal-cancel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.15),
+                rgba(255, 255, 255, 0.25),
+                rgba(255, 255, 255, 0.15),
+                transparent
+            );
+            animation: shimmer3D 3.2s infinite 0.8s;
+            z-index: 1;
+        }
 
-/* Tombol add account */
-.add-account-btn {
-    position: relative;
-    overflow: hidden;
-    box-shadow: 
-        0 4px 12px rgba(27, 94, 32, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
+        .modal-btn::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            right: 1px;
+            height: 30%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            border-radius: 7px 7px 0 0;
+            pointer-events: none;
+            z-index: 1;
+        }
 
-.add-account-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.25),
-        rgba(255, 255, 255, 0.4),
-        rgba(255, 255, 255, 0.25),
-        transparent
-    );
-    animation: shimmer3D 3s infinite 0.3s;
-    z-index: 1;
-}
+        /* Tombol add account */
+        .add-account-btn {
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 12px rgba(27, 94, 32, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
 
-.add-account-btn::after {
-    content: '';
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    right: 1px;
-    height: 30%;
-    background: linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0.1),
-        transparent
-    );
-    border-radius: 7px 7px 0 0;
-    pointer-events: none;
-    z-index: 1;
-}
+        .add-account-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.25),
+                rgba(255, 255, 255, 0.4),
+                rgba(255, 255, 255, 0.25),
+                transparent
+            );
+            animation: shimmer3D 3s infinite 0.3s;
+            z-index: 1;
+        }
 
-/* Tombol install PWA */
-button[onclick*="installPWA"] {
-    position: relative;
-    overflow: hidden;
-    box-shadow: 
-        0 3px 8px rgba(255, 152, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
+        .add-account-btn::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            right: 1px;
+            height: 30%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            border-radius: 7px 7px 0 0;
+            pointer-events: none;
+            z-index: 1;
+        }
 
-button[onclick*="installPWA"]::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 45%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.3),
-        rgba(255, 255, 255, 0.5),
-        rgba(255, 255, 255, 0.3),
-        transparent
-    );
-    animation: shimmer3D 2.7s infinite 0.6s;
-    z-index: 1;
-}
+        /* Tombol install PWA */
+        button[onclick*="installPWA"] {
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 3px 8px rgba(255, 152, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
 
-button[onclick*="installPWA"]::after {
-    content: '';
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    right: 1px;
-    height: 30%;
-    background: linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0.1),
-        transparent
-    );
-    border-radius: 7px 7px 0 0;
-    pointer-events: none;
-    z-index: 1;
-}
+        button[onclick*="installPWA"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 45%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                rgba(255, 255, 255, 0.5),
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            animation: shimmer3D 2.7s infinite 0.6s;
+            z-index: 1;
+        }
 
-/* Memastikan teks dan ikon tetap di atas efek kilauan */
-.btn > *,
-.amount-btn > *,
-.type-btn > *,
-.nav-btn > *,
-.modal-btn > *,
-.add-account-btn > *,
-button[onclick*="installPWA"] > * {
-    position: relative;
-    z-index: 2;
-}
+        button[onclick*="installPWA"]::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            right: 1px;
+            height: 30%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            border-radius: 7px 7px 0 0;
+            pointer-events: none;
+            z-index: 1;
+        }
 
-/* Menonaktifkan efek kilauan saat tombol disabled */
-.btn:disabled::before,
-.amount-btn:disabled::before,
-.type-btn:disabled::before,
-.modal-btn:disabled::before,
-.add-account-btn:disabled::before,
-button[onclick*="installPWA"]:disabled::before,
-.btn:disabled::after,
-.amount-btn:disabled::after,
-.type-btn:disabled::after,
-.modal-btn:disabled::after,
-.add-account-btn:disabled::after,
-button[onclick*="installPWA"]:disabled::after {
-    display: none;
-    animation: none;
-}
+        /* Memastikan teks dan ikon tetap di atas efek kilauan */
+        .btn > *,
+        .amount-btn > *,
+        .type-btn > *,
+        .nav-btn > *,
+        .modal-btn > *,
+        .add-account-btn > *,
+        button[onclick*="installPWA"] > * {
+            position: relative;
+            z-index: 2;
+        }
 
-/* Efek hover dengan kilauan lebih intens */
-.btn:hover:not(:disabled)::before,
-.add-account-btn:hover::before,
-.modal-confirm:hover::before {
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.4),
-        rgba(255, 255, 255, 0.7),
-        rgba(255, 255, 255, 0.4),
-        transparent
-    );
-    animation-duration: 1.5s;
-}
+        /* Menonaktifkan efek kilauan saat tombol disabled */
+        .btn:disabled::before,
+        .amount-btn:disabled::before,
+        .type-btn:disabled::before,
+        .modal-btn:disabled::before,
+        .add-account-btn:disabled::before,
+        button[onclick*="installPWA"]:disabled::before,
+        .btn:disabled::after,
+        .amount-btn:disabled::after,
+        .type-btn:disabled::after,
+        .modal-btn:disabled::after,
+        .add-account-btn:disabled::after,
+        button[onclick*="installPWA"]:disabled::after {
+            display: none;
+            animation: none;
+        }
 
-.amount-btn:hover:not(:disabled)::before,
-.type-btn:hover:not(:disabled)::before {
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.25),
-        rgba(255, 255, 255, 0.35),
-        rgba(255, 255, 255, 0.25),
-        transparent
-    );
-    animation-duration: 2s;
-}
+        /* Efek hover dengan kilauan lebih intens */
+        .btn:hover:not(:disabled)::before,
+        .add-account-btn:hover::before,
+        .modal-confirm:hover::before {
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.4),
+                rgba(255, 255, 255, 0.7),
+                rgba(255, 255, 255, 0.4),
+                transparent
+            );
+            animation-duration: 1.5s;
+        }
 
-/* Efek tombol processing */
-.btn.processing::before {
-    animation: none;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.1),
-        rgba(255, 255, 255, 0.15),
-        rgba(255, 255, 255, 0.1),
-        transparent
-    );
-}
+        .amount-btn:hover:not(:disabled)::before,
+        .type-btn:hover:not(:disabled)::before {
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.25),
+                rgba(255, 255, 255, 0.35),
+                rgba(255, 255, 255, 0.25),
+                transparent
+            );
+            animation-duration: 2s;
+        }
 
-/* Responsive adjustments untuk efek kilauan */
-@media (max-width: 480px) {
-    .btn::before,
-    .amount-btn::before,
-    .type-btn::before,
-    .modal-btn::before,
-    .add-account-btn::before,
-    button[onclick*="installPWA"]::before {
-        animation-duration: 3s;
-    }
-    
-    .btn::after,
-    .amount-btn::after,
-    .type-btn::after,
-    .modal-btn::after,
-    .add-account-btn::after,
-    button[onclick*="installPWA"]::after {
-        height: 25%;
-    }
-}
+        /* Efek tombol processing */
+        .btn.processing::before {
+            animation: none;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0.15),
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+        }
+
+        /* Responsive adjustments untuk efek kilauan */
+        @media (max-width: 480px) {
+            .btn::before,
+            .amount-btn::before,
+            .type-btn::before,
+            .modal-btn::before,
+            .add-account-btn::before,
+            button[onclick*="installPWA"]::before {
+                animation-duration: 3s;
+            }
+            
+            .btn::after,
+            .amount-btn::after,
+            .type-btn::after,
+            .modal-btn::after,
+            .add-account-btn::after,
+            button[onclick*="installPWA"]::after {
+                height: 25%;
+            }
+        }
+
         /* RESPONSIVE */
         @media (max-width: 480px) {
             .amount-grid {
