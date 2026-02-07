@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a192f">
+    <script>
+        // Redirect semua 404 ke index.html
+        sessionStorage.redirect = location.pathname;
+        
+        // Redirect ke root dengan hash routing
+        const path = window.location.pathname;
+        
+        if (path === '/' || path === '/index.html') {
+            // Jika sudah di root, tetap di root
+            window.location.href = '/';
+        } else {
+            // Simpan path asli dan redirect ke root
+            localStorage.setItem('pwa-redirect-path', path);
+            window.location.href = '/';
+        }
+    </script>
+</head>
+<body>
+    <div style="text-align: center; padding: 50px; font-family: sans-serif;">
+        <h1>Mengalihkan ke aplikasi...</h1>
+        <p>Jika tidak redirect otomatis, <a href="/">klik di sini</a></p>
+    </div>
+</body>
+</html>
