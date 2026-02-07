@@ -1,7 +1,7 @@
 {
   "name": "JIMPITAN MANG RESTI",
   "short_name": "Jimpitan",
-  "description": "Sistem Digital Jimpitan Mang Resti",
+  "description": "Jimpitan Digital System Mang Resti",
   "start_url": "/bankflow-jimpitan/index.html",
   "scope": "/bankflow-jimpitan/",
   "display": "standalone",
