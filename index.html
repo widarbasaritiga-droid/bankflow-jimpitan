@@ -673,7 +673,360 @@
             font-weight: bold;
             margin-top: 10px;
         }
-        
+        /* ====== EFEK KILAUAN SINAR CERMIN UNTUK SEMUA TOMBOL ====== */
+
+/* Efek untuk tombol utama (btn) */
+.btn {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-light) 100%);
+    color: white;
+    border: none;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 8px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
+    z-index: 1;
+}
+
+/* Efek kilauan untuk tombol utama */
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        rgba(255, 255, 255, 0.5),
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    transform: skewX(-25deg);
+    animation: shineEffect 2.5s infinite ease-in-out;
+    z-index: 1;
+}
+
+/* Efek untuk tombol amount (quick amount buttons) */
+.amount-btn {
+    position: relative;
+    overflow: hidden;
+    padding: 16px 8px;
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.15);
+    color: var(--text-light);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+/* Efek kilauan untuk tombol amount */
+.amount-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        rgba(255, 255, 255, 0.3),
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transform: skewX(-20deg);
+    animation: shineEffect 3s infinite ease-in-out;
+    z-index: 1;
+}
+
+/* Efek untuk tombol type selector (setor/tarik) */
+.type-btn {
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    padding: 14px;
+    border: 2px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05);
+    color: var(--text-light);
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.2s;
+}
+
+/* Efek kilauan untuk tombol type */
+.type-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.15),
+        rgba(255, 255, 255, 0.25),
+        rgba(255, 255, 255, 0.15),
+        transparent
+    );
+    transform: skewX(-15deg);
+    animation: shineEffect 3.5s infinite ease-in-out;
+    z-index: 1;
+}
+
+/* Efek untuk tombol nav (navigation) */
+.nav-btn {
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    font-size: 11px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+/* Efek kilauan untuk tombol nav saat active */
+.nav-btn.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 30%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        rgba(255, 255, 255, 0.3),
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transform: skewX(-10deg);
+    animation: shineEffect 4s infinite ease-in-out;
+    z-index: 1;
+}
+
+/* Efek untuk tombol modal */
+.modal-btn {
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.modal-confirm::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.25),
+        rgba(255, 255, 255, 0.4),
+        rgba(255, 255, 255, 0.25),
+        transparent
+    );
+    transform: skewX(-20deg);
+    animation: shineEffect 2.8s infinite ease-in-out;
+    z-index: 1;
+}
+
+.modal-cancel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.15),
+        rgba(255, 255, 255, 0.25),
+        rgba(255, 255, 255, 0.15),
+        transparent
+    );
+    transform: skewX(-15deg);
+    animation: shineEffect 3.2s infinite ease-in-out 1s;
+    z-index: 1;
+}
+
+/* Efek untuk tombol add account */
+.add-account-btn {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-light) 100%);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    width: 100%;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.add-account-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.25),
+        rgba(255, 255, 255, 0.4),
+        rgba(255, 255, 255, 0.25),
+        transparent
+    );
+    transform: skewX(-20deg);
+    animation: shineEffect 3s infinite ease-in-out;
+    z-index: 1;
+}
+
+/* Efek untuk tombol install PWA */
+button[onclick*="installPWA"] {
+    position: relative;
+    overflow: hidden;
+    background: var(--yellow);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button[onclick*="installPWA"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        rgba(255, 255, 255, 0.5),
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    transform: skewX(-15deg);
+    animation: shineEffect 2.7s infinite ease-in-out;
+    z-index: 1;
+}
+
+/* Animasi efek kilauan */
+@keyframes shineEffect {
+    0% {
+        left: -100%;
+    }
+    20% {
+        left: 150%;
+    }
+    100% {
+        left: 150%;
+    }
+}
+
+/* Memastikan teks dan ikon tetap di atas efek kilauan */
+.btn span, .btn i,
+.amount-btn span, .amount-btn i,
+.type-btn span, .type-btn i,
+.nav-btn span, .nav-btn i,
+.modal-btn span, .modal-btn i,
+.add-account-btn span, .add-account-btn i,
+button[onclick*="installPWA"] span, button[onclick*="installPWA"] i {
+    position: relative;
+    z-index: 2;
+}
+
+/* Menonaktifkan efek kilauan saat tombol disabled */
+.btn:disabled::before,
+.amount-btn:disabled::before,
+.type-btn:disabled::before,
+.modal-btn:disabled::before,
+.add-account-btn:disabled::before {
+    display: none;
+    animation: none;
+}
+
+/* Efek kilauan saat tombol dalam mode processing */
+.btn.processing::before {
+    animation: none;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.15),
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+}
+
+/* Efek hover yang lebih halus dengan kilauan */
+.btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(27, 94, 32, 0.4);
+}
+
+.amount-btn:hover:not(:disabled) {
+    background: rgba(76, 175, 80, 0.2);
+    border-color: var(--green-light);
+    transform: translateY(-1px);
+}
+
+.type-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-1px);
+}
+
+.add-account-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
+}
         /* RESPONSIVE */
         @media (max-width: 480px) {
             .amount-grid {
