@@ -1,23 +1,23 @@
-# BankFlow - Sistem Jimpitan Galungan Digital
+# JIMPITAN MANG RESTI - Sistem Digital Jimpitan
 
-![BankFlow Banner](assets/banner.png)
+Aplikasi Progressive Web App (PWA) untuk manajemen jimpitan digital dengan fitur lengkap.
 
-Sistem digital untuk mengelola jimpitan Galungan dengan potongan tetap 4.76%, dilengkapi notifikasi WhatsApp dan Telegram.
+## Fitur Utama
 
-## ✨ Fitur Utama
+1. **Manajemen Transaksi**: Setor dan tarik dana jimpitan
+2. **Dashboard Real-time**: Monitoring saldo global
+3. **Manajemen Nasabah**: Tambah dan kelola data nasabah
+4. **Cek Saldo**: Cek saldo per nasabah
+5. **Struk Digital**: Generate struk transaksi dalam format PNG
+6. **WhatsApp Integration**: Kirim struk langsung ke WhatsApp
+7. **PWA Support**: Bisa diinstall di smartphone (Android/iOS)
 
-- ✅ **Sistem Jimpitan 4.76%** - Perhitungan otomatis potongan
-- ✅ **WhatsApp Notifikasi** - Kirim struk PNG ke nasabah
-- ✅ **Telegram Admin** - File TXT lengkap untuk admin
-- ✅ **PWA Support** - Install sebagai aplikasi native
-- ✅ **Offline Mode** - Bisa kerja tanpa internet
-- ✅ **Auto Sync** - Sinkronisasi data otomatis
-- ✅ **Push Notification** - Notifikasi real-time
+## Teknologi yang Digunakan
 
-## 🚀 Deployment
+- **HTML5**, **CSS3**, **JavaScript (ES6+)**
+- **PWA**: Service Workers, Web App Manifest
+- **HTML2Canvas**: Untuk generate struk PNG
+- **Google Apps Script**: Backend API
+- **Responsive Design**: Mobile-first approach
 
-### 1. Deploy ke GitHub Pages
-```bash
-git clone https://github.com/username/bankflow-jimpitan.git
-cd bankflow-jimpitan
-# Upload semua file ke repository
+## Struktur File
