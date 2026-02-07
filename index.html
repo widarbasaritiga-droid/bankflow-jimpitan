@@ -164,7 +164,7 @@
             to { transform: rotate(360deg); }
         }
         
-        /* INPUTS - FIXED CONTRAST */
+        /* INPUTS */
         input, select, textarea {
             width: 100%;
             padding: 14px 12px;
@@ -178,7 +178,6 @@
         }
         input::placeholder, select::placeholder, textarea::placeholder {
             color: rgba(255, 255, 255, 0.6);
-            opacity: 0.8;
         }
         input:focus, select:focus, textarea:focus {
             outline: none;
@@ -187,11 +186,8 @@
             box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
         }
         
-        /* SELECT DROPDOWN FIX */
+        /* SELECT DROPDOWN */
         select {
-            background: rgba(255, 255, 255, 0.12);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            color: #ffffff;
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ffffff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
@@ -199,13 +195,8 @@
             background-size: 16px;
             padding-right: 36px;
         }
-        select option {
-            background: #1a237e;
-            color: #ffffff;
-            padding: 10px;
-        }
         
-        /* DATE ROW WITH DAYS COUNT */
+        /* DATE ROW */
         .date-row {
             display: flex;
             gap: 12px;
@@ -250,7 +241,7 @@
             border-radius: 0 8px 0 4px;
         }
         
-        /* TRANSACTION INFO DISPLAY */
+        /* TRANSACTION INFO */
         .transaction-info-container {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 12px;
@@ -304,7 +295,7 @@
             background: linear-gradient(135deg, var(--red) 0%, #ef5350 100%);
         }
         
-        /* AMOUNT INPUT CONTAINER - FIXED */
+        /* AMOUNT INPUT */
         .amount-input-container {
             position: relative;
             margin-bottom: 20px;
@@ -331,13 +322,8 @@
             text-align: center;
             letter-spacing: 1px;
         }
-        .amount-input:focus {
-            outline: none;
-            border-color: var(--green-light);
-            background: rgba(255, 255, 255, 0.18);
-        }
         
-        /* AMOUNT BUTTONS WITH LABELS */
+        /* AMOUNT BUTTONS */
         .amount-section {
             margin-bottom: 20px;
         }
@@ -380,7 +366,6 @@
         .amount-btn:hover { 
             background: rgba(76, 175, 80, 0.2);
             border-color: var(--green-light);
-            transform: translateY(-1px);
         }
         .amount-btn-label {
             position: absolute;
@@ -418,7 +403,6 @@
         .type-btn.active {
             border-color: var(--green-dark);
             color: white;
-            transform: translateY(-1px);
         }
         .type-btn.setor.active { 
             background: rgba(27, 94, 32, 0.25);
@@ -455,10 +439,6 @@
             display: flex;
             align-items: center;
             gap: 14px;
-            transition: all 0.2s;
-        }
-        .account-item:hover {
-            background: rgba(255,255,255,0.05);
         }
         .account-item:last-child { border-bottom: none; }
         .account-avatar {
@@ -576,11 +556,6 @@
             margin-bottom: 16px;
             width: 100%;
             justify-content: center;
-            transition: all 0.3s;
-        }
-        .add-account-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
         }
         
         /* FORM LABELS */
@@ -592,7 +567,7 @@
             font-weight: 500;
         }
         
-        /* RECEIPT STYLING - HIDDEN */
+        /* RECEIPT STYLING */
         .receipt-container {
             position: fixed;
             top: -9999px;
@@ -605,57 +580,6 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             font-family: 'Courier New', monospace;
         }
-        .receipt-header {
-            text-align: center;
-            border-bottom: 2px solid #000;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-        .receipt-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #1a237e;
-        }
-        .receipt-subtitle {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-        .receipt-details {
-            margin-bottom: 20px;
-        }
-        .receipt-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            padding-bottom: 8px;
-            border-bottom: 1px dashed #ddd;
-        }
-        .receipt-label {
-            font-weight: bold;
-            color: #333;
-        }
-        .receipt-value {
-            font-weight: 600;
-        }
-        .receipt-total {
-            font-size: 20px;
-            font-weight: bold;
-            text-align: center;
-            padding: 15px;
-            background: #f5f5f5;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        .receipt-footer {
-            text-align: center;
-            color: #666;
-            font-size: 12px;
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 2px solid #000;
-        }
         
         /* RESPONSIVE */
         @media (max-width: 480px) {
@@ -664,10 +588,6 @@
             }
             .content {
                 padding: 70px 12px 70px;
-            }
-            .receipt-container {
-                width: 350px;
-                padding: 20px;
             }
         }
         
@@ -687,10 +607,6 @@
             justify-content: center;
             width: 100%;
         }
-        .install-btn-container {
-            margin-top: 15px;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
@@ -699,7 +615,7 @@
     </div>
     
     <div class="content" id="content">
-        <!-- Content loaded here -->
+        <!-- Content akan diload di sini -->
     </div>
     
     <div class="nav">
@@ -721,20 +637,19 @@
         </button>
     </div>
 
-    <!-- Hidden receipt container for PNG generation -->
+    <!-- Hidden receipt container -->
     <div id="receiptContainer" class="receipt-container"></div>
 
     <script>
-        // ====== KONFIGURASI API ======
+        // ====== KONFIGURASI ======
         const API_URL = 'https://script.google.com/macros/s/AKfycbzg2VbfzX6Wdmo0DJkPY9noOhBZlRmXvgzuhLMpqfseste6Yi2P1KeLOFSvf-HM0Fn3/exec';
         
-        // ====== STATE GLOBAL ======
+        // ====== STATE ======
         let state = {
             tab: 'transaksi',
             accounts: [],
             globalBalance: 0,
             isProcessing: false,
-            isGeneratingReceipt: false,
             transaction: {
                 account: '',
                 type: 'SETOR',
@@ -747,13 +662,8 @@
             isAppInstalled: false
         };
         
-        // ====== INISIALISASI APLIKASI ======
+        // ====== INISIALISASI ======
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('JIMPITAN MANG RESTI App Initialized');
-            
-            // Cek apakah aplikasi sudah terinstal
-            checkIfAppInstalled();
-            
             // Setup navigation
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -764,108 +674,72 @@
                 });
             });
             
-            // Load initial data and show transaction tab
+            // Load data
             loadData();
             loadTab('transaksi');
             
             // PWA Install Prompt
             window.addEventListener('beforeinstallprompt', (e) => {
-                console.log('PWA install prompt available');
                 e.preventDefault();
                 state.deferredPrompt = e;
-                
-                // Tampilkan tombol instal hanya jika belum terinstal
                 if (!state.isAppInstalled) {
                     showInstallButton();
                 }
             });
             
-            // Deteksi saat aplikasi dijalankan dalam mode standalone (sudah terinstal)
-            window.addEventListener('appinstalled', (e) => {
-                console.log('PWA was installed');
+            // PWA Installed Event
+            window.addEventListener('appinstalled', () => {
                 state.isAppInstalled = true;
                 localStorage.setItem('pwa_installed', 'true');
                 hideInstallButton();
-                showToast('Aplikasi berhasil diinstal!', false);
             });
             
-            // Register Service Worker untuk PWA
+            // Register Service Worker
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('sw.js')
-                    .then(registration => {
-                        console.log('Service Worker registered:', registration);
-                    })
                     .catch(error => {
-                        console.log('Service Worker registration failed:', error);
+                        console.log('Service Worker gagal:', error);
                     });
             }
+            
+            // Check if app is installed
+            checkIfAppInstalled();
         });
         
-        // ====== FUNGSI UNTUK MENGECEK STATUS INSTALASI ======
+        // ====== FUNGSI UTAMA ======
         function checkIfAppInstalled() {
-            // Method 1: Check display mode
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-            const isFullscreen = window.matchMedia('(display-mode: fullscreen)').matches;
-            const isMinimalUI = window.matchMedia('(display-mode: minimal-ui)').matches;
-            
-            if (isStandalone || isFullscreen || isMinimalUI) {
-                state.isAppInstalled = true;
-                localStorage.setItem('pwa_installed', 'true');
-                return;
-            }
-            
-            // Method 2: Check for iOS standalone mode
-            if (window.navigator.standalone === true) {
-                state.isAppInstalled = true;
-                localStorage.setItem('pwa_installed', 'true');
-                return;
-            }
-            
-            // Method 3: Check localStorage
-            const installedStatus = localStorage.getItem('pwa_installed');
-            if (installedStatus === 'true') {
+            const installed = localStorage.getItem('pwa_installed');
+            if (installed === 'true') {
                 state.isAppInstalled = true;
             }
-            
-            console.log('App installed status:', state.isAppInstalled);
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                state.isAppInstalled = true;
+            }
         }
         
-        // ====== LOAD DATA DARI API ======
         async function loadData() {
             try {
-                console.log('Loading data from API...');
-                showToast('Memuat data...');
-                
-                // Load nasabah data
+                // Load accounts
                 const res = await fetch(`${API_URL}?action=getNasabah`);
                 const data = await res.json();
                 state.accounts = data.data || [];
-                console.log('Accounts loaded:', state.accounts.length);
                 
-                // Load global balance
+                // Load balance
                 const balanceRes = await fetch(`${API_URL}?action=getAllSaldo`);
                 const balanceData = await balanceRes.json();
                 state.globalBalance = balanceData.saldo_global || 0;
-                console.log('Global balance:', state.globalBalance);
                 
-                // Render current tab
                 renderTab();
-                
-                showToast('Data berhasil dimuat');
             } catch (e) {
-                console.error('Load error:', e);
                 showToast('Gagal memuat data', true);
             }
         }
         
-        // ====== LOAD TAB ======
-        async function loadTab(tab) {
+        function loadTab(tab) {
             state.tab = tab;
-            console.log('Loading tab:', tab);
             renderTab();
         }
         
-        // ====== RENDER TAB ======
         function renderTab() {
             const content = document.getElementById('content');
             
@@ -887,9 +761,7 @@
             attachEvents();
         }
         
-        // ====== RENDER TRANSAKSI ======
         function renderTransaksi() {
-            // Tentukan teks tombol berdasarkan state
             let btnText;
             if (state.isProcessing) {
                 btnText = '<div class="spinner"></div> Memproses...';
@@ -899,7 +771,6 @@
                 btnText = '<i class="fas fa-paper-plane"></i> KIRIM PROSES';
             }
             
-            // Hitung jumlah hari
             const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
             
             return `
@@ -947,11 +818,11 @@
                         <div class="type-selector">
                             <button class="type-btn setor ${state.transaction.type === 'SETOR' ? 'active' : ''}" 
                                     data-type="SETOR" ${state.isProcessing ? 'disabled' : ''}>
-                                <i class="fas fa-arrow-down" style="margin-right: 6px;"></i> SETOR
+                                <i class="fas fa-arrow-down"></i> SETOR
                             </button>
                             <button class="type-btn tarik ${state.transaction.type === 'TARIK' ? 'active' : ''}" 
                                     data-type="TARIK" ${state.isProcessing ? 'disabled' : ''}>
-                                <i class="fas fa-arrow-up" style="margin-right: 6px;"></i> TARIK
+                                <i class="fas fa-arrow-up"></i> TARIK
                             </button>
                         </div>
                     </div>
@@ -968,43 +839,16 @@
                                    id="amountInput" 
                                    placeholder="0"
                                    value="${state.transaction.amount > 0 ? formatNumber(state.transaction.amount) : ''}"
-                                   onfocus="this.select()"
                                    ${state.isProcessing ? 'disabled' : ''}>
                         </div>
                         
                         <div class="amount-grid">
-                            <button class="amount-btn" data-amount="3000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">3K</span>
-                                3.000
-                            </button>
-                            <button class="amount-btn" data-amount="5000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">5K</span>
-                                5.000
-                            </button>
-                            <button class="amount-btn" data-amount="10000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">10K</span>
-                                10.000
-                            </button>
-                            <button class="amount-btn" data-amount="15000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">15K</span>
-                                15.000
-                            </button>
-                            <button class="amount-btn" data-amount="20000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">20K</span>
-                                20.000
-                            </button>
-                            <button class="amount-btn" data-amount="25000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">25K</span>
-                                25.000
-                            </button>
-                            <button class="amount-btn" data-amount="30000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">30K</span>
-                                30.000
-                            </button>
-                            <button class="amount-btn" data-amount="35000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">35K</span>
-                                35.000
-                            </button>
+                            ${[3000, 5000, 10000, 15000, 20000, 25000, 30000, 35000].map(amount => `
+                                <button class="amount-btn" data-amount="${amount}" ${state.isProcessing ? 'disabled' : ''}>
+                                    <span class="amount-btn-label">${amount/1000}K</span>
+                                    ${formatNumber(amount)}
+                                </button>
+                            `).join('')}
                         </div>
                     </div>
                     
@@ -1015,7 +859,7 @@
                                 <span class="info-value-rounded">${state.transaction.account}</span>
                             </div>
                             <div class="transaction-info-row">
-                                <span class="info-label-rounded">Jenis Transaksi</span>
+                                <span class="info-label-rounded">Jenis</span>
                                 <span class="transaction-type-badge ${state.transaction.type === 'TARIK' ? 'withdraw' : ''}">
                                     <i class="fas fa-${state.transaction.type === 'SETOR' ? 'arrow-down' : 'arrow-up'}"></i>
                                     ${state.transaction.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}
@@ -1029,10 +873,6 @@
                                 <span class="info-label-rounded">Periode</span>
                                 <span class="info-value-rounded">${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)}</span>
                             </div>
-                            <div class="transaction-info-row">
-                                <span class="info-label-rounded">Durasi</span>
-                                <span class="info-value-rounded">${daysCount} Hari</span>
-                            </div>
                         </div>
                     ` : ''}
                     
@@ -1042,9 +882,8 @@
                         ${btnText}
                     </button>
                     
-                    <!-- Tombol Install PWA -->
                     ${state.deferredPrompt && !state.isAppInstalled ? `
-                        <div class="install-btn-container">
+                        <div style="margin-top: 15px;">
                             <button onclick="installPWA()" class="install-btn">
                                 <i class="fas fa-download"></i> Install Aplikasi
                             </button>
@@ -1054,7 +893,6 @@
             `;
         }
         
-        // ====== RENDER DASHBOARD ======
         function renderDashboard() {
             return `
                 <div class="card">
@@ -1071,11 +909,11 @@
                     </div>
                     
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 20px;">
-                        <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; text-align: center;">
                             <div style="font-size: 28px; font-weight: 700; color: #00e676;">${state.accounts.length}</div>
                             <div style="font-size: 13px; color: var(--text-medium); margin-top: 6px;">Total Nasabah</div>
                         </div>
-                        <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; text-align: center;">
                             <div style="font-size: 28px; font-weight: 700; color: #00e676;">${formatRupiah(state.accounts.length > 0 ? Math.round(state.globalBalance/state.accounts.length) : 0)}</div>
                             <div style="font-size: 13px; color: var(--text-medium); margin-top: 6px;">Rata-rata Saldo</div>
                         </div>
@@ -1084,7 +922,6 @@
             `;
         }
         
-        // ====== RENDER REKENING ======
         function renderRekening() {
             return `
                 <div class="card">
@@ -1113,12 +950,12 @@
                                 <div class="account-item">
                                     <div class="account-avatar">${acc.nama.charAt(0).toUpperCase()}</div>
                                     <div>
-                                        <div style="font-weight: 600; color: var(--text-light);">${acc.nama}</div>
-                                        <div style="font-size: 12px; color: var(--text-dim);">ID: ${acc.id_nasabah || 'N/A'}</div>
+                                        <div style="font-weight: 600;">${acc.nama}</div>
+                                        <div style="font-size: 12px; color: var(--text-dim);">ID: ${acc.id_nasabah || '-'}</div>
                                     </div>
                                 </div>
                             `).join('') : 
-                            `<div style="text-align: center; padding: 40px 20px; color: var(--text-dim);">
+                            `<div style="text-align: center; padding: 40px; color: var(--text-dim);">
                                 <i class="fas fa-users" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
                                 <div>Belum ada data nasabah</div>
                             </div>`
@@ -1128,7 +965,6 @@
             `;
         }
         
-        // ====== RENDER SALDO ======
         function renderSaldo() {
             return `
                 <div class="card">
@@ -1137,11 +973,8 @@
                     </div>
                     
                     <div class="info-card">
-                        <div class="info-label">SALDO GLOBAL BANK</div>
+                        <div class="info-label">SALDO GLOBAL</div>
                         <div class="info-value">${formatRupiah(state.globalBalance)}</div>
-                        <div style="font-size: 13px; color: var(--text-medium); margin-top: 8px;">
-                            Akumulasi semua rekening
-                        </div>
                     </div>
                     
                     <div style="margin: 20px 0;">
@@ -1160,30 +993,20 @@
             `;
         }
         
-        // ====== ATTACH EVENTS ======
         function attachEvents() {
-            // Events untuk halaman transaksi
             if (state.tab === 'transaksi') {
-                // Date inputs
                 document.getElementById('dateFrom')?.addEventListener('change', (e) => {
                     state.transaction.dateFrom = e.target.value;
                     updateTransactionDisplay();
-                    updateTransactionButton();
                 });
                 document.getElementById('dateTo')?.addEventListener('change', (e) => {
                     state.transaction.dateTo = e.target.value;
                     updateTransactionDisplay();
-                    updateTransactionButton();
                 });
-                
-                // Account selection
                 document.getElementById('selectAccount')?.addEventListener('change', (e) => {
                     state.transaction.account = e.target.value;
                     updateTransactionDisplay();
-                    updateTransactionButton();
                 });
-                
-                // Type buttons
                 document.querySelectorAll('.type-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         if (state.isProcessing) return;
@@ -1191,11 +1014,8 @@
                         document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
                         btn.classList.add('active');
                         updateTransactionDisplay();
-                        updateTransactionButton();
                     });
                 });
-                
-                // Amount input
                 const amountInput = document.getElementById('amountInput');
                 if (amountInput) {
                     amountInput.addEventListener('input', (e) => {
@@ -1204,15 +1024,8 @@
                         state.transaction.amount = parseInt(value) || 0;
                         e.target.value = value ? formatNumber(value) : '';
                         updateTransactionDisplay();
-                        updateTransactionButton();
-                    });
-                    
-                    amountInput.addEventListener('focus', function() {
-                        setTimeout(() => this.select(), 100);
                     });
                 }
-                
-                // Quick amount buttons
                 document.querySelectorAll('.amount-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         if (state.isProcessing) return;
@@ -1221,150 +1034,63 @@
                         const input = document.getElementById('amountInput');
                         if (input) input.value = formatNumber(amount);
                         updateTransactionDisplay();
-                        updateTransactionButton();
                     });
                 });
-                
-                // Submit button
                 document.getElementById('submitBtn')?.addEventListener('click', confirmTransaction);
             }
-            
-            // Events untuk halaman rekening (tambah nasabah)
             if (state.tab === 'rekening') {
                 document.getElementById('addAccountBtn')?.addEventListener('click', showAddNasabahModal);
             }
-            
-            // Events untuk halaman saldo
             if (state.tab === 'saldo') {
                 document.getElementById('saldoAccount')?.addEventListener('change', async (e) => {
                     const account = e.target.value;
                     const resultDiv = document.getElementById('saldoResult');
-                    
                     if (!account) {
-                        resultDiv.innerHTML = `
-                            <i class="fas fa-wallet" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
-                            <div>Pilih nasabah untuk melihat saldo</div>
-                        `;
+                        resultDiv.innerHTML = `<i class="fas fa-wallet" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i><div>Pilih nasabah untuk melihat saldo</div>`;
                         return;
                     }
-                    
-                    resultDiv.innerHTML = `
-                        <div style="width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--green-light); border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
-                        <div>Memuat saldo...</div>
-                    `;
-                    
+                    resultDiv.innerHTML = `<div class="spinner"></div> Memuat saldo...`;
                     try {
                         const res = await fetch(`${API_URL}?action=getSaldo&nama=${encodeURIComponent(account)}`);
                         const data = await res.json();
                         const saldo = data.data?.saldo_akhir || 0;
-                        
                         resultDiv.innerHTML = `
-                            <div class="info-card" style="background: linear-gradient(135deg, rgba(27, 94, 32, 0.4) 0%, rgba(76, 175, 80, 0.4) 100%);">
+                            <div class="info-card">
                                 <div class="info-label">SALDO ${account.toUpperCase()}</div>
                                 <div class="info-value">${formatRupiah(saldo)}</div>
                                 <div style="font-size: 13px; color: var(--text-medium); margin-top: 8px;">Status: Aktif</div>
                             </div>
                         `;
                     } catch (e) {
-                        resultDiv.innerHTML = `
-                            <div style="color: var(--red); text-align: center;">
-                                <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 16px;"></i>
-                                <div>Gagal memuat saldo</div>
-                            </div>
-                        `;
+                        resultDiv.innerHTML = `<div style="color: var(--red);"><i class="fas fa-exclamation-triangle"></i> Gagal memuat saldo</div>`;
                     }
                 });
             }
         }
         
-        // ====== UPDATE TRANSACTION DISPLAY ======
         function updateTransactionDisplay() {
-            // Re-render hanya bagian transaction info jika ada data
-            if (state.transaction.account && state.transaction.amount > 0) {
-                const transactionInfoContainer = document.querySelector('.transaction-info-container');
-                if (transactionInfoContainer) {
-                    const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
-                    
-                    transactionInfoContainer.innerHTML = `
-                        <div class="transaction-info-row">
-                            <span class="info-label-rounded">Nasabah</span>
-                            <span class="info-value-rounded">${state.transaction.account}</span>
-                        </div>
-                        <div class="transaction-info-row">
-                            <span class="info-label-rounded">Jenis Transaksi</span>
-                            <span class="transaction-type-badge ${state.transaction.type === 'TARIK' ? 'withdraw' : ''}">
-                                <i class="fas fa-${state.transaction.type === 'SETOR' ? 'arrow-down' : 'arrow-up'}"></i>
-                                ${state.transaction.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}
-                            </span>
-                        </div>
-                        <div class="transaction-info-row">
-                            <span class="info-label-rounded">Nominal</span>
-                            <span class="info-value-rounded">${formatRupiah(state.transaction.amount)}</span>
-                        </div>
-                        <div class="transaction-info-row">
-                            <span class="info-label-rounded">Periode</span>
-                            <span class="info-value-rounded">${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)}</span>
-                        </div>
-                        <div class="transaction-info-row">
-                            <span class="info-label-rounded">Durasi</span>
-                            <span class="info-value-rounded">${daysCount} Hari</span>
-                        </div>
-                    `;
-                }
-                
-                // Update days count badge
-                const daysCountElement = document.querySelector('.days-count');
-                const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
-                if (daysCountElement) {
-                    daysCountElement.textContent = `${daysCount} hari`;
-                } else if (daysCount > 0) {
-                    const dateFromGroup = document.querySelector('.date-group:first-child');
-                    if (dateFromGroup) {
-                        const daysBadge = document.createElement('div');
-                        daysBadge.className = 'days-count';
-                        daysBadge.textContent = `${daysCount} hari`;
-                        dateFromGroup.appendChild(daysBadge);
-                    }
-                }
-            }
-        }
-        
-        // ====== UPDATE TRANSACTION BUTTON ======
-        function updateTransactionButton() {
             const btn = document.getElementById('submitBtn');
             if (!btn) return;
-            
-            // Update status disabled
             btn.disabled = !(state.transaction.account && state.transaction.amount > 0) || state.isProcessing;
-            
-            // Update kelas untuk styling
-            if (state.isProcessing) {
-                btn.classList.add('processing');
-            } else {
-                btn.classList.remove('processing');
-            }
-            
-            // Update teks tombol
             if (state.isProcessing) {
                 btn.innerHTML = '<div class="spinner"></div> Memproses...';
+                btn.classList.add('processing');
             } else if (state.transaction.account && state.transaction.amount > 0) {
                 btn.innerHTML = `${state.transaction.type === 'SETOR' ? 'SETOR' : 'TARIK'} ${formatRupiah(state.transaction.amount)} - ${state.transaction.account}`;
+                btn.classList.remove('processing');
             } else {
                 btn.innerHTML = '<i class="fas fa-paper-plane"></i> KIRIM PROSES';
+                btn.classList.remove('processing');
             }
         }
         
-        // ====== KONFIRMASI TRANSAKSI ======
         function confirmTransaction() {
             const modal = document.createElement('div');
             modal.className = 'modal';
-            
-            const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
-            
             modal.innerHTML = `
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h3><i class="fas fa-check-circle"></i> KONFIRMASI TRANSAKSI</h3>
+                        <h3><i class="fas fa-check-circle"></i> KONFIRMASI</h3>
                         <button onclick="closeModal()" style="background: none; border: none; color: var(--text-medium); cursor: pointer;">
                             <i class="fas fa-times"></i>
                         </button>
@@ -1374,370 +1100,146 @@
                             <div style="font-size: 36px; font-weight: bold; color: ${state.transaction.type === 'SETOR' ? 'var(--green-light)' : 'var(--red)'};">${formatRupiah(state.transaction.amount)}</div>
                             <div style="color: var(--text-medium); font-size: 14px;">${state.transaction.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}</div>
                         </div>
-                        
-                        <div class="transaction-info-container" style="margin-bottom: 20px;">
+                        <div class="transaction-info-container">
                             <div class="transaction-info-row">
                                 <span class="info-label-rounded">Nasabah</span>
                                 <span class="info-value-rounded">${state.transaction.account}</span>
                             </div>
                             <div class="transaction-info-row">
-                                <span class="info-label-rounded">Jenis Transaksi</span>
+                                <span class="info-label-rounded">Jenis</span>
                                 <span class="transaction-type-badge ${state.transaction.type === 'TARIK' ? 'withdraw' : ''}">
                                     <i class="fas fa-${state.transaction.type === 'SETOR' ? 'arrow-down' : 'arrow-up'}"></i>
                                     ${state.transaction.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}
                                 </span>
                             </div>
-                            <div class="transaction-info-row">
-                                <span class="info-label-rounded">Periode</span>
-                                <span class="info-value-rounded">${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)}</span>
-                            </div>
-                            <div class="transaction-info-row">
-                                <span class="info-label-rounded">Durasi</span>
-                                <span class="info-value-rounded">${daysCount} Hari</span>
-                            </div>
                         </div>
-                        
                         <div style="font-size: 13px; color: var(--text-dim); text-align: center; padding: 12px; background: rgba(255, 193, 7, 0.1); border-radius: 8px;">
-                            <i class="fas fa-exclamation-triangle"></i> Data akan disimpan dan struk PNG akan dibuat
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="modal-btn modal-cancel" onclick="closeModal()" id="cancelBtn">BATAL</button>
-                        <button class="modal-btn modal-confirm" onclick="startProcessingTransaction()" id="confirmBtn">
-                            <i class="fas fa-check"></i> SIMPAN & BUAT STRUK
-                        </button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        }
-        
-        // ====== MULAI PROSES TRANSAKSI ======
-        function startProcessingTransaction() {
-            // Tutup modal
-            closeModal();
-            
-            // Set state processing ke true
-            state.isProcessing = true;
-            
-            // Update UI untuk menunjukkan sedang memproses
-            updateTransactionButton();
-            
-            // Mulai proses transaksi
-            processTransaction();
-        }
-        
-        // ====== TAMBAH NASABAH MODAL ======
-        function showAddNasabahModal() {
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3><i class="fas fa-user-plus"></i> TAMBAH NASABAH BARU</h3>
-                        <button onclick="closeModal()" style="background: none; border: none; color: var(--text-medium); cursor: pointer;">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-label">Nama Lengkap *</div>
-                        <input type="text" id="namaNasabah" placeholder="Masukkan nama lengkap">
-                        
-                        <div class="form-label">Nomor HP *</div>
-                        <input type="tel" id="hpNasabah" placeholder="Contoh: 081234567890">
-                        
-                        <div class="form-label">Alamat</div>
-                        <input type="text" id="alamatNasabah" placeholder="Masukkan alamat lengkap">
-                        
-                        <div class="form-label">Email</div>
-                        <input type="email" id="emailNasabah" placeholder="contoh@email.com">
-                        
-                        <div style="font-size: 12px; color: var(--text-dim); margin-top: 16px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 6px;">
-                            <i class="fas fa-info-circle"></i> Data akan disimpan setelah dikonfirmasi
+                            <i class="fas fa-exclamation-triangle"></i> Data akan disimpan dan struk akan dibuat
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button class="modal-btn modal-cancel" onclick="closeModal()">BATAL</button>
-                        <button class="modal-btn modal-confirm" onclick="addNasabah()">
-                            <i class="fas fa-save"></i> SIMPAN KE DATABASE
+                        <button class="modal-btn modal-confirm" onclick="startProcessingTransaction()">
+                            <i class="fas fa-check"></i> SIMPAN
                         </button>
                     </div>
                 </div>
             `;
             document.body.appendChild(modal);
-            
-            // Focus ke input pertama
-            setTimeout(() => {
-                document.getElementById('namaNasabah')?.focus();
-            }, 300);
         }
         
-        // ====== PROSES TAMBAH NASABAH ======
-        async function addNasabah() {
-            const nama = document.getElementById('namaNasabah')?.value.trim();
-            const hp = document.getElementById('hpNasabah')?.value.trim();
-            const alamat = document.getElementById('alamatNasabah')?.value.trim();
-            const email = document.getElementById('emailNasabah')?.value.trim();
-            
-            if (!nama) {
-                showToast('Nama nasabah wajib diisi', true);
-                document.getElementById('namaNasabah')?.focus();
-                return;
-            }
-            
-            if (!hp) {
-                showToast('Nomori HP wajib diisi', false);
-                document.getElementById('hpNasabah')?.focus();
-                return;
-            }
-            
-            // Validasi nomor HP (hanya angka, minimal 10 digit)
-            const cleanHP = hp.replace(/\D/g, '');
-            if (cleanHP.length < 10) {
-                showToast('Nomor HP minimal 10 digit', true);
-                document.getElementById('hpNasabah')?.focus();
-                return;
-            }
-            
-            showToast('Menyimpan data nasabah ke database...');
-            
-            try {
-                const res = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({
-                        action: 'addNasabah',
-                        nama: nama,
-                        no_hp: cleanHP,
-                        alamat: alamat,
-                        email: email || ''
-                    })
-                });
-                
-                const data = await res.json();
-                
-                if (data.status === 'success') {
-                    showToast('Nasabah berhasil ditambahkan ke database!');
-                    closeModal();
-                    
-                    // Refresh data dan kembali ke halaman rekening
-                    await loadData();
-                    loadTab('rekening');
-                    
-                } else {
-                    showToast('Gagal: ' + (data.message || 'Error'), true);
-                }
-            } catch (e) {
-                showToast('Gagal menyimpan data ke database', true);
-            }
+        function startProcessingTransaction() {
+            closeModal();
+            state.isProcessing = true;
+            updateTransactionDisplay();
+            processTransaction();
         }
         
-        // ====== PROSES TRANSAKSI DAN BUAT STRUK ======
         async function processTransaction() {
-            showToast('Menyimpan transaksi ke database...');
-            
+            showToast('Menyimpan transaksi...');
             try {
-                // Simpan data transaksi untuk digunakan nanti
                 state.lastTransactionData = {
                     ...state.transaction,
                     transactionId: 'TRX-' + Date.now(),
-                    timestamp: new Date().toISOString(),
                     daysCount: calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo)
                 };
-                
-                // Kirim ke database
                 const res = await fetch(API_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: new URLSearchParams({
                         action: 'addTransaksi',
                         nama: state.transaction.account,
                         jenis: state.transaction.type,
                         nominal: state.transaction.amount,
-                        keterangan: `Transaksi periode ${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)} (${calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo)} hari)`
+                        keterangan: `Periode ${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)}`
                     })
                 });
-                
                 const data = await res.json();
-                
                 if (data.status === 'success') {
-                    showToast('Transaksi berhasil! Membuat struk...');
-                    
-                    // Generate struk PNG
+                    showToast('Transaksi berhasil!');
                     await generateReceipt();
-                    
-                    // Reset form
                     resetTransactionForm();
-                    
-                    showToast('Transaksi selesai! Struk telah dibuat.');
-                    
                 } else {
                     showToast('Gagal: ' + (data.message || 'Error'), true);
-                    // Reset processing state jika gagal
                     state.isProcessing = false;
-                    updateTransactionButton();
+                    updateTransactionDisplay();
                 }
             } catch (e) {
-                console.error('Transaction error:', e);
-                showToast('Gagal menyimpan transaksi ke database', true);
-                // Reset processing state jika error
+                showToast('Gagal menyimpan transaksi', true);
                 state.isProcessing = false;
-                updateTransactionButton();
+                updateTransactionDisplay();
             }
         }
         
-        // ====== GENERATE STRUK PNG ======
         async function generateReceipt() {
             try {
-                state.isGeneratingReceipt = true;
-                
-                // 1. Generate HTML untuk struk
                 const receiptHTML = generateReceiptHTML();
                 const receiptContainer = document.getElementById('receiptContainer');
                 receiptContainer.innerHTML = receiptHTML;
-                
-                // 2. Convert ke PNG menggunakan html2canvas
                 const canvas = await html2canvas(receiptContainer, {
                     scale: 2,
                     backgroundColor: '#ffffff',
-                    logging: false,
-                    useCORS: true
+                    logging: false
                 });
-                
-                // 3. Convert canvas ke data URL
                 const dataUrl = canvas.toDataURL('image/png');
-                
-                // 4. Kirim ke WhatsApp
                 await sendToWhatsApp(dataUrl);
-                
             } catch (error) {
-                console.error('Generate receipt error:', error);
-                showToast('Gagal membuat struk, tapi transaksi sudah tersimpan', true);
+                console.error('Error membuat struk:', error);
             }
         }
         
-        // ====== GENERATE HTML STRUK ======
         function generateReceiptHTML() {
             const trans = state.lastTransactionData;
-            const transactionId = trans.transactionId || 'TRX-' + Date.now();
-            const now = new Date();
-            const receiptDate = now.toLocaleDateString('id-ID', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric'
-            });
-            const receiptTime = now.toLocaleTimeString('id-ID', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
             return `
-                <div class="receipt-header">
-                    <div class="receipt-title">JIMPITAN MANG RESTI</div>
-                    <div class="receipt-subtitle">Digital Jimpitan System</div>
-                    <div style="font-size: 12px; color: #666;">Padang Bulia</div>
+                <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 20px;">
+                    <div style="font-size: 24px; font-weight: bold; color: #1a237e;">JIMPITAN MANG RESTI</div>
+                    <div style="font-size: 14px; color: #666;">Digital Jimpitan System</div>
                 </div>
-                
-                <div class="receipt-details">
-                    <div class="receipt-row">
-                        <span class="receipt-label">ID Transaksi:</span>
-                        <span class="receipt-value">${transactionId}</span>
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-weight: bold;">ID Transaksi:</span>
+                        <span>${trans.transactionId}</span>
                     </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Tanggal:</span>
-                        <span class="receipt-value">${receiptDate}</span>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-weight: bold;">Tanggal:</span>
+                        <span>${new Date().toLocaleDateString('id-ID')}</span>
                     </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Waktu:</span>
-                        <span class="receipt-value">${receiptTime}</span>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-weight: bold;">Nasabah:</span>
+                        <span>${trans.account}</span>
                     </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Nasabah:</span>
-                        <span class="receipt-value">${trans.account}</span>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-weight: bold;">Jenis:</span>
+                        <span style="color: ${trans.type === 'SETOR' ? 'green' : 'red'};">${trans.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}</span>
                     </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Jenis:</span>
-                        <span class="receipt-value" style="color: ${trans.type === 'SETOR' ? 'green' : 'red'}; font-weight: bold;">
-                            ${trans.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}
-                        </span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Periode:</span>
-                        <span class="receipt-value">${formatDateDisplay(trans.dateFrom)} - ${formatDateDisplay(trans.dateTo)}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Durasi:</span>
-                        <span class="receipt-value">${trans.daysCount} Hari</span>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="font-weight: bold;">Nominal:</span>
+                        <span style="font-weight: bold;">${formatRupiah(trans.amount)}</span>
                     </div>
                 </div>
-                
-                <div class="receipt-total" style="color: ${trans.type === 'SETOR' ? 'green' : 'red'};">
-                    ${trans.type === 'SETOR' ? 'SETOR' : 'TARIK'}: ${formatRupiah(trans.amount)}
-                </div>
-                
-                <div class="receipt-footer">
-                    <div style="margin-bottom: 10px;">Terima kasih atas kepercayaan Anda</div>
-                    <div style="font-size: 10px;">* Transaksi ini telah tercatat di sistem</div>
-                    <div style="font-size: 10px;">** Padang Bulia</div>
+                <div style="text-align: center; font-size: 12px; color: #666; margin-top: 25px; padding-top: 15px; border-top: 2px solid #000;">
+                    <div>Terima kasih atas kepercayaan Anda</div>
                 </div>
             `;
         }
         
-        // ====== KIRIM KE WHATSAPP ======
         async function sendToWhatsApp(dataUrl) {
             const trans = state.lastTransactionData;
-            
-            // Buat pesan untuk WhatsApp
-            const message = `📋 *STRUK TRANSAKSI JIMPITAN MANG RESTI*
-
-🏦 *Jimpitan Digital Banking*
-📅 *Tanggal:* ${new Date().toLocaleDateString('id-ID')}
-⏰ *Waktu:* ${new Date().toLocaleTimeString('id-ID')}
-
-👤 *Nasabah:* ${trans.account}
-🔢 *ID Transaksi:* ${trans.transactionId}
-📊 *Jenis:* ${trans.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}
-💰 *Nominal:* ${formatRupiah(trans.amount)}
-📅 *Periode:* ${formatDateDisplay(trans.dateFrom)} - ${formatDateDisplay(trans.dateTo)}
-📆 *Durasi:* ${trans.daysCount} Hari
-
-_Transaksi ini telah tercatat di sistem._
-_Terima kasih atas kepercayaan Anda._`;
-            
-            // Encode message untuk URL
+            const message = `📋 STRUK JIMPITAN\n\nNasabah: ${trans.account}\nJenis: ${trans.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}\nNominal: ${formatRupiah(trans.amount)}\nID: ${trans.transactionId}`;
             const encodedMessage = encodeURIComponent(message);
-            
-            // Untuk mobile, buka WhatsApp langsung
-            if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                // Untuk mobile, buka WhatsApp dengan pesan
-                const whatsappUrl = `whatsapp://send?text=${encodedMessage}`;
-                window.location.href = whatsappUrl;
+            if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+                window.location.href = `whatsapp://send?text=${encodedMessage}`;
             } else {
-                // Untuk desktop, buka WhatsApp Web
-                const whatsappUrl = `https://web.whatsapp.com/send?text=${encodedMessage}`;
-                window.open(whatsappUrl, '_blank');
+                window.open(`https://web.whatsapp.com/send?text=${encodedMessage}`, '_blank');
             }
-            
-            // Jika ingin menambahkan image, kita bisa download dulu
-            // karena WhatsApp Web tidak support langsung dari data URL
             setTimeout(() => {
-                downloadReceiptImage(dataUrl);
+                const link = document.createElement('a');
+                link.download = `struk-${trans.transactionId}.png`;
+                link.href = dataUrl;
+                link.click();
             }, 1000);
         }
         
-        // ====== DOWNLOAD STRUK IMAGE ======
-        function downloadReceiptImage(dataUrl) {
-            const link = document.createElement('a');
-            link.download = `struk-jimpitan-${state.lastTransactionData.transactionId}.png`;
-            link.href = dataUrl;
-            link.click();
-        }
-        
-        // ====== RESET FORM TRANSAKSI ======
         function resetTransactionForm() {
             state.transaction = {
                 account: '',
@@ -1746,25 +1248,83 @@ _Terima kasih atas kepercayaan Anda._`;
                 dateFrom: new Date().toISOString().split('T')[0],
                 dateTo: new Date().toISOString().split('T')[0]
             };
-            
             state.isProcessing = false;
-            state.isGeneratingReceipt = false;
             state.lastTransactionData = null;
-            
-            // Refresh data
             loadData();
         }
         
-        // ====== PWA INSTALL FUNCTIONS ======
+        function showAddNasabahModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-user-plus"></i> TAMBAH NASABAH</h3>
+                        <button onclick="closeModal()" style="background: none; border: none; color: var(--text-medium); cursor: pointer;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-label">Nama Lengkap *</div>
+                        <input type="text" id="namaNasabah" placeholder="Masukkan nama">
+                        <div class="form-label">Nomor HP *</div>
+                        <input type="tel" id="hpNasabah" placeholder="081234567890">
+                        <div style="font-size: 12px; color: var(--text-dim); padding: 12px; background: rgba(255,255,255,0.05); border-radius: 6px;">
+                            <i class="fas fa-info-circle"></i> Data akan disimpan ke database
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="modal-btn modal-cancel" onclick="closeModal()">BATAL</button>
+                        <button class="modal-btn modal-confirm" onclick="addNasabah()">
+                            <i class="fas fa-save"></i> SIMPAN
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        async function addNasabah() {
+            const nama = document.getElementById('namaNasabah')?.value.trim();
+            const hp = document.getElementById('hpNasabah')?.value.trim();
+            if (!nama || !hp) {
+                showToast('Nama dan HP wajib diisi', true);
+                return;
+            }
+            showToast('Menyimpan data...');
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        action: 'addNasabah',
+                        nama: nama,
+                        no_hp: hp.replace(/\D/g, ''),
+                        alamat: '',
+                        email: ''
+                    })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    showToast('Nasabah berhasil ditambahkan');
+                    closeModal();
+                    await loadData();
+                    loadTab('rekening');
+                } else {
+                    showToast('Gagal: ' + (data.message || 'Error'), true);
+                }
+            } catch (e) {
+                showToast('Gagal menyimpan data', true);
+            }
+        }
+        
         function showInstallButton() {
-            // Button akan muncul di renderTransaksi()
             if (state.tab === 'transaksi') {
                 renderTab();
             }
         }
         
         function hideInstallButton() {
-            // Update UI untuk menyembunyikan tombol instal
             if (state.tab === 'transaksi') {
                 renderTab();
             }
@@ -1778,11 +1338,7 @@ _Terima kasih atas kepercayaan Anda._`;
                     showToast('Aplikasi berhasil diinstall!');
                     state.isAppInstalled = true;
                     state.deferredPrompt = null;
-                    
-                    // Simpan status instalasi di localStorage
                     localStorage.setItem('pwa_installed', 'true');
-                    
-                    // Sembunyikan tombol instal
                     hideInstallButton();
                 }
             }
@@ -1800,30 +1356,15 @@ _Terima kasih atas kepercayaan Anda._`;
         
         function formatDateDisplay(dateStr) {
             const date = new Date(dateStr);
-            return date.toLocaleDateString('id-ID', { 
-                day: '2-digit', 
-                month: 'short', 
-                year: 'numeric' 
-            });
+            return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
         }
         
         function calculateDaysBetweenDates(dateFrom, dateTo) {
             try {
                 const from = new Date(dateFrom);
                 const to = new Date(dateTo);
-                
-                // Validasi tanggal
-                if (isNaN(from.getTime()) || isNaN(to.getTime())) {
-                    return 0;
-                }
-                
-                // Hitung selisih dalam milidetik
                 const timeDiff = to.getTime() - from.getTime();
-                
-                // Konversi ke hari
                 const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
-                
-                // Tambah 1 karena termasuk hari pertama
                 return Math.max(0, daysDiff + 1);
             } catch (error) {
                 return 0;
@@ -1833,15 +1374,10 @@ _Terima kasih atas kepercayaan Anda._`;
         function showToast(message, isError = false) {
             const toast = document.createElement('div');
             toast.className = 'toast' + (isError ? ' error' : '');
-            toast.innerHTML = `
-                <i class="fas fa-${isError ? 'exclamation-circle' : 'check-circle'}"></i>
-                ${message}
-            `;
+            toast.innerHTML = `<i class="fas fa-${isError ? 'exclamation-circle' : 'check-circle'}"></i> ${message}`;
             document.body.appendChild(toast);
-            
             setTimeout(() => {
                 toast.style.opacity = '0';
-                toast.style.transform = 'translateX(100%)';
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
@@ -1851,7 +1387,7 @@ _Terima kasih atas kepercayaan Anda._`;
             if (modal) modal.remove();
         }
         
-        // ====== EXPOSE FUNCTIONS TO GLOBAL SCOPE ======
+        // ====== EXPOSE FUNCTIONS ======
         window.closeModal = closeModal;
         window.addNasabah = addNasabah;
         window.startProcessingTransaction = startProcessingTransaction;
