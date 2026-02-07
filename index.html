@@ -675,6 +675,7 @@
         }
 
         /* ====== EFEK KILAUAN 3D UNTUK SEMUA TOMBOL ====== */
+        /* HANYA CSS INI YANG DITAMBAHKAN, TIDAK ADA PERUBAHAN LAIN */
 
         /* Animasi efek kilauan utama */
         @keyframes shimmer3D {
@@ -1280,12 +1281,12 @@
         // ====== LOAD DATA DARI API ======
         async function loadData() {
             try {
-                // Load nasabah data
+                // Load nasabah data - KODE ASLI
                 const res = await fetch(`${API_URL}?action=getNasabah`);
                 const data = await res.json();
                 state.accounts = data.data || [];
                 
-                // Load global balance
+                // Load global balance - KODE ASLI  
                 const balanceRes = await fetch(`${API_URL}?action=getAllSaldo`);
                 const balanceData = await balanceRes.json();
                 state.globalBalance = balanceData.saldo_global || 0;
