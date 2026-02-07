@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BankFlow</title>
+    <title>Digital Jimpitan System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Favicon dan PWA Icons -->
@@ -691,7 +691,7 @@
 </head>
 <body>
     <div class="header">
-        <h1><i class="fas fa-university"></i> BankFlow</h1>
+        <h1><i class="fas fa-university"></i> Jimpitan</h1>
     </div>
     
     <div class="content" id="content">
@@ -1556,7 +1556,7 @@
                     try {
                         // 4. Create FormData untuk upload
                         const formData = new FormData();
-                        formData.append('receipt', blob, 'struk-bankflow.png');
+                        formData.append('receipt', blob, 'struk-Jimpitan.png');
                         formData.append('transactionData', JSON.stringify(state.lastTransactionData));
                         
                         // 5. Upload ke server untuk mendapatkan URL
@@ -1616,9 +1616,9 @@
             
             return `
                 <div class="receipt-header">
-                    <div class="receipt-title">BANKFLOW</div>
-                    <div class="receipt-subtitle">Digital Banking System</div>
-                    <div style="font-size: 12px; color: #666;">Jl. Digital No. 123, Jakarta</div>
+                    <div class="receipt-title">JIMPITAN MANG RESTI</div>
+                    <div class="receipt-subtitle">Digital Jimpitan System</div>
+                    <div style="font-size: 12px; color: #666;">Jl. Raya Desa Padangbulia Gg. Tapuk, Buleleng</div>
                 </div>
                 
                 <div class="receipt-details">
@@ -1662,7 +1662,7 @@
                     <div style="font-size: 12px; margin-bottom: 10px;">Scan untuk verifikasi:</div>
                     <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px;">
                         ${transactionId}<br>
-                        BankFlow Digital Receipt
+                        Digital Jimpitan Receipt
                     </div>
                 </div>
                 
@@ -1682,9 +1682,9 @@
         // ====== KIRIM KE WHATSAPP ======
         async function sendToWhatsApp(receiptUrl) {
             const trans = state.lastTransactionData;
-            const message = `📋 *STRUK TRANSAKSI BANKFLOW*
+            const message = `📋 *STRUK TRANSAKSI JIMPITAN*
 
-🏦 *BankFlow Digital Banking*
+🏦 * Digital Jimpitan System*
 📅 *Tanggal:* ${new Date().toLocaleDateString('id-ID')}
 ⏰ *Waktu:* ${new Date().toLocaleTimeString('id-ID')}
 
@@ -1697,7 +1697,7 @@
 
 📎 *Struk Digital:* ${receiptUrl}
 
-_Transaksi ini telah tercatat di sistem BankFlow._
+_Transaksi ini telah tercatat di sistem Jimpitan._
 _Terima kasih atas kepercayaan Anda._`;
             
             // Encode message untuk URL
@@ -1716,7 +1716,7 @@ _Terima kasih atas kepercayaan Anda._`;
         // ====== DOWNLOAD STRUK (FALLBACK) ======
         function downloadReceipt(canvas) {
             const link = document.createElement('a');
-            link.download = `struk-bankflow-${Date.now()}.png`;
+            link.download = `struk-jimpitan-${Date.now()}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
         }
@@ -1811,4 +1811,5 @@ _Terima kasih atas kepercayaan Anda._`;
     </script>
 </body>
 </html>
+
 
