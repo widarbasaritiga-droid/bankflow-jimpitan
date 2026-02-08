@@ -3,16 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JIMPITAN MANG RESTI</title>
-    <script>
-        // REDIRECT KE APLIKASI UTAMA
-        window.location.replace('/bankflow-jimpitan/index.html');
-    </script>
+    <title>Halaman Tidak Ditemukan - Sistem Jimpitan Digital</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #0a192f 0%, #1a365d 100%);
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            color: #00e676;
+            margin-bottom: 20px;
+        }
+        .error-message {
+            font-size: 24px;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+        .back-button {
+            background: linear-gradient(135deg, #00e676 0%, #00c853 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+        .back-button:hover {
+            transform: translateY(-2px);
+        }
+        .logo {
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .logo i {
+            margin-right: 10px;
+            color: #00e676;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div style="padding: 50px; text-align: center; font-family: Arial;">
-        <h2>Mengarahkan ke Aplikasi Jimpitan...</h2>
-        <p><a href="/bankflow-jimpitan/index.html">Klik di sini jika tidak otomatis</a></p>
+    <div class="logo">
+        <i class="fas fa-university"></i> Sistem Jimpitan Digital
     </div>
+    
+    <div class="error-code">404</div>
+    
+    <div class="error-message">
+        Halaman yang Anda cari tidak ditemukan. 
+        Mungkin halaman telah dipindah atau dihapus.
+    </div>
+    
+    <a href="/" class="back-button">
+        <i class="fas fa-home"></i> Kembali ke Beranda
+    </a>
+    
+    <script>
+        // Auto-redirect setelah 10 detik
+        setTimeout(function() {
+            window.location.href = "/";
+        }, 10000);
+        
+        // Log error untuk debugging
+        console.error("404 Page Not Found: " + window.location.pathname);
+    </script>
 </body>
 </html>
