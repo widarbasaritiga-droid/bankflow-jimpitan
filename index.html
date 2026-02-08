@@ -33,7 +33,7 @@
     <!-- HTML2Canvas untuk render PNG -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
-    <body>
+<body>
     <div class="header">
         <h1><i class="fas fa-university"></i> Sistem Jimpitan Digital</h1>
     </div>
@@ -129,12 +129,22 @@
             setInterval(checkForUpdates, 4 * 60 * 60 * 1000); // 4 jam
         });
         
-        // ====== SERVICE WORKER SETUP ======
+        // ====== SERVICE WORKER SETUP (DIPERBAIKI) ======
         function setupServiceWorker() {
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw.js')
+                // Hapus registrasi lama untuk debugging
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    registrations.forEach(registration => {
+                        console.log('🗑️ Unregistering old SW:', registration.scope);
+                        registration.unregister();
+                    });
+                }).then(() => {
+                    // Register baru
+                    navigator.serviceWorker.register('/sw.js', {
+                        scope: '/'
+                    })
                     .then(registration => {
-                        console.log('✅ Service Worker registered:', registration);
+                        console.log('✅ Service Worker registered:', registration.scope);
                         
                         // Check for updates
                         registration.addEventListener('updatefound', () => {
@@ -173,7 +183,9 @@
                     })
                     .catch(error => {
                         console.error('❌ Service Worker registration failed:', error);
+                        showToast(`SW Error: ${error.message}`, true);
                     });
+                });
             }
         }
         
