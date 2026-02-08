@@ -1,10 +1,32 @@
 {
   "version": "2.0.1",
   "buildDate": "2024-01-15",
+  "releaseDate": "2024-01-15",
   "changelog": [
     "Perbaikan cache auto-update",
     "Optimasi performa",
     "Fitur tambah nasabah",
-    "Notifikasi update otomatis"
-  ]
+    "Notifikasi update otomatis",
+    "Service Worker debugging",
+    "PWA manifest lengkap",
+    "Offline capability"
+  ],
+  "features": [
+    "Transaksi Setor/Tarik",
+    "Manajemen Nasabah",
+    "Dashboard Statistik",
+    "Cek Saldo Real-time",
+    "Generate Struk Digital",
+    "PWA Offline Support",
+    "Auto Update System"
+  ],
+  "author": "Sistem Jimpitan Digital",
+  "website": "https://widarbasaritiga-droid.github.io",
+  "support": "jimpitan@example.com",
+  "minBrowser": "Chrome 70, Firefox 63, Safari 12",
+  "requirements": {
+    "serviceWorker": true,
+    "https": true,
+    "storage": "50MB"
+  }
 }
