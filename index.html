@@ -931,6 +931,57 @@ function setupServiceWorker() {
                         <button class="modal-btn modal-confirm" onclick="startProcessingTransaction()" id="confirmBtn">
                             <i class="fas fa-check"></i> SIMPAN TRANSAKSI
                         </button>
+// ====== PWA HELPER FUNCTIONS ======
+
+// Force update Service Worker
+function forceUpdateSW() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration()
+            .then(registration => {
+                if (registration) {
+                    registration.update().then(() => {
+                        showToast('✅ Update diperiksa');
+                    });
+                }
+            });
+    }
+}
+
+// Unregister all Service Workers (for debugging)
+function unregisterAllSW() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations()
+            .then(registrations => {
+                registrations.forEach(registration => {
+                    registration.unregister();
+                });
+                showToast('🗑️ Semua Service Worker di-unregister');
+                setTimeout(() => location.reload(), 1000);
+            });
+    }
+}
+
+// Check SW status
+function checkSWStatus() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration()
+            .then(registration => {
+                if (registration) {
+                    showToast(`✅ SW aktif: ${registration.scope}`);
+                } else {
+                    showToast('❌ SW tidak terdaftar', true);
+                }
+            });
+    } else {
+        showToast('❌ Browser tidak mendukung SW', true);
+    }
+}
+
+// ====== TAMBAHKAN KE GLOBAL SCOPE ======
+window.forceUpdateSW = forceUpdateSW;
+window.unregisterAllSW = unregisterAllSW;
+window.checkSWStatus = checkSWStatus;
+                      
                     </div>
                 </div>
             `;
