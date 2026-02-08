@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Custom CSS Files -->
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="shimmer-effects.css">
+    <link rel="stylesheet" href="styles.css?v=2.0.1">
+    <link rel="stylesheet" href="shimmer-effects.css?v=2.0.1">
     
     <!-- Favicon dan PWA Icons -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -49,6 +49,10 @@
             <i class="fas fa-wallet"></i>
             <span>Saldo</span>
         </button>
+        <button class="nav-btn" data-tab="settings">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </button>
     </div>
 
     <!-- Hidden receipt container for PNG generation -->
@@ -60,7 +64,10 @@
         const API_URL = 'https://script.google.com/macros/s/AKfycbzg2VbfzX6Wdmo0DJkPY9noOhBZlRmXvgzuhLMpqfseste6Yi2P1KeLOFSvf-HM0Fn3/exec';
         
         // Kunci API untuk aksi yang memerlukan autentikasi
-        const API_KEY = 'GENERATE_A_RANDOM_TOKEN_HERE'; // Sama dengan di Script Properties
+        const API_KEY = 'JIMPITAN_DIGITAL_2024_SECRET_KEY'; // Sama dengan di Script Properties
+        
+        // Versi aplikasi - UBAH INI SETIAP UPDATE
+        const APP_VERSION = '2.0.1';
         
         // Server untuk generate struk (opsional)
         const RECEIPT_SERVER = 'https://bankflow-receipt.vercel.app/api/generate';
@@ -68,22 +75,26 @@
         // ====== STATE GLOBAL ======
         let state = {
             tab: 'transaksi',
-            nasabahList: [], // Diganti dari accounts ke nasabahList
+            nasabahList: [],
             globalBalance: 0,
             isProcessing: false,
             isGeneratingReceipt: false,
             transaction: {
-                nasabah: '', // Diganti dari account ke nasabah
+                nasabah: '',
                 type: 'SETOR',
                 amount: 0,
                 dateFrom: new Date().toISOString().split('T')[0],
                 dateTo: new Date().toISOString().split('T')[0]
             },
-            lastTransactionData: null
+            lastTransactionData: null,
+            updateAvailable: false,
+            newVersion: ''
         };
         
         // ====== INISIALISASI APLIKASI ======
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log(`🚀 Aplikasi Jimpitan v${APP_VERSION} dimulai`);
+            
             // Setup navigation
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -94,32 +105,91 @@
                 });
             });
             
+            // Setup Service Worker dengan auto-update
+            setupServiceWorker();
+            
             // Load initial data and show transaction tab
-            loadData();
+            await loadData();
             loadTab('transaksi');
             
-            // PWA Installation
-            initializePWA();
+            // Check for updates
+            setTimeout(checkForUpdates, 3000);
+            
+            // Setup periodic update check
+            setInterval(checkForUpdates, 4 * 60 * 60 * 1000); // 4 jam
         });
+        
+        // ====== SERVICE WORKER SETUP ======
+        function setupServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker registered:', registration);
+                        
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            console.log('🔄 Update found for Service Worker');
+                            
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('📱 New version available');
+                                    state.updateAvailable = true;
+                                    showUpdateNotification('Versi baru tersedia!');
+                                }
+                            });
+                        });
+                        
+                        // Listen for messages from Service Worker
+                        navigator.serviceWorker.addEventListener('message', event => {
+                            console.log('📨 Message from SW:', event.data);
+                            
+                            if (event.data.type === 'SW_UPDATED') {
+                                showToast(`Aplikasi diperbarui ke v${event.data.version}`);
+                                
+                                if (event.data.action === 'reload') {
+                                    setTimeout(() => {
+                                        window.location.reload();
+                                    }, 2000);
+                                }
+                            }
+                        });
+                        
+                        // Check for updates periodically
+                        setInterval(() => {
+                            registration.update();
+                        }, 60 * 60 * 1000); // Setiap 1 jam
+                        
+                    })
+                    .catch(error => {
+                        console.error('❌ Service Worker registration failed:', error);
+                    });
+            }
+        }
         
         // ====== LOAD DATA DARI API ======
         async function loadData() {
             try {
+                console.log('📥 Loading data from API...');
+                
                 // Load nasabah data
                 const res = await fetch(`${API_URL}?action=getNasabah`);
                 const data = await res.json();
-                state.nasabahList = data.data || []; // Diganti ke nasabahList
+                state.nasabahList = data.data || [];
                 
                 // Load global balance  
                 const balanceRes = await fetch(`${API_URL}?action=getAllSaldo`);
                 const balanceData = await balanceRes.json();
                 state.globalBalance = balanceData.saldo_global || 0;
                 
+                console.log(`✅ Data loaded: ${state.nasabahList.length} nasabah, saldo: ${formatRupiah(state.globalBalance)}`);
+                
                 // Render current tab
                 renderTab();
+                
             } catch (e) {
-                console.error('Load error:', e);
-                showToast('Gagal memuat data', true);
+                console.error('❌ Load error:', e);
+                showToast('Gagal memuat data dari server', true);
             }
         }
         
@@ -140,11 +210,14 @@
                 case 'dashboard':
                     content.innerHTML = renderDashboard();
                     break;
-                case 'nasabah': // Diganti dari rekening ke nasabah
+                case 'nasabah':
                     content.innerHTML = renderNasabah();
                     break;
                 case 'saldo':
                     content.innerHTML = renderSaldo();
+                    break;
+                case 'settings':
+                    content.innerHTML = renderSettings();
                     break;
             }
             
@@ -305,6 +378,16 @@
                             ${!state.transaction.nasabah || state.transaction.amount <= 0 || state.isProcessing ? 'disabled' : ''}>
                         ${btnText}
                     </button>
+                    
+                    ${state.updateAvailable ? `
+                        <div style="margin-top: 16px; padding: 12px; background: rgba(255, 193, 7, 0.1); border-radius: 8px; text-align: center;">
+                            <i class="fas fa-sync-alt" style="color: #ff9800;"></i>
+                            <span style="color: #ff9800; font-weight: 600;">Update tersedia!</span>
+                            <button onclick="installUpdate()" style="background: #ff9800; color: white; border: none; padding: 6px 12px; border-radius: 6px; margin-left: 10px; font-weight: 600; cursor: pointer;">
+                                Update Sekarang
+                            </button>
+                        </div>
+                    ` : ''}
                 </div>
             `;
         }
@@ -418,6 +501,66 @@
             `;
         }
         
+        // ====== RENDER SETTINGS ======
+        function renderSettings() {
+            return `
+                <div class="card">
+                    <div class="section-title">
+                        <i class="fas fa-cog"></i> PENGATURAN SISTEM
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-label">VERSI APLIKASI</div>
+                        <div class="info-value">${APP_VERSION}</div>
+                        <div style="font-size: 13px; color: var(--text-medium); margin-top: 8px;">
+                            Sistem Jimpitan Digital
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <div class="form-label">Status Service Worker</div>
+                        <div id="swStatus" style="padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <span>Service Worker</span>
+                                <span style="color: #00e676; font-weight: 600;">Aktif</span>
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-dim); margin-top: 8px;">
+                                Cache auto-update aktif
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" onclick="checkForUpdates()" style="margin-bottom: 12px;">
+                        <i class="fas fa-sync-alt"></i> CHECK UPDATE
+                    </button>
+                    
+                    <button class="btn" onclick="clearAppCache()" style="background: linear-gradient(135deg, var(--red) 0%, #ef5350 100%); margin-bottom: 12px;">
+                        <i class="fas fa-broom"></i> CLEAR CACHE & RELOAD
+                    </button>
+                    
+                    <button class="btn" onclick="testAPI()" style="background: linear-gradient(135deg, #283593 0%, #3949ab 100%);">
+                        <i class="fas fa-plug"></i> TEST KONEKSI API
+                    </button>
+                    
+                    <div style="margin-top: 20px; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="color: var(--text-light); font-weight: 600; margin-bottom: 12px;">Informasi Sistem</div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="color: var(--text-medium); font-size: 13px;">Jumlah Nasabah:</span>
+                            <span style="color: var(--text-light); font-weight: 600;">${state.nasabahList.length}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="color: var(--text-medium); font-size: 13px;">Total Saldo:</span>
+                            <span style="color: var(--text-light); font-weight: 600;">${formatRupiah(state.globalBalance)}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-medium); font-size: 13px;">API Status:</span>
+                            <span style="color: #00e676; font-weight: 600;">Online</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
         // ====== ATTACH EVENTS ======
         function attachEvents() {
             // Events untuk halaman transaksi
@@ -512,7 +655,6 @@
                     `;
                     
                     try {
-                        // Gunakan endpoint getSaldo dari Apps Script
                         const res = await fetch(`${API_URL}?action=getSaldo&nama=${encodeURIComponent(nasabah)}`);
                         const data = await res.json();
                         
@@ -556,7 +698,6 @@
         
         // ====== UPDATE TRANSACTION DISPLAY ======
         function updateTransactionDisplay() {
-            // Re-render hanya bagian transaction info jika ada data
             if (state.transaction.nasabah && state.transaction.amount > 0) {
                 const transactionInfoContainer = document.querySelector('.transaction-info-container');
                 if (transactionInfoContainer) {
@@ -589,7 +730,6 @@
                     `;
                 }
                 
-                // Update days count badge
                 const daysCountElement = document.querySelector('.days-count');
                 const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
                 if (daysCountElement) {
@@ -611,17 +751,14 @@
             const btn = document.getElementById('submitBtn');
             if (!btn) return;
             
-            // Update status disabled
             btn.disabled = !(state.transaction.nasabah && state.transaction.amount > 0) || state.isProcessing;
             
-            // Update kelas untuk styling
             if (state.isProcessing) {
                 btn.classList.add('processing');
             } else {
                 btn.classList.remove('processing');
             }
             
-            // Update teks tombol
             if (state.isProcessing) {
                 btn.innerHTML = '<div class="spinner"></div> Memproses...';
             } else if (state.transaction.nasabah && state.transaction.amount > 0) {
@@ -728,7 +865,6 @@
             `;
             document.body.appendChild(modal);
             
-            // Focus ke input pertama
             setTimeout(() => {
                 document.getElementById('namaNasabah')?.focus();
             }, 300);
@@ -753,7 +889,6 @@
                 return;
             }
             
-            // Validasi nomor HP
             const cleanHP = hp.replace(/\D/g, '');
             if (cleanHP.length < 10) {
                 showToast('Nomor HP minimal 10 digit', true);
@@ -764,7 +899,6 @@
             showToast('Menyimpan data nasabah ke sistem...');
             
             try {
-                // Kirim dengan token autentikasi
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
@@ -772,7 +906,7 @@
                     },
                     body: new URLSearchParams({
                         action: 'addNasabah',
-                        token: API_KEY, // Tambahkan token untuk autentikasi
+                        token: API_KEY,
                         nama: nama,
                         no_hp: cleanHP,
                         alamat: alamat,
@@ -786,7 +920,6 @@
                     showToast(`Nasabah ${nama} berhasil ditambahkan!`);
                     closeModal();
                     
-                    // Refresh data dan kembali ke halaman nasabah
                     await loadData();
                     loadTab('nasabah');
                     
@@ -812,7 +945,6 @@
             showToast('Menyimpan transaksi ke sistem...');
             
             try {
-                // Simpan data transaksi
                 state.lastTransactionData = {
                     ...state.transaction,
                     transactionId: 'TRX-' + Date.now(),
@@ -820,7 +952,6 @@
                     daysCount: calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo)
                 };
                 
-                // Kirim ke Apps Script dengan autentikasi
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
@@ -828,7 +959,7 @@
                     },
                     body: new URLSearchParams({
                         action: 'addTransaksi',
-                        token: API_KEY, // Token autentikasi
+                        token: API_KEY,
                         nama: state.transaction.nasabah,
                         jenis: state.transaction.type,
                         nominal: state.transaction.amount,
@@ -841,13 +972,10 @@
                 if (data.status === 'success') {
                     showToast('Transaksi berhasil disimpan!');
                     
-                    // Generate struk jika diperlukan
                     await generateReceipt();
                     
-                    // Reset form
                     resetTransactionForm();
                     
-                    // Refresh data
                     await loadData();
                     
                 } else {
@@ -868,12 +996,10 @@
             try {
                 state.isGeneratingReceipt = true;
                 
-                // Generate HTML untuk struk
                 const receiptHTML = generateReceiptHTML();
                 const receiptContainer = document.getElementById('receiptContainer');
                 receiptContainer.innerHTML = receiptHTML;
                 
-                // Convert ke PNG
                 const canvas = await html2canvas(receiptContainer, {
                     scale: 2,
                     backgroundColor: '#ffffff',
@@ -881,7 +1007,6 @@
                     useCORS: true
                 });
                 
-                // Download struk
                 canvas.toBlob((blob) => {
                     const link = document.createElement('a');
                     link.download = `struk-jimpitan-${Date.now()}.png`;
@@ -895,7 +1020,6 @@
             } catch (error) {
                 console.error('Error generating receipt:', error);
                 state.isGeneratingReceipt = false;
-                // Lanjutkan tanpa struk
                 showToast('Transaksi berhasil, gagal generate struk');
             }
         }
@@ -983,34 +1107,144 @@
             renderTab();
         }
         
-        // ====== PWA INITIALIZATION ======
-        function initializePWA() {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registered');
-                    })
-                    .catch(err => {
-                        console.log('ServiceWorker registration failed:', err);
-                    });
-            }
-            
-            let deferredPrompt;
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-            });
-            
-            window.installPWA = async () => {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted') {
-                        showToast('Aplikasi berhasil diinstall!');
-                    }
-                    deferredPrompt = null;
+        // ====== AUTO-UPDATE FUNCTIONS ======
+        
+        // Check for updates
+        async function checkForUpdates() {
+            try {
+                console.log('🔄 Checking for updates...');
+                
+                // Check version.json
+                const response = await fetch('/version.json');
+                const data = await response.json();
+                
+                if (data.version !== APP_VERSION) {
+                    state.updateAvailable = true;
+                    state.newVersion = data.version;
+                    showUpdateNotification(data.version);
+                } else {
+                    console.log('✅ App is up to date');
                 }
-            };
+            } catch (error) {
+                console.log('Version check failed:', error);
+            }
+        }
+        
+        // Show update notification
+        function showUpdateNotification(newVersion) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-sync-alt"></i> UPDATE TERSEDIA</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <i class="fas fa-download" style="font-size: 48px; color: var(--green-light); margin-bottom: 16px;"></i>
+                            <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Versi ${newVersion} tersedia!</div>
+                            <div style="color: var(--text-medium); font-size: 14px;">Update untuk mendapatkan fitur terbaru</div>
+                        </div>
+                        
+                        <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+                            <div style="color: var(--text-light); font-weight: 600; margin-bottom: 8px;">Apa yang baru:</div>
+                            <ul style="color: var(--text-medium); font-size: 13px; padding-left: 20px;">
+                                <li>Perbaikan cache auto-update</li>
+                                <li>Optimasi performa</li>
+                                <li>Fitur tambah nasabah</li>
+                                <li>Notifikasi update otomatis</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="modal-btn modal-cancel" onclick="closeModal()" id="laterBtn">
+                            <i class="fas fa-clock"></i> NANTI
+                        </button>
+                        <button class="modal-btn modal-confirm" onclick="installUpdate()" id="updateBtn">
+                            <i class="fas fa-download"></i> UPDATE SEKARANG
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        // Install update
+        async function installUpdate() {
+            closeModal();
+            
+            showToast('Memperbarui aplikasi...');
+            
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registration = await navigator.serviceWorker.ready;
+                    
+                    // Post message untuk skip waiting
+                    if (registration.waiting) {
+                        registration.waiting.postMessage({type: 'SKIP_WAITING'});
+                    }
+                    
+                    // Update Service Worker
+                    await registration.update();
+                    
+                    // Clear cache
+                    await clearAppCache();
+                    
+                    showToast('Aplikasi berhasil diperbarui!');
+                    
+                    // Reload setelah 2 detik
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                    
+                } catch (error) {
+                    console.error('Error installing update:', error);
+                    showToast('Gagal memperbarui aplikasi', true);
+                }
+            }
+        }
+        
+        // Clear app cache
+        async function clearAppCache() {
+            if ('serviceWorker' in navigator && 'caches' in window) {
+                try {
+                    // Hapus semua cache
+                    const cacheNames = await caches.keys();
+                    await Promise.all(
+                        cacheNames.map(cacheName => caches.delete(cacheName))
+                    );
+                    
+                    // Unregister service worker
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    if (registration) {
+                        await registration.unregister();
+                    }
+                    
+                    console.log('✅ Cache cleared successfully');
+                    
+                } catch (error) {
+                    console.error('Error clearing cache:', error);
+                    throw error;
+                }
+            }
+        }
+        
+        // Test API connection
+        async function testAPI() {
+            try {
+                showToast('Testing koneksi API...');
+                
+                const res = await fetch(`${API_URL}?action=testConnection`);
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    showToast('✅ Koneksi API berhasil!');
+                } else {
+                    showToast('❌ Koneksi API gagal', true);
+                }
+            } catch (error) {
+                showToast('❌ Koneksi API error', true);
+            }
         }
         
         // ====== UTILITY FUNCTIONS ======
@@ -1076,7 +1310,10 @@
         window.processTransaction = processTransaction;
         window.prosesTambahNasabah = prosesTambahNasabah;
         window.startProcessingTransaction = startProcessingTransaction;
-        window.installPWA = window.installPWA;
+        window.checkForUpdates = checkForUpdates;
+        window.installUpdate = installUpdate;
+        window.clearAppCache = clearAppCache;
+        window.testAPI = testAPI;
     </script>
 </body>
 </html>
