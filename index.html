@@ -70,16 +70,9 @@
 
     <script>
         // ====== KONFIGURASI API ======
-        // Ganti dengan URL Apps Script Anda yang sudah di-deploy
         const API_URL = 'https://script.google.com/macros/s/AKfycbzg2VbfzX6Wdmo0DJkPY9noOhBZlRmXvgzuhLMpqfseste6Yi2P1KeLOFSvf-HM0Fn3/exec';
-        
-        // Kunci API untuk aksi yang memerlukan autentikasi
-        const API_KEY = 'JIMPITAN_DIGITAL_2024_SECRET_KEY'; // Sama dengan di Script Properties
-        
-        // Versi aplikasi - UBAH INI SETIAP UPDATE
+        const API_KEY = 'JIMPITAN_DIGITAL_2024_SECRET_KEY';
         const APP_VERSION = '2.0.1';
-        
-        // Server untuk generate struk (opsional)
         const RECEIPT_SERVER = 'https://bankflow-receipt.vercel.app/api/generate';
         
         // ====== STATE GLOBAL ======
@@ -115,187 +108,121 @@
                 });
             });
             
-            // Setup Service Worker dengan auto-update
+            // Setup Service Worker
             setupServiceWorker();
             
-            // Load initial data and show transaction tab
+            // Load initial data
             await loadData();
             loadTab('transaksi');
             
             // Check for updates
             setTimeout(checkForUpdates, 3000);
-            
-            // Setup periodic update check
-            setInterval(checkForUpdates, 4 * 60 * 60 * 1000); // 4 jam
+            setInterval(checkForUpdates, 4 * 60 * 60 * 1000);
         });
         
-      // ====== SERVICE WORKER SETUP (DIPERBAIKI UNTUK GITHUB PAGES) ======
-function setupServiceWorker() {
-    if ('serviceWorker' in navigator) {
-        console.log('🔍 Service Worker supported');
-        
-        // Tunggu halaman selesai load
-        window.addEventListener('load', function() {
-            console.log('📄 Page loaded, registering Service Worker...');
-            
-            // Path untuk GitHub Pages
-            const swPath = './sw.js'; // Gunakan relative path untuk GitHub Pages
-            const swScope = './';
-            
-            console.log(`🔧 Registering SW: ${swPath} with scope: ${swScope}`);
-            
-            // Hapus registrasi lama (opsional, untuk debugging)
-            navigator.serviceWorker.getRegistrations()
-                .then(registrations => {
-                    if (registrations.length > 0) {
-                        console.log(`🗑️ Found ${registrations.length} old SW registrations, cleaning up...`);
-                        return Promise.all(
-                            registrations.map(reg => {
-                                console.log('Unregistering:', reg.scope);
-                                return reg.unregister();
-                            })
-                        );
-                    }
-                    return Promise.resolve();
-                })
-                .then(() => {
-                    // Register Service Worker baru
-                    return navigator.serviceWorker.register(swPath, {
-                        scope: swScope
-                    });
-                })
-                .then(registration => {
-                    console.log('✅ Service Worker registered successfully!');
-                    console.log('Scope:', registration.scope);
-                    console.log('State:', registration.active ? 'Active' : 'Installing');
+        // ====== SERVICE WORKER SETUP ======
+        function setupServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                console.log('🔍 Service Worker supported');
+                
+                window.addEventListener('load', function() {
+                    console.log('📄 Page loaded, registering Service Worker...');
                     
-                    // Tampilkan toast sukses
-                    showToast('✅ Aplikasi siap digunakan offline!');
+                    const swPath = './sw.js';
+                    const swScope = './';
                     
-                    // Check for Service Worker updates
-                    registration.addEventListener('updatefound', () => {
-                        const newWorker = registration.installing;
-                        console.log('🔄 Update found for Service Worker:', newWorker.state);
-                        
-                        newWorker.addEventListener('statechange', () => {
-                            console.log('SW state changed to:', newWorker.state);
+                    console.log(`🔧 Registering SW: ${swPath} with scope: ${swScope}`);
+                    
+                    // Hapus registrasi lama
+                    navigator.serviceWorker.getRegistrations()
+                        .then(registrations => {
+                            if (registrations.length > 0) {
+                                console.log(`🗑️ Found ${registrations.length} old SW registrations`);
+                                return Promise.all(
+                                    registrations.map(reg => reg.unregister())
+                                );
+                            }
+                            return Promise.resolve();
+                        })
+                        .then(() => {
+                            return navigator.serviceWorker.register(swPath, { scope: swScope });
+                        })
+                        .then(registration => {
+                            console.log('✅ Service Worker registered!');
+                            console.log('Scope:', registration.scope);
                             
-                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                console.log('📱 New version available!');
-                                state.updateAvailable = true;
+                            showToast('✅ Aplikasi siap digunakan offline!');
+                            
+                            registration.addEventListener('updatefound', () => {
+                                const newWorker = registration.installing;
+                                console.log('🔄 Update found for Service Worker');
                                 
-                                // Tampilkan notifikasi update
-                                showUpdateNotification('Versi baru tersedia!');
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        console.log('📱 New version available!');
+                                        state.updateAvailable = true;
+                                        showUpdateNotification('Versi baru tersedia!');
+                                    }
+                                });
+                            });
+                            
+                            navigator.serviceWorker.addEventListener('message', event => {
+                                console.log('📨 Message from SW:', event.data);
                                 
-                                // Kirim notifikasi ke semua tabs
-                                if (registration.waiting) {
-                                    registration.waiting.postMessage({type: 'SKIP_WAITING'});
+                                if (event.data && event.data.type === 'SW_UPDATED') {
+                                    showToast(`🔄 Aplikasi diperbarui ke v${event.data.version || 'terbaru'}`);
+                                    
+                                    if (event.data.action === 'reload') {
+                                        setTimeout(() => {
+                                            window.location.reload();
+                                        }, 1500);
+                                    }
                                 }
-                            }
+                            });
                             
-                            if (newWorker.state === 'activated') {
-                                console.log('🎉 New Service Worker activated!');
-                            }
-                        });
-                    });
-                    
-                    // Listen for messages from Service Worker
-                    navigator.serviceWorker.addEventListener('message', event => {
-                        console.log('📨 Message from SW:', event.data);
-                        
-                        if (event.data && event.data.type === 'SW_UPDATED') {
-                            showToast(`🔄 Aplikasi diperbarui ke v${event.data.version || 'terbaru'}`);
+                            setInterval(() => {
+                                registration.update().catch(err => {
+                                    console.log('Update check failed:', err);
+                                });
+                            }, 60 * 60 * 1000);
                             
-                            if (event.data.action === 'reload') {
-                                setTimeout(() => {
-                                    console.log('Reloading page for update...');
-                                    window.location.reload();
-                                }, 1500);
-                            }
-                        }
-                        
-                        if (event.data && event.data.type === 'SW_READY') {
-                            console.log('✅ Service Worker ready');
-                        }
-                    });
-                    
-                    // Periksa apakah ada update yang menunggu
-                    if (registration.waiting) {
-                        console.log('⏳ Update pending, prompting user...');
-                        state.updateAvailable = true;
-                        showUpdateNotification('Update tersedia! Klik untuk memperbarui.');
-                    }
-                    
-                    // Setup periodic update check
-                    setInterval(() => {
-                        console.log('🔄 Checking for updates...');
-                        registration.update().catch(err => {
-                            console.log('Update check failed:', err);
+                        })
+                        .catch(error => {
+                            console.error('❌ Service Worker registration failed:', error);
+                            console.log('Aplikasi tetap berjalan tanpa offline support');
                         });
-                    }, 60 * 60 * 1000); // Setiap 1 jam
                     
-                })
-                .catch(error => {
-                    console.error('❌ Service Worker registration failed:', error);
+                    setTimeout(() => {
+                        if (!navigator.serviceWorker.controller) {
+                            console.log('🔄 Retrying Service Worker registration...');
+                            navigator.serviceWorker.register(swPath, { scope: swScope })
+                                .then(reg => console.log('Retry successful:', reg.scope))
+                                .catch(err => console.log('Retry failed:', err));
+                        }
+                    }, 3000);
                     
-                    // Tampilkan error yang lebih spesifik
-                    let errorMessage = 'Gagal menyiapkan aplikasi offline';
-                    
-                    if (error.message.includes('404')) {
-                        errorMessage = 'File sw.js tidak ditemukan. Pastikan file ada di server.';
-                    } else if (error.message.includes('MIME')) {
-                        errorMessage = 'Tipe file sw.js tidak didukung.';
-                    } else if (error.message.includes('security')) {
-                        errorMessage = 'Service Worker membutuhkan HTTPS atau localhost.';
-                    }
-                    
-                    console.log('Error details:', errorMessage);
-                    
-                    // Jangan tampilkan error ke user untuk UX yang lebih baik
-                    // Aplikasi tetap bisa berjalan tanpa Service Worker
                 });
-            
-            // Fallback: coba registrasi lagi setelah 3 detik
-            setTimeout(() => {
-                if (!navigator.serviceWorker.controller) {
-                    console.log('🔄 Retrying Service Worker registration...');
-                    navigator.serviceWorker.register(swPath, { scope: swScope })
-                        .then(reg => console.log('Retry successful:', reg.scope))
-                        .catch(err => console.log('Retry failed:', err));
-                }
-            }, 3000);
-            
-        });
-        
-        // Handle controller change (SW mengambil alih)
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-            console.log('🔄 Controller changed, new Service Worker in control');
-        });
-        
-    } else {
-        console.log('⚠️ Service Worker not supported in this browser');
-        // Aplikasi tetap berjalan tanpa offline capability
-    }
-}
+                
+            } else {
+                console.log('⚠️ Service Worker not supported in this browser');
+            }
+        }
         
         // ====== LOAD DATA DARI API ======
         async function loadData() {
             try {
                 console.log('📥 Loading data from API...');
                 
-                // Load nasabah data
                 const res = await fetch(`${API_URL}?action=getNasabah`);
                 const data = await res.json();
                 state.nasabahList = data.data || [];
                 
-                // Load global balance  
                 const balanceRes = await fetch(`${API_URL}?action=getAllSaldo`);
                 const balanceData = await balanceRes.json();
                 state.globalBalance = balanceData.saldo_global || 0;
                 
                 console.log(`✅ Data loaded: ${state.nasabahList.length} nasabah, saldo: ${formatRupiah(state.globalBalance)}`);
                 
-                // Render current tab
                 renderTab();
                 
             } catch (e) {
@@ -337,7 +264,6 @@ function setupServiceWorker() {
         
         // ====== RENDER TRANSAKSI ======
         function renderTransaksi() {
-            // Tentukan teks tombol berdasarkan state
             let btnText;
             if (state.isProcessing) {
                 btnText = '<div class="spinner"></div> Memproses...';
@@ -347,7 +273,6 @@ function setupServiceWorker() {
                 btnText = '<i class="fas fa-paper-plane"></i> KIRIM PROSES';
             }
             
-            // Hitung jumlah hari
             const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
             
             return `
@@ -633,10 +558,10 @@ function setupServiceWorker() {
                         <div id="swStatus" style="padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
                             <div style="display: flex; align-items: center; justify-content: space-between;">
                                 <span>Service Worker</span>
-                                <span style="color: #00e676; font-weight: 600;">Aktif</span>
+                                <span style="color: #00e676; font-weight: 600;" id="swStatusText">Loading...</span>
                             </div>
-                            <div style="font-size: 12px; color: var(--text-dim); margin-top: 8px;">
-                                Cache auto-update aktif
+                            <div style="font-size: 12px; color: var(--text-dim); margin-top: 8px;" id="swStatusDetail">
+                                Memeriksa status...
                             </div>
                         </div>
                     </div>
@@ -647,6 +572,14 @@ function setupServiceWorker() {
                     
                     <button class="btn" onclick="clearAppCache()" style="background: linear-gradient(135deg, var(--red) 0%, #ef5350 100%); margin-bottom: 12px;">
                         <i class="fas fa-broom"></i> CLEAR CACHE & RELOAD
+                    </button>
+                    
+                    <button class="btn" onclick="checkSWStatus()" style="background: linear-gradient(135deg, #5d4037 0%, #795548 100%); margin-bottom: 12px;">
+                        <i class="fas fa-search"></i> CHECK SW STATUS
+                    </button>
+                    
+                    <button class="btn" onclick="unregisterAllSW()" style="background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%); margin-bottom: 12px;">
+                        <i class="fas fa-trash-alt"></i> UNREGISTER ALL SW
                     </button>
                     
                     <button class="btn" onclick="testAPI()" style="background: linear-gradient(135deg, #283593 0%, #3949ab 100%);">
@@ -676,7 +609,6 @@ function setupServiceWorker() {
         function attachEvents() {
             // Events untuk halaman transaksi
             if (state.tab === 'transaksi') {
-                // Date inputs
                 document.getElementById('dateFrom')?.addEventListener('change', (e) => {
                     state.transaction.dateFrom = e.target.value;
                     updateTransactionDisplay();
@@ -688,14 +620,12 @@ function setupServiceWorker() {
                     updateTransactionButton();
                 });
                 
-                // Nasabah selection
                 document.getElementById('selectNasabah')?.addEventListener('change', (e) => {
                     state.transaction.nasabah = e.target.value;
                     updateTransactionDisplay();
                     updateTransactionButton();
                 });
                 
-                // Type buttons
                 document.querySelectorAll('.type-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         if (state.isProcessing) return;
@@ -707,7 +637,6 @@ function setupServiceWorker() {
                     });
                 });
                 
-                // Amount input
                 const amountInput = document.getElementById('amountInput');
                 if (amountInput) {
                     amountInput.addEventListener('input', (e) => {
@@ -724,7 +653,6 @@ function setupServiceWorker() {
                     });
                 }
                 
-                // Quick amount buttons
                 document.querySelectorAll('.amount-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         if (state.isProcessing) return;
@@ -737,7 +665,6 @@ function setupServiceWorker() {
                     });
                 });
                 
-                // Submit button
                 document.getElementById('submitBtn')?.addEventListener('click', confirmTransaction);
             }
             
@@ -804,6 +731,12 @@ function setupServiceWorker() {
                         `;
                     }
                 });
+            }
+            
+            // Events untuk halaman settings
+            if (state.tab === 'settings') {
+                // Update SW status display
+                setTimeout(updateSWStatusDisplay, 300);
             }
         }
         
@@ -931,57 +864,6 @@ function setupServiceWorker() {
                         <button class="modal-btn modal-confirm" onclick="startProcessingTransaction()" id="confirmBtn">
                             <i class="fas fa-check"></i> SIMPAN TRANSAKSI
                         </button>
-// ====== PWA HELPER FUNCTIONS ======
-
-// Force update Service Worker
-function forceUpdateSW() {
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistration()
-            .then(registration => {
-                if (registration) {
-                    registration.update().then(() => {
-                        showToast('✅ Update diperiksa');
-                    });
-                }
-            });
-    }
-}
-
-// Unregister all Service Workers (for debugging)
-function unregisterAllSW() {
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations()
-            .then(registrations => {
-                registrations.forEach(registration => {
-                    registration.unregister();
-                });
-                showToast('🗑️ Semua Service Worker di-unregister');
-                setTimeout(() => location.reload(), 1000);
-            });
-    }
-}
-
-// Check SW status
-function checkSWStatus() {
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistration()
-            .then(registration => {
-                if (registration) {
-                    showToast(`✅ SW aktif: ${registration.scope}`);
-                } else {
-                    showToast('❌ SW tidak terdaftar', true);
-                }
-            });
-    } else {
-        showToast('❌ Browser tidak mendukung SW', true);
-    }
-}
-
-// ====== TAMBAHKAN KE GLOBAL SCOPE ======
-window.forceUpdateSW = forceUpdateSW;
-window.unregisterAllSW = unregisterAllSW;
-window.checkSWStatus = checkSWStatus;
-                      
                     </div>
                 </div>
             `;
@@ -1276,7 +1158,6 @@ window.checkSWStatus = checkSWStatus;
             try {
                 console.log('🔄 Checking for updates...');
                 
-                // Check version.json
                 const response = await fetch('/version.json');
                 const data = await response.json();
                 
@@ -1341,20 +1222,16 @@ window.checkSWStatus = checkSWStatus;
                 try {
                     const registration = await navigator.serviceWorker.ready;
                     
-                    // Post message untuk skip waiting
                     if (registration.waiting) {
                         registration.waiting.postMessage({type: 'SKIP_WAITING'});
                     }
                     
-                    // Update Service Worker
                     await registration.update();
                     
-                    // Clear cache
                     await clearAppCache();
                     
                     showToast('Aplikasi berhasil diperbarui!');
                     
-                    // Reload setelah 2 detik
                     setTimeout(() => {
                         window.location.reload();
                     }, 2000);
@@ -1370,13 +1247,11 @@ window.checkSWStatus = checkSWStatus;
         async function clearAppCache() {
             if ('serviceWorker' in navigator && 'caches' in window) {
                 try {
-                    // Hapus semua cache
                     const cacheNames = await caches.keys();
                     await Promise.all(
                         cacheNames.map(cacheName => caches.delete(cacheName))
                     );
                     
-                    // Unregister service worker
                     const registration = await navigator.serviceWorker.getRegistration();
                     if (registration) {
                         await registration.unregister();
@@ -1406,6 +1281,94 @@ window.checkSWStatus = checkSWStatus;
                 }
             } catch (error) {
                 showToast('❌ Koneksi API error', true);
+            }
+        }
+        
+        // ====== PWA HELPER FUNCTIONS ======
+        
+        // Force update Service Worker
+        function forceUpdateSW() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistration()
+                    .then(registration => {
+                        if (registration) {
+                            registration.update().then(() => {
+                                showToast('✅ Update diperiksa');
+                            });
+                        }
+                    });
+            }
+        }
+        
+        // Unregister all Service Workers
+        function unregisterAllSW() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations()
+                    .then(registrations => {
+                        registrations.forEach(registration => {
+                            registration.unregister();
+                        });
+                        showToast('🗑️ Semua Service Worker di-unregister');
+                        setTimeout(() => location.reload(), 1000);
+                    });
+            }
+        }
+        
+        // Check SW status
+        function checkSWStatus() {
+            updateSWStatusDisplay();
+            showToast('🔄 Memeriksa status Service Worker...');
+            
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistration()
+                    .then(registration => {
+                        if (registration) {
+                            const status = navigator.serviceWorker.controller ? 'Aktif' : 'Terdaftar';
+                            showToast(`✅ SW ${status}: ${registration.scope}`);
+                        } else {
+                            showToast('❌ SW tidak terdaftar', true);
+                        }
+                    });
+            } else {
+                showToast('❌ Browser tidak mendukung SW', true);
+            }
+        }
+        
+        // Update SW status display
+        function updateSWStatusDisplay() {
+            const statusText = document.getElementById('swStatusText');
+            const statusDetail = document.getElementById('swStatusDetail');
+            
+            if (!statusText || !statusDetail) return;
+            
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistration()
+                    .then(registration => {
+                        if (registration) {
+                            if (navigator.serviceWorker.controller) {
+                                statusText.textContent = 'Aktif';
+                                statusText.style.color = '#00e676';
+                                statusDetail.textContent = `Scope: ${registration.scope}`;
+                            } else {
+                                statusText.textContent = 'Terdaftar';
+                                statusText.style.color = '#ff9800';
+                                statusDetail.textContent = 'Menunggu aktivasi...';
+                            }
+                        } else {
+                            statusText.textContent = 'Tidak Aktif';
+                            statusText.style.color = '#ff5252';
+                            statusDetail.textContent = 'Service Worker belum terdaftar';
+                        }
+                    })
+                    .catch(error => {
+                        statusText.textContent = 'Error';
+                        statusText.style.color = '#ff5252';
+                        statusDetail.textContent = error.message;
+                    });
+            } else {
+                statusText.textContent = 'Tidak Didukung';
+                statusText.style.color = '#ff5252';
+                statusDetail.textContent = 'Browser tidak mendukung Service Worker';
             }
         }
         
@@ -1476,6 +1439,10 @@ window.checkSWStatus = checkSWStatus;
         window.installUpdate = installUpdate;
         window.clearAppCache = clearAppCache;
         window.testAPI = testAPI;
+        window.forceUpdateSW = forceUpdateSW;
+        window.unregisterAllSW = unregisterAllSW;
+        window.checkSWStatus = checkSWStatus;
+        window.updateSWStatusDisplay = updateSWStatusDisplay;
     </script>
 </body>
 </html>
