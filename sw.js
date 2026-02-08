@@ -9,7 +9,6 @@ const urlsToCache = [
   'https://html2canvas.hertzen.com/dist/html2canvas.min.js'
 ];
 
-// Install Service Worker
 self.addEventListener('install', event => {
   console.log('🛠️ Service Worker: Installing...');
   
@@ -26,7 +25,6 @@ self.addEventListener('install', event => {
   );
 });
 
-// Activate Service Worker
 self.addEventListener('activate', event => {
   console.log('🚀 Service Worker: Activating...');
   
@@ -47,12 +45,9 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch Strategy: Cache First, Fallback to Network
 self.addEventListener('fetch', event => {
-  // Skip non-GET requests
   if (event.request.method !== 'GET') return;
   
-  // Skip external requests (except CDN)
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin && 
       !url.href.includes('cdnjs.cloudflare.com') &&
@@ -63,25 +58,20 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        // Cache hit - return response
         if (response) {
           console.log('📂 From cache:', event.request.url);
           return response;
         }
         
-        // Not in cache - fetch from network
         console.log('🌐 Fetching from network:', event.request.url);
         return fetch(event.request)
           .then(networkResponse => {
-            // Check if valid response
             if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
               return networkResponse;
             }
             
-            // Clone the response
             const responseToCache = networkResponse.clone();
             
-            // Add to cache
             caches.open(CACHE_NAME)
               .then(cache => {
                 cache.put(event.request, responseToCache);
@@ -93,12 +83,10 @@ self.addEventListener('fetch', event => {
           .catch(error => {
             console.error('❌ Fetch failed:', error);
             
-            // Return offline page or fallback
             if (event.request.destination === 'document') {
               return caches.match('/index.html');
             }
             
-            // For API calls, return error response
             if (event.request.url.includes('script.google.com')) {
               return new Response(JSON.stringify({
                 status: 'error',
@@ -112,13 +100,11 @@ self.addEventListener('fetch', event => {
   );
 });
 
-// Handle messages from client
 self.addEventListener('message', event => {
   console.log('📨 Message from client:', event.data);
   
   if (event.data.type === 'SKIP_WAITING') {
     self.skipWaiting().then(() => {
-      // Send message to all clients
       self.clients.matchAll().then(clients => {
         clients.forEach(client => {
           client.postMessage({
