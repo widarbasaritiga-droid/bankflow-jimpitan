@@ -1,0 +1,9 @@
+{
+  "version": "2.0.1",
+  "build_date": "2024-01-15T10:30:00Z",
+  "changelog": [
+    "Perbaikan cache auto-update",
+    "Optimasi performa",
+    "Fitur tambah nasabah"
+  ]
+}
