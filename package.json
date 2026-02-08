@@ -1,0 +1,33 @@
+{
+  "name": "sistem-jimpitan-digital",
+  "version": "2.0.1",
+  "description": "Aplikasi PWA untuk sistem jimpitan digital",
+  "main": "index.html",
+  "scripts": {
+    "start": "echo 'Buka index.html di browser lokal'",
+    "deploy": "echo 'Push ke GitHub untuk deploy'",
+    "test": "echo 'Test PWA dengan Lighthouse'"
+  },
+  "keywords": [
+    "pwa",
+    "jimpitan",
+    "finance",
+    "offline",
+    "google-apps-script"
+  ],
+  "author": "Sistem Jimpitan Digital",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/widarbasaritiga-droid/widarbasaritiga-droid.github.io"
+  },
+  "bugs": {
+    "url": "https://github.com/widarbasaritiga-droid/widarbasaritiga-droid.github.io/issues"
+  },
+  "homepage": "https://widarbasaritiga-droid.github.io",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}
