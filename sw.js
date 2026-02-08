@@ -1,4 +1,4 @@
-// sw.js
+// sw.js - Service Worker untuk Sistem Jimpitan Digital
 const CACHE_NAME = 'jimpitan-digital-v2.0.1';
 const urlsToCache = [
   '/',
@@ -129,13 +129,5 @@ self.addEventListener('message', event => {
         });
       });
     });
-  }
-});
-
-// Background sync (optional)
-self.addEventListener('sync', event => {
-  if (event.tag === 'sync-transactions') {
-    console.log('🔄 Background sync triggered');
-    // Handle background sync logic here
   }
 });
