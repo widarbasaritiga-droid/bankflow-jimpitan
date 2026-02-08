@@ -8,16 +8,65 @@
   "background_color": "#0a192f",
   "theme_color": "#0a192f",
   "orientation": "portrait",
+  "categories": ["finance", "productivity", "business"],
+  "lang": "id-ID",
+  "dir": "ltr",
   "icons": [
     {
       "src": "/favicon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/favicon-512x512.png",
       "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
       "type": "image/png"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard Sistem Jimpitan"
+    },
+    {
+      "src": "/screenshot2.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Transaksi Mobile"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Transaksi Baru",
+      "short_name": "Transaksi",
+      "description": "Buat transaksi setor/tarik baru",
+      "url": "/?tab=transaksi",
+      "icons": [{ "src": "/icon-transaction.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Cek Saldo",
+      "short_name": "Saldo",
+      "description": "Cek saldo nasabah",
+      "url": "/?tab=saldo",
+      "icons": [{ "src": "/icon-wallet.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
 }
