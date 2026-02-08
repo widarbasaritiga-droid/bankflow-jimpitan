@@ -188,7 +188,7 @@
                             
                         })
                         .catch(error => {
-                            console.error('❌ Service Worker registration failed:', error);
+                            console.error('❌ ServiceWorker registration failed:', error);
                             console.log('Aplikasi tetap berjalan tanpa offline support');
                         });
                     
@@ -211,7 +211,7 @@
         // ====== LOAD DATA DARI API ======
         async function loadData() {
             try {
-                console.log('📥 Loading data from API...');
+                console.log('📥 Load from API...');
                 
                 const res = await fetch(`${API_URL}?action=getNasabah`);
                 const data = await res.json();
