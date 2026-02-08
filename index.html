@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Jimpitan System</title>
+    
+    <!-- CSS Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS Files -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="shimmer-effects.css">
     
     <!-- Favicon dan PWA Icons -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -16,1170 +22,10 @@
     
     <!-- HTML2Canvas untuk render PNG -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    
-    <style>
-        /* VARIABLES */
-        :root {
-            --blue-dark: #0a192f;
-            --blue-medium: #1a237e;
-            --green-dark: #1b5e20;
-            --green-light: #4caf50;
-            --red: #c62828;
-            --yellow: #ff9800;
-            --text-light: #ffffff;
-            --text-medium: #e3f2fd;
-            --text-dim: #90a4ae;
-            --bg-card: rgba(25, 35, 45, 0.95);
-            --input-bg: rgba(255, 255, 255, 0.12);
-            --border-light: rgba(255, 255, 255, 0.25);
-            --border-medium: rgba(255, 255, 255, 0.15);
-        }
-        
-        /* RESET */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; 
-            background: var(--blue-dark); 
-            color: var(--text-light);
-            min-height: 100vh;
-            line-height: 1.5;
-        }
-        
-        /* HEADER */
-        .header {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            height: 56px;
-            background: var(--blue-medium);
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            z-index: 100;
-            border-bottom: 1px solid var(--border-light);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-        .header h1 { 
-            font-size: 18px; 
-            font-weight: 600;
-            color: var(--text-light);
-        }
-        
-        /* MAIN CONTENT */
-        .content {
-            padding: 70px 16px 70px;
-            min-height: 100vh;
-        }
-        
-        /* CARD */
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-medium);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        
-        /* NAVIGATION */
-        .nav {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            background: var(--blue-medium);
-            display: flex;
-            border-top: 1px solid var(--border-light);
-            height: 56px;
-            box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
-        }
-        .nav-btn {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-dim);
-            font-size: 11px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .nav-btn.active {
-            color: var(--text-light);
-            background: rgba(255,255,255,0.15);
-            font-weight: 500;
-        }
-        .nav-btn i { 
-            font-size: 18px; 
-            margin-bottom: 4px;
-        }
-        
-        /* BUTTONS */
-        .btn {
-            background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-light) 100%);
-            color: white;
-            border: none;
-            padding: 16px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            border-radius: 8px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
-        }
-        .btn:disabled { 
-            opacity: 0.4; 
-            cursor: not-allowed;
-            box-shadow: none;
-            background: linear-gradient(135deg, #666666 0%, #888888 100%);
-        }
-        .btn:hover:not(:disabled) { 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(27, 94, 32, 0.4);
-        }
-        
-        /* PROCESSING STATE */
-        .btn.processing {
-            background: linear-gradient(135deg, #666666 0%, #888888 100%);
-            color: rgba(255, 255, 255, 0.7);
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-        
-        /* SPINNER */
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #ffffff;
-            animation: spin 1s ease-in-out infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* INPUTS - FIXED CONTRAST */
-        input, select, textarea {
-            width: 100%;
-            padding: 14px 12px;
-            background: rgba(255, 255, 255, 0.12);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: #ffffff;
-            font-size: 15px;
-            margin-bottom: 12px;
-            transition: all 0.2s;
-        }
-        input::placeholder, select::placeholder, textarea::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-            opacity: 0.8;
-        }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--green-light);
-            background: rgba(255, 255, 255, 0.18);
-            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
-        }
-        
-        /* SELECT DROPDOWN FIX */
-        select {
-            background: rgba(255, 255, 255, 0.12);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ffffff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 16px;
-            padding-right: 36px;
-        }
-        select option {
-            background: #1a237e;
-            color: #ffffff;
-            padding: 10px;
-        }
-        
-        /* DATE ROW WITH DAYS COUNT */
-        .date-row {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
-            align-items: flex-end;
-        }
-        .date-group {
-            flex: 1;
-            position: relative;
-        }
-        .date-input {
-            width: 100%;
-            padding: 14px 12px;
-            background: rgba(255, 255, 255, 0.12);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: #ffffff;
-            font-size: 15px;
-            transition: all 0.2s;
-        }
-        .date-input:focus {
-            outline: none;
-            border-color: var(--green-light);
-            background: rgba(255, 255, 255, 0.18);
-        }
-        .date-label {
-            font-size: 13px;
-            color: var(--text-medium);
-            margin-bottom: 6px;
-            display: block;
-            font-weight: 500;
-        }
-        .days-count {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: var(--green-light);
-            color: white;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 0 8px 0 4px;
-        }
-        
-        /* TRANSACTION INFO DISPLAY */
-        .transaction-info-container {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .transaction-info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .transaction-info-row:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
-        .info-label-rounded {
-            background: rgba(26, 35, 126, 0.5);
-            color: var(--text-medium);
-            font-size: 12px;
-            font-weight: 600;
-            padding: 6px 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .info-value-rounded {
-            background: rgba(76, 175, 80, 0.2);
-            color: var(--text-light);
-            font-size: 14px;
-            font-weight: 600;
-            padding: 6px 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(76, 175, 80, 0.3);
-        }
-        .transaction-type-badge {
-            background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-light) 100%);
-            color: white;
-            font-size: 12px;
-            font-weight: 600;
-            padding: 6px 12px;
-            border-radius: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .transaction-type-badge.withdraw {
-            background: linear-gradient(135deg, var(--red) 0%, #ef5350 100%);
-        }
-        
-        /* AMOUNT INPUT CONTAINER - FIXED */
-        .amount-input-container {
-            position: relative;
-            margin-bottom: 20px;
-        }
-        .amount-prefix {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-light);
-            font-weight: 600;
-            font-size: 20px;
-            z-index: 1;
-        }
-        .amount-input {
-            width: 100%;
-            padding: 16px 16px 16px 60px;
-            background: rgba(255, 255, 255, 0.12);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: var(--text-light);
-            font-size: 24px;
-            font-weight: 700;
-            text-align: center;
-            letter-spacing: 1px;
-        }
-        .amount-input:focus {
-            outline: none;
-            border-color: var(--green-light);
-            background: rgba(255, 255, 255, 0.18);
-        }
-        
-        /* AMOUNT BUTTONS WITH LABELS */
-        .amount-section {
-            margin-bottom: 20px;
-        }
-        .amount-label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        .amount-label {
-            font-size: 13px;
-            color: var(--text-medium);
-            font-weight: 500;
-        }
-        .amount-currency {
-            font-size: 12px;
-            color: var(--text-dim);
-            background: rgba(255,255,255,0.1);
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-        .amount-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
-        .amount-btn {
-            position: relative;
-            padding: 16px 8px;
-            background: rgba(255,255,255,0.08);
-            border: 2px solid rgba(255,255,255,0.15);
-            color: var(--text-light);
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.2s;
-            text-align: center;
-        }
-        .amount-btn:hover { 
-            background: rgba(76, 175, 80, 0.2);
-            border-color: var(--green-light);
-            transform: translateY(-1px);
-        }
-        .amount-btn-label {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            background: var(--green-light);
-            color: white;
-            font-size: 10px;
-            font-weight: 600;
-            padding: 2px 6px;
-            border-radius: 10px;
-            min-width: 20px;
-            text-align: center;
-        }
-        
-        /* TYPE SELECTOR */
-        .type-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .type-btn {
-            flex: 1;
-            padding: 14px;
-            border: 2px solid rgba(255,255,255,0.15);
-            background: rgba(255,255,255,0.05);
-            color: var(--text-light);
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            font-weight: 600;
-            font-size: 15px;
-            transition: all 0.2s;
-        }
-        .type-btn.active {
-            border-color: var(--green-dark);
-            color: white;
-            transform: translateY(-1px);
-        }
-        .type-btn.setor.active { 
-            background: rgba(27, 94, 32, 0.25);
-        }
-        .type-btn.tarik.active { 
-            background: rgba(198, 40, 40, 0.25);
-            border-color: var(--red);
-        }
-        
-        /* INFO CARD */
-        .info-card {
-            background: linear-gradient(135deg, rgba(26, 35, 126, 0.4) 0%, rgba(40, 53, 147, 0.4) 100%);
-            padding: 18px;
-            border-radius: 10px;
-            margin-bottom: 16px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .info-value {
-            font-size: 26px;
-            font-weight: 700;
-            color: #00e676;
-            margin: 10px 0 6px;
-        }
-        .info-label {
-            font-size: 13px;
-            color: var(--text-medium);
-        }
-        
-        /* ACCOUNT LIST */
-        .account-item {
-            padding: 14px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            transition: all 0.2s;
-        }
-        .account-item:hover {
-            background: rgba(255,255,255,0.05);
-        }
-        .account-item:last-child { border-bottom: none; }
-        .account-avatar {
-            width: 42px;
-            height: 42px;
-            background: linear-gradient(135deg, var(--blue-medium) 0%, #283593 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: white;
-            font-size: 18px;
-        }
-        
-        /* MODAL */
-        .modal {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-        .modal-content {
-            background: var(--bg-card);
-            border-radius: 12px;
-            max-width: 400px;
-            width: 100%;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        .modal-header {
-            padding: 18px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .modal-body { 
-            padding: 20px; 
-        }
-        .modal-footer {
-            padding: 18px;
-            border-top: 1px solid rgba(255,255,255,0.2);
-            display: flex;
-            gap: 12px;
-        }
-        .modal-btn {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 15px;
-        }
-        .modal-cancel {
-            background: rgba(255,255,255,0.1);
-            color: var(--text-light);
-        }
-        .modal-confirm {
-            background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-light) 100%);
-            color: white;
-        }
-        
-        /* TOAST */
-        .toast {
-            position: fixed;
-            top: 70px;
-            right: 16px;
-            background: var(--green-dark);
-            color: white;
-            padding: 14px 18px;
-            border-radius: 8px;
-            z-index: 2000;
-            animation: slideIn 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .toast.error {
-            background: var(--red);
-        }
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
-        }
-        
-        /* SECTION HEADERS */
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-light);
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        /* ADD ACCOUNT BUTTON */
-        .add-account-btn {
-            background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-light) 100%);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 16px;
-            width: 100%;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-        .add-account-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
-        }
-        
-        /* FORM LABELS */
-        .form-label {
-            font-size: 13px;
-            color: var(--text-medium);
-            margin-bottom: 6px;
-            display: block;
-            font-weight: 500;
-        }
-        
-        /* RECEIPT STYLING */
-        .receipt-container {
-            position: fixed;
-            top: -9999px;
-            left: -9999px;
-            width: 400px;
-            background: white;
-            color: black;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            font-family: 'Courier New', monospace;
-        }
-        .receipt-header {
-            text-align: center;
-            border-bottom: 2px solid #000;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-        .receipt-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #1a237e;
-        }
-        .receipt-subtitle {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-        .receipt-details {
-            margin-bottom: 20px;
-        }
-        .receipt-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            padding-bottom: 8px;
-            border-bottom: 1px dashed #ddd;
-        }
-        .receipt-label {
-            font-weight: bold;
-            color: #333;
-        }
-        .receipt-value {
-            font-weight: 600;
-        }
-        .receipt-total {
-            font-size: 20px;
-            font-weight: bold;
-            text-align: center;
-            padding: 15px;
-            background: #f5f5f5;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        .receipt-footer {
-            text-align: center;
-            color: #666;
-            font-size: 12px;
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 2px solid #000;
-        }
-        .receipt-qr {
-            text-align: center;
-            margin: 15px 0;
-            color: #333;
-        }
-        .receipt-wa-button {
-            display: inline-block;
-            background: #25D366;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        /* ====== EFEK KILAUAN 3D UNTUK SEMUA TOMBOL ====== */
-        /* HANYA CSS INI YANG DITAMBAHKAN, TIDAK ADA PERUBAHAN LAIN */
-
-        /* Animasi efek kilauan utama */
-        @keyframes shimmer3D {
-            0% {
-                transform: translateX(-100%) skewX(-15deg);
-            }
-            100% {
-                transform: translateX(200%) skewX(-15deg);
-            }
-        }
-
-        @keyframes borderGlow {
-            0%, 100% {
-                opacity: 0.3;
-            }
-            50% {
-                opacity: 0.8;
-            }
-        }
-
-        /* Tombol utama (btn) */
-        .btn {
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            box-shadow: 
-                0 4px 12px rgba(27, 94, 32, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.4),
-                rgba(255, 255, 255, 0.6),
-                rgba(255, 255, 255, 0.4),
-                transparent
-            );
-            animation: shimmer3D 2.5s infinite;
-            z-index: 1;
-        }
-
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 1px;
-            left: 1px;
-            right: 1px;
-            height: 30%;
-            background: linear-gradient(
-                to bottom,
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
-            border-radius: 7px 7px 0 0;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        /* Tombol amount */
-        .amount-btn {
-            position: relative;
-            overflow: hidden;
-            box-shadow: 
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .amount-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 40%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.2),
-                rgba(255, 255, 255, 0.3),
-                rgba(255, 255, 255, 0.2),
-                transparent
-            );
-            animation: shimmer3D 3s infinite 0.5s;
-            z-index: 1;
-        }
-
-        .amount-btn::after {
-            content: '';
-            position: absolute;
-            top: 1px;
-            left: 1px;
-            right: 1px;
-            height: 25%;
-            background: linear-gradient(
-                to bottom,
-                rgba(255, 255, 255, 0.08),
-                transparent
-            );
-            border-radius: 6px 6px 0 0;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        /* Tombol type selector */
-        .type-btn {
-            position: relative;
-            overflow: hidden;
-            box-shadow: 
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .type-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 35%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.15),
-                rgba(255, 255, 255, 0.25),
-                rgba(255, 255, 255, 0.15),
-                transparent
-            );
-            animation: shimmer3D 3.5s infinite 1s;
-            z-index: 1;
-        }
-
-        .type-btn::after {
-            content: '';
-            position: absolute;
-            top: 1px;
-            left: 1px;
-            right: 1px;
-            height: 25%;
-            background: linear-gradient(
-                to bottom,
-                rgba(255, 255, 255, 0.08),
-                transparent
-            );
-            border-radius: 6px 6px 0 0;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .type-btn.active::before {
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.25),
-                rgba(255, 255, 255, 0.4),
-                rgba(255, 255, 255, 0.25),
-                transparent
-            );
-            animation-duration: 2s;
-        }
-
-        .type-btn.active::after {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            border-radius: 10px;
-            background: linear-gradient(45deg, 
-                transparent, 
-                rgba(255, 255, 255, 0.1), 
-                transparent, 
-                rgba(255, 255, 255, 0.1), 
-                transparent);
-            z-index: 0;
-            animation: borderGlow 2s linear infinite;
-        }
-
-        .type-btn.setor.active {
-            box-shadow: 
-                inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                0 0 0 1px rgba(27, 94, 32, 0.3),
-                0 3px 8px rgba(27, 94, 32, 0.4);
-        }
-
-        .type-btn.tarik.active {
-            box-shadow: 
-                inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                0 0 0 1px rgba(198, 40, 40, 0.3),
-                0 3px 8px rgba(198, 40, 40, 0.4);
-        }
-
-        /* Tombol navigasi */
-        .nav-btn {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nav-btn.active::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 30%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.2),
-                rgba(255, 255, 255, 0.3),
-                rgba(255, 255, 255, 0.2),
-                transparent
-            );
-            animation: shimmer3D 4s infinite;
-            z-index: 1;
-        }
-
-        .nav-btn.active::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.4),
-                transparent
-            );
-            animation: shimmer3D 2s infinite;
-        }
-
-        /* Tombol modal */
-        .modal-btn {
-            position: relative;
-            overflow: hidden;
-            box-shadow: 
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-confirm::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 45%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.25),
-                rgba(255, 255, 255, 0.4),
-                rgba(255, 255, 255, 0.25),
-                transparent
-            );
-            animation: shimmer3D 2.8s infinite;
-            z-index: 1;
-        }
-
-        .modal-cancel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 40%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.15),
-                rgba(255, 255, 255, 0.25),
-                rgba(255, 255, 255, 0.15),
-                transparent
-            );
-            animation: shimmer3D 3.2s infinite 0.8s;
-            z-index: 1;
-        }
-
-        .modal-btn::after {
-            content: '';
-            position: absolute;
-            top: 1px;
-            left: 1px;
-            right: 1px;
-            height: 30%;
-            background: linear-gradient(
-                to bottom,
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
-            border-radius: 7px 7px 0 0;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        /* Tombol add account */
-        .add-account-btn {
-            position: relative;
-            overflow: hidden;
-            box-shadow: 
-                0 4px 12px rgba(27, 94, 32, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-
-        .add-account-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.25),
-                rgba(255, 255, 255, 0.4),
-                rgba(255, 255, 255, 0.25),
-                transparent
-            );
-            animation: shimmer3D 3s infinite 0.3s;
-            z-index: 1;
-        }
-
-        .add-account-btn::after {
-            content: '';
-            position: absolute;
-            top: 1px;
-            left: 1px;
-            right: 1px;
-            height: 30%;
-            background: linear-gradient(
-                to bottom,
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
-            border-radius: 7px 7px 0 0;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        /* Tombol install PWA */
-        button[onclick*="installPWA"] {
-            position: relative;
-            overflow: hidden;
-            box-shadow: 
-                0 3px 8px rgba(255, 152, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-
-        button[onclick*="installPWA"]::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 45%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.3),
-                rgba(255, 255, 255, 0.5),
-                rgba(255, 255, 255, 0.3),
-                transparent
-            );
-            animation: shimmer3D 2.7s infinite 0.6s;
-            z-index: 1;
-        }
-
-        button[onclick*="installPWA"]::after {
-            content: '';
-            position: absolute;
-            top: 1px;
-            left: 1px;
-            right: 1px;
-            height: 30%;
-            background: linear-gradient(
-                to bottom,
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
-            border-radius: 7px 7px 0 0;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        /* Memastikan teks dan ikon tetap di atas efek kilauan */
-        .btn > *,
-        .amount-btn > *,
-        .type-btn > *,
-        .nav-btn > *,
-        .modal-btn > *,
-        .add-account-btn > *,
-        button[onclick*="installPWA"] > * {
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Menonaktifkan efek kilauan saat tombol disabled */
-        .btn:disabled::before,
-        .amount-btn:disabled::before,
-        .type-btn:disabled::before,
-        .modal-btn:disabled::before,
-        .add-account-btn:disabled::before,
-        button[onclick*="installPWA"]:disabled::before,
-        .btn:disabled::after,
-        .amount-btn:disabled::after,
-        .type-btn:disabled::after,
-        .modal-btn:disabled::after,
-        .add-account-btn:disabled::after,
-        button[onclick*="installPWA"]:disabled::after {
-            display: none;
-            animation: none;
-        }
-
-        /* Efek hover dengan kilauan lebih intens */
-        .btn:hover:not(:disabled)::before,
-        .add-account-btn:hover::before,
-        .modal-confirm:hover::before {
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.4),
-                rgba(255, 255, 255, 0.7),
-                rgba(255, 255, 255, 0.4),
-                transparent
-            );
-            animation-duration: 1.5s;
-        }
-
-        .amount-btn:hover:not(:disabled)::before,
-        .type-btn:hover:not(:disabled)::before {
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.25),
-                rgba(255, 255, 255, 0.35),
-                rgba(255, 255, 255, 0.25),
-                transparent
-            );
-            animation-duration: 2s;
-        }
-
-        /* Efek tombol processing */
-        .btn.processing::before {
-            animation: none;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.1),
-                rgba(255, 255, 255, 0.15),
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
-        }
-
-        /* Responsive adjustments untuk efek kilauan */
-        @media (max-width: 480px) {
-            .btn::before,
-            .amount-btn::before,
-            .type-btn::before,
-            .modal-btn::before,
-            .add-account-btn::before,
-            button[onclick*="installPWA"]::before {
-                animation-duration: 3s;
-            }
-            
-            .btn::after,
-            .amount-btn::after,
-            .type-btn::after,
-            .modal-btn::after,
-            .add-account-btn::after,
-            button[onclick*="installPWA"]::after {
-                height: 25%;
-            }
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 480px) {
-            .amount-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .content {
-                padding: 70px 12px 70px;
-            }
-            .receipt-container {
-                width: 350px;
-                padding: 20px;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="header">
-        <h1><i class="fas fa-university"></i> Jimpitan</h1>
+        <h1><i class="fas fa-university"></i> Sistem Jimpitan Digital</h1>
     </div>
     
     <div class="content" id="content">
@@ -1195,9 +41,9 @@
             <i class="fas fa-chart-line"></i>
             <span>Dashboard</span>
         </button>
-        <button class="nav-btn" data-tab="rekening">
+        <button class="nav-btn" data-tab="nasabah">
             <i class="fas fa-users"></i>
-            <span>Rekening</span>
+            <span>Nasabah</span>
         </button>
         <button class="nav-btn" data-tab="saldo">
             <i class="fas fa-wallet"></i>
@@ -1210,18 +56,24 @@
 
     <script>
         // ====== KONFIGURASI API ======
+        // Ganti dengan URL Apps Script Anda yang sudah di-deploy
         const API_URL = 'https://script.google.com/macros/s/AKfycbzg2VbfzX6Wdmo0DJkPY9noOhBZlRmXvgzuhLMpqfseste6Yi2P1KeLOFSvf-HM0Fn3/exec';
-        const RECEIPT_SERVER = 'https://bankflow-receipt.vercel.app/api/generate'; // Server untuk generate struk
+        
+        // Kunci API untuk aksi yang memerlukan autentikasi
+        const API_KEY = 'GENERATE_A_RANDOM_TOKEN_HERE'; // Sama dengan di Script Properties
+        
+        // Server untuk generate struk (opsional)
+        const RECEIPT_SERVER = 'https://bankflow-receipt.vercel.app/api/generate';
         
         // ====== STATE GLOBAL ======
         let state = {
             tab: 'transaksi',
-            accounts: [],
+            nasabahList: [], // Diganti dari accounts ke nasabahList
             globalBalance: 0,
             isProcessing: false,
             isGeneratingReceipt: false,
             transaction: {
-                account: '',
+                nasabah: '', // Diganti dari account ke nasabah
                 type: 'SETOR',
                 amount: 0,
                 dateFrom: new Date().toISOString().split('T')[0],
@@ -1229,17 +81,6 @@
             },
             lastTransactionData: null
         };
-        
-        // ====== PWA SERVICE WORKER ======
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').then(registration => {
-                    console.log('ServiceWorker registered');
-                }).catch(err => {
-                    console.log('ServiceWorker registration failed:', err);
-                });
-            });
-        }
         
         // ====== INISIALISASI APLIKASI ======
         document.addEventListener('DOMContentLoaded', () => {
@@ -1257,36 +98,19 @@
             loadData();
             loadTab('transaksi');
             
-            // Install button for PWA
-            let deferredPrompt;
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                showToast('Aplikasi dapat diinstall ke perangkat Anda!', false);
-            });
-            
-            // Install PWA function
-            window.installPWA = async () => {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted') {
-                        showToast('Aplikasi berhasil diinstall!');
-                    }
-                    deferredPrompt = null;
-                }
-            };
+            // PWA Installation
+            initializePWA();
         });
         
         // ====== LOAD DATA DARI API ======
         async function loadData() {
             try {
-                // Load nasabah data - KODE ASLI
+                // Load nasabah data
                 const res = await fetch(`${API_URL}?action=getNasabah`);
                 const data = await res.json();
-                state.accounts = data.data || [];
+                state.nasabahList = data.data || []; // Diganti ke nasabahList
                 
-                // Load global balance - KODE ASLI  
+                // Load global balance  
                 const balanceRes = await fetch(`${API_URL}?action=getAllSaldo`);
                 const balanceData = await balanceRes.json();
                 state.globalBalance = balanceData.saldo_global || 0;
@@ -1316,8 +140,8 @@
                 case 'dashboard':
                     content.innerHTML = renderDashboard();
                     break;
-                case 'rekening':
-                    content.innerHTML = renderRekening();
+                case 'nasabah': // Diganti dari rekening ke nasabah
+                    content.innerHTML = renderNasabah();
                     break;
                 case 'saldo':
                     content.innerHTML = renderSaldo();
@@ -1333,8 +157,8 @@
             let btnText;
             if (state.isProcessing) {
                 btnText = '<div class="spinner"></div> Memproses...';
-            } else if (state.transaction.account && state.transaction.amount > 0) {
-                btnText = `${state.transaction.type === 'SETOR' ? 'SETOR' : 'TARIK'} ${formatRupiah(state.transaction.amount)} - ${state.transaction.account}`;
+            } else if (state.transaction.nasabah && state.transaction.amount > 0) {
+                btnText = `${state.transaction.type === 'SETOR' ? 'SETOR' : 'TARIK'} ${formatRupiah(state.transaction.amount)} - ${state.transaction.nasabah}`;
             } else {
                 btnText = '<i class="fas fa-paper-plane"></i> KIRIM PROSES';
             }
@@ -1350,12 +174,12 @@
                     
                     <div style="display: flex; gap: 12px; margin-bottom: 20px;">
                         <div class="info-card" style="flex: 1;">
-                            <div class="info-label">Total Saldo</div>
+                            <div class="info-label">Total Saldo Sistem</div>
                             <div class="info-value">${formatRupiah(state.globalBalance)}</div>
                         </div>
                         <div class="info-card" style="flex: 1;">
                             <div class="info-label">Jumlah Nasabah</div>
-                            <div class="info-value">${state.accounts.length}</div>
+                            <div class="info-value">${state.nasabahList.length}</div>
                         </div>
                     </div>
                     
@@ -1376,9 +200,9 @@
                     
                     <div style="margin-bottom: 16px;">
                         <div class="form-label">Pilih Nasabah</div>
-                        <select id="selectAccount" ${state.isProcessing ? 'disabled' : ''}>
+                        <select id="selectNasabah" ${state.isProcessing ? 'disabled' : ''}>
                             <option value="">-- Pilih Nasabah --</option>
-                            ${state.accounts.map(a => `<option value="${a.nama}" ${state.transaction.account === a.nama ? 'selected' : ''}>${a.nama}</option>`).join('')}
+                            ${state.nasabahList.map(n => `<option value="${n.nama}" ${state.transaction.nasabah === n.nama ? 'selected' : ''}>${n.nama}${n.id_nasabah ? ` (${n.id_nasabah})` : ''}</option>`).join('')}
                         </select>
                     </div>
                     
@@ -1448,11 +272,11 @@
                         </div>
                     </div>
                     
-                    ${state.transaction.account && state.transaction.amount > 0 ? `
+                    ${state.transaction.nasabah && state.transaction.amount > 0 ? `
                         <div class="transaction-info-container">
                             <div class="transaction-info-row">
                                 <span class="info-label-rounded">Nasabah</span>
-                                <span class="info-value-rounded">${state.transaction.account}</span>
+                                <span class="info-value-rounded">${state.transaction.nasabah}</span>
                             </div>
                             <div class="transaction-info-row">
                                 <span class="info-label-rounded">Jenis Transaksi</span>
@@ -1478,15 +302,9 @@
                     
                     <button class="btn ${state.isProcessing ? 'processing' : ''}" 
                             id="submitBtn" 
-                            ${!state.transaction.account || state.transaction.amount <= 0 || state.isProcessing ? 'disabled' : ''}>
+                            ${!state.transaction.nasabah || state.transaction.amount <= 0 || state.isProcessing ? 'disabled' : ''}>
                         ${btnText}
                     </button>
-                    
-                    <div style="text-align: center; margin-top: 10px;">
-                        <button onclick="window.installPWA()" style="background: var(--yellow); color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                            <i class="fas fa-download"></i> Install Aplikasi
-                        </button>
-                    </div>
                 </div>
             `;
         }
@@ -1496,24 +314,24 @@
             return `
                 <div class="card">
                     <div class="section-title">
-                        <i class="fas fa-chart-line"></i> DASHBOARD
+                        <i class="fas fa-chart-line"></i> DASHBOARD SISTEM
                     </div>
                     
                     <div class="info-card">
-                        <div class="info-label">SALDO GLOBAL</div>
+                        <div class="info-label">SALDO GLOBAL SISTEM</div>
                         <div class="info-value">${formatRupiah(state.globalBalance)}</div>
                         <div style="font-size: 13px; color: var(--text-medium); margin-top: 8px;">
-                            Total dari ${state.accounts.length} nasabah
+                            Total dari ${state.nasabahList.length} nasabah
                         </div>
                     </div>
                     
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 20px;">
                         <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
-                            <div style="font-size: 28px; font-weight: 700; color: #00e676;">${state.accounts.length}</div>
+                            <div style="font-size: 28px; font-weight: 700; color: #00e676;">${state.nasabahList.length}</div>
                             <div style="font-size: 13px; color: var(--text-medium); margin-top: 6px;">Total Nasabah</div>
                         </div>
                         <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
-                            <div style="font-size: 28px; font-weight: 700; color: #00e676;">${formatRupiah(state.accounts.length > 0 ? Math.round(state.globalBalance/state.accounts.length) : 0)}</div>
+                            <div style="font-size: 28px; font-weight: 700; color: #00e676;">${formatRupiah(state.nasabahList.length > 0 ? Math.round(state.globalBalance/state.nasabahList.length) : 0)}</div>
                             <div style="font-size: 13px; color: var(--text-medium); margin-top: 6px;">Rata-rata Saldo</div>
                         </div>
                     </div>
@@ -1521,22 +339,22 @@
             `;
         }
         
-        // ====== RENDER REKENING ======
-        function renderRekening() {
+        // ====== RENDER DAFTAR NASABAH ======
+        function renderNasabah() {
             return `
                 <div class="card">
                     <div class="section-title">
-                        <i class="fas fa-users"></i> DAFTAR REKENING
+                        <i class="fas fa-users"></i> DAFTAR NASABAH
                     </div>
                     
-                    <button class="add-account-btn" id="addAccountBtn">
-                        <i class="fas fa-plus-circle"></i> TAMBAH NASABAH
+                    <button class="add-account-btn" id="addNasabahBtn">
+                        <i class="fas fa-user-plus"></i> TAMBAH NASABAH BARU
                     </button>
                     
                     <div style="display: flex; gap: 12px; margin-bottom: 20px;">
                         <div class="info-card" style="flex: 1;">
                             <div class="info-label">Total Nasabah</div>
-                            <div class="info-value">${state.accounts.length}</div>
+                            <div class="info-value">${state.nasabahList.length}</div>
                         </div>
                         <div class="info-card" style="flex: 1;">
                             <div class="info-label">Total Saldo</div>
@@ -1545,13 +363,16 @@
                     </div>
                     
                     <div style="max-height: 400px; overflow-y: auto; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
-                        ${state.accounts.length > 0 ? 
-                            state.accounts.map(acc => `
+                        ${state.nasabahList.length > 0 ? 
+                            state.nasabahList.map(nasabah => `
                                 <div class="account-item">
-                                    <div class="account-avatar">${acc.nama.charAt(0).toUpperCase()}</div>
+                                    <div class="account-avatar">${nasabah.nama.charAt(0).toUpperCase()}</div>
                                     <div>
-                                        <div style="font-weight: 600; color: var(--text-light);">${acc.nama}</div>
-                                        <div style="font-size: 12px; color: var(--text-dim);">ID: ${acc.id_nasabah || 'N/A'}</div>
+                                        <div style="font-weight: 600; color: var(--text-light);">${nasabah.nama}</div>
+                                        <div style="font-size: 12px; color: var(--text-dim);">
+                                            ID: ${nasabah.id_nasabah || 'N/A'} 
+                                            ${nasabah.no_hp ? `• ${nasabah.no_hp}` : ''}
+                                        </div>
                                     </div>
                                 </div>
                             `).join('') : 
@@ -1570,22 +391,22 @@
             return `
                 <div class="card">
                     <div class="section-title">
-                        <i class="fas fa-wallet"></i> CEK SALDO
+                        <i class="fas fa-wallet"></i> CEK SALDO NASABAH
                     </div>
                     
                     <div class="info-card">
-                        <div class="info-label">SALDO GLOBAL BANK</div>
+                        <div class="info-label">SALDO GLOBAL SISTEM</div>
                         <div class="info-value">${formatRupiah(state.globalBalance)}</div>
                         <div style="font-size: 13px; color: var(--text-medium); margin-top: 8px;">
-                            Akumulasi semua rekening
+                            Akumulasi semua nasabah
                         </div>
                     </div>
                     
                     <div style="margin: 20px 0;">
                         <div class="form-label">Pilih Nasabah</div>
-                        <select id="saldoAccount">
+                        <select id="saldoNasabah">
                             <option value="">-- Pilih Nasabah --</option>
-                            ${state.accounts.map(a => `<option value="${a.nama}">${a.nama}</option>`).join('')}
+                            ${state.nasabahList.map(n => `<option value="${n.nama}">${n.nama}${n.id_nasabah ? ` (${n.id_nasabah})` : ''}</option>`).join('')}
                         </select>
                     </div>
                     
@@ -1613,9 +434,9 @@
                     updateTransactionButton();
                 });
                 
-                // Account selection
-                document.getElementById('selectAccount')?.addEventListener('change', (e) => {
-                    state.transaction.account = e.target.value;
+                // Nasabah selection
+                document.getElementById('selectNasabah')?.addEventListener('change', (e) => {
+                    state.transaction.nasabah = e.target.value;
                     updateTransactionDisplay();
                     updateTransactionButton();
                 });
@@ -1666,18 +487,18 @@
                 document.getElementById('submitBtn')?.addEventListener('click', confirmTransaction);
             }
             
-            // Events untuk halaman rekening (tambah nasabah)
-            if (state.tab === 'rekening') {
-                document.getElementById('addAccountBtn')?.addEventListener('click', showAddNasabahModal);
+            // Events untuk halaman nasabah
+            if (state.tab === 'nasabah') {
+                document.getElementById('addNasabahBtn')?.addEventListener('click', showAddNasabahModal);
             }
             
             // Events untuk halaman saldo
             if (state.tab === 'saldo') {
-                document.getElementById('saldoAccount')?.addEventListener('change', async (e) => {
-                    const account = e.target.value;
+                document.getElementById('saldoNasabah')?.addEventListener('change', async (e) => {
+                    const nasabah = e.target.value;
                     const resultDiv = document.getElementById('saldoResult');
                     
-                    if (!account) {
+                    if (!nasabah) {
                         resultDiv.innerHTML = `
                             <i class="fas fa-wallet" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
                             <div>Pilih nasabah untuk melihat saldo</div>
@@ -1687,26 +508,45 @@
                     
                     resultDiv.innerHTML = `
                         <div style="width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--green-light); border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
-                        <div>Memuat saldo...</div>
+                        <div>Memuat saldo nasabah...</div>
                     `;
                     
                     try {
-                        const res = await fetch(`${API_URL}?action=getSaldo&nama=${encodeURIComponent(account)}`);
+                        // Gunakan endpoint getSaldo dari Apps Script
+                        const res = await fetch(`${API_URL}?action=getSaldo&nama=${encodeURIComponent(nasabah)}`);
                         const data = await res.json();
-                        const saldo = data.data?.saldo_akhir || 0;
                         
-                        resultDiv.innerHTML = `
-                            <div class="info-card" style="background: linear-gradient(135deg, rgba(27, 94, 32, 0.4) 0%, rgba(76, 175, 80, 0.4) 100%);">
-                                <div class="info-label">SALDO ${account.toUpperCase()}</div>
-                                <div class="info-value">${formatRupiah(saldo)}</div>
-                                <div style="font-size: 13px; color: var(--text-medium); margin-top: 8px;">Status: Aktif</div>
-                            </div>
-                        `;
+                        if (data.status === 'success') {
+                            const saldo = data.data.saldo_akhir || 0;
+                            const totalSetor = data.data.total_setor || 0;
+                            const totalTarik = data.data.total_tarik || 0;
+                            
+                            resultDiv.innerHTML = `
+                                <div class="info-card" style="background: linear-gradient(135deg, rgba(27, 94, 32, 0.4) 0%, rgba(76, 175, 80, 0.4) 100%); margin-bottom: 16px;">
+                                    <div class="info-label">SALDO ${nasabah.toUpperCase()}</div>
+                                    <div class="info-value">${formatRupiah(saldo)}</div>
+                                    <div style="font-size: 13px; color: var(--text-medium); margin-top: 8px;">Status: Aktif</div>
+                                </div>
+                                
+                                <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                        <span style="color: var(--text-medium); font-size: 13px;">Total Setor:</span>
+                                        <span style="color: #00e676; font-weight: 600;">${formatRupiah(totalSetor)}</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="color: var(--text-medium); font-size: 13px;">Total Tarik:</span>
+                                        <span style="color: #ff5252; font-weight: 600;">${formatRupiah(totalTarik)}</span>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            throw new Error(data.message || 'Gagal memuat saldo');
+                        }
                     } catch (e) {
                         resultDiv.innerHTML = `
                             <div style="color: var(--red); text-align: center;">
                                 <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 16px;"></i>
-                                <div>Gagal memuat saldo</div>
+                                <div>Gagal memuat saldo nasabah</div>
                             </div>
                         `;
                     }
@@ -1717,7 +557,7 @@
         // ====== UPDATE TRANSACTION DISPLAY ======
         function updateTransactionDisplay() {
             // Re-render hanya bagian transaction info jika ada data
-            if (state.transaction.account && state.transaction.amount > 0) {
+            if (state.transaction.nasabah && state.transaction.amount > 0) {
                 const transactionInfoContainer = document.querySelector('.transaction-info-container');
                 if (transactionInfoContainer) {
                     const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
@@ -1725,7 +565,7 @@
                     transactionInfoContainer.innerHTML = `
                         <div class="transaction-info-row">
                             <span class="info-label-rounded">Nasabah</span>
-                            <span class="info-value-rounded">${state.transaction.account}</span>
+                            <span class="info-value-rounded">${state.transaction.nasabah}</span>
                         </div>
                         <div class="transaction-info-row">
                             <span class="info-label-rounded">Jenis Transaksi</span>
@@ -1772,7 +612,7 @@
             if (!btn) return;
             
             // Update status disabled
-            btn.disabled = !(state.transaction.account && state.transaction.amount > 0) || state.isProcessing;
+            btn.disabled = !(state.transaction.nasabah && state.transaction.amount > 0) || state.isProcessing;
             
             // Update kelas untuk styling
             if (state.isProcessing) {
@@ -1784,8 +624,8 @@
             // Update teks tombol
             if (state.isProcessing) {
                 btn.innerHTML = '<div class="spinner"></div> Memproses...';
-            } else if (state.transaction.account && state.transaction.amount > 0) {
-                btn.innerHTML = `${state.transaction.type === 'SETOR' ? 'SETOR' : 'TARIK'} ${formatRupiah(state.transaction.amount)} - ${state.transaction.account}`;
+            } else if (state.transaction.nasabah && state.transaction.amount > 0) {
+                btn.innerHTML = `${state.transaction.type === 'SETOR' ? 'SETOR' : 'TARIK'} ${formatRupiah(state.transaction.amount)} - ${state.transaction.nasabah}`;
             } else {
                 btn.innerHTML = '<i class="fas fa-paper-plane"></i> KIRIM PROSES';
             }
@@ -1815,7 +655,7 @@
                         <div class="transaction-info-container" style="margin-bottom: 20px;">
                             <div class="transaction-info-row">
                                 <span class="info-label-rounded">Nasabah</span>
-                                <span class="info-value-rounded">${state.transaction.account}</span>
+                                <span class="info-value-rounded">${state.transaction.nasabah}</span>
                             </div>
                             <div class="transaction-info-row">
                                 <span class="info-label-rounded">Jenis Transaksi</span>
@@ -1835,13 +675,13 @@
                         </div>
                         
                         <div style="font-size: 13px; color: var(--text-dim); text-align: center; padding: 12px; background: rgba(255, 193, 7, 0.1); border-radius: 8px;">
-                            <i class="fas fa-exclamation-triangle"></i> Data akan disimpan dan struk PNG dikirim via WhatsApp
+                            <i class="fas fa-exclamation-triangle"></i> Data akan disimpan ke sistem Jimpitan Digital
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button class="modal-btn modal-cancel" onclick="closeModal()" id="cancelBtn">BATAL</button>
                         <button class="modal-btn modal-confirm" onclick="startProcessingTransaction()" id="confirmBtn">
-                            <i class="fas fa-check"></i> SIMPAN & KIRIM STRUK
+                            <i class="fas fa-check"></i> SIMPAN TRANSAKSI
                         </button>
                     </div>
                 </div>
@@ -1849,22 +689,7 @@
             document.body.appendChild(modal);
         }
         
-        // ====== MULAI PROSES TRANSAKSI ======
-        function startProcessingTransaction() {
-            // Tutup modal
-            closeModal();
-            
-            // Set state processing ke true
-            state.isProcessing = true;
-            
-            // Update UI untuk menunjukkan sedang memproses
-            updateTransactionButton();
-            
-            // Mulai proses transaksi
-            processTransaction();
-        }
-        
-       // ====== TAMBAH NASABAH MODAL ======
+        // ====== TAMBAH NASABAH MODAL ======
         function showAddNasabahModal() {
             const modal = document.createElement('div');
             modal.className = 'modal';
@@ -1886,7 +711,7 @@
                         <div class="form-label">Alamat</div>
                         <input type="text" id="alamatNasabah" placeholder="Masukkan alamat lengkap">
                         
-                        <div class="form-label">Email</div>
+                        <div class="form-label">Email (opsional)</div>
                         <input type="email" id="emailNasabah" placeholder="contoh@email.com">
                         
                         <div style="font-size: 12px; color: var(--text-dim); margin-top: 16px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 6px;">
@@ -1895,8 +720,8 @@
                     </div>
                     <div class="modal-footer">
                         <button class="modal-btn modal-cancel" onclick="closeModal()">BATAL</button>
-                        <button class="modal-btn modal-confirm" onclick="addNasabah()">
-                            <i class="fas fa-save"></i> SIMPAN KE SPREADSHEET
+                        <button class="modal-btn modal-confirm" onclick="prosesTambahNasabah()">
+                            <i class="fas fa-save"></i> SIMPAN KE SISTEM
                         </button>
                     </div>
                 </div>
@@ -1910,7 +735,7 @@
         }
         
         // ====== PROSES TAMBAH NASABAH ======
-        async function addNasabah() {
+        async function prosesTambahNasabah() {
             const nama = document.getElementById('namaNasabah')?.value.trim();
             const hp = document.getElementById('hpNasabah')?.value.trim();
             const alamat = document.getElementById('alamatNasabah')?.value.trim();
@@ -1923,12 +748,12 @@
             }
             
             if (!hp) {
-                showToast('Nomori HP wajib diisi', true);
+                showToast('Nomor HP wajib diisi', true);
                 document.getElementById('hpNasabah')?.focus();
                 return;
             }
             
-            // Validasi nomor HP (hanya angka, minimal 10 digit)
+            // Validasi nomor HP
             const cleanHP = hp.replace(/\D/g, '');
             if (cleanHP.length < 10) {
                 showToast('Nomor HP minimal 10 digit', true);
@@ -1936,9 +761,10 @@
                 return;
             }
             
-            showToast('Menyimpan data nasabah ke spreadsheet...');
+            showToast('Menyimpan data nasabah ke sistem...');
             
             try {
+                // Kirim dengan token autentikasi
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
@@ -1946,6 +772,7 @@
                     },
                     body: new URLSearchParams({
                         action: 'addNasabah',
+                        token: API_KEY, // Tambahkan token untuk autentikasi
                         nama: nama,
                         no_hp: cleanHP,
                         alamat: alamat,
@@ -1956,27 +783,36 @@
                 const data = await res.json();
                 
                 if (data.status === 'success') {
-                    showToast('Nasabah berhasil ditambahkan ke spreadsheet!');
+                    showToast(`Nasabah ${nama} berhasil ditambahkan!`);
                     closeModal();
                     
-                    // Refresh data dan kembali ke halaman rekening
+                    // Refresh data dan kembali ke halaman nasabah
                     await loadData();
-                    loadTab('rekening');
+                    loadTab('nasabah');
                     
                 } else {
                     showToast('Gagal: ' + (data.message || 'Error'), true);
                 }
             } catch (e) {
-                showToast('Gagal menyimpan data ke spreadsheet', true);
+                console.error('Error adding nasabah:', e);
+                showToast('Gagal menyimpan data ke sistem', true);
             }
         }
         
-        // ====== PROSES TRANSAKSI DAN KIRIM STRUK ======
+        // ====== MULAI PROSES TRANSAKSI ======
+        function startProcessingTransaction() {
+            closeModal();
+            state.isProcessing = true;
+            updateTransactionButton();
+            processTransaction();
+        }
+        
+        // ====== PROSES TRANSAKSI KE APPS SCRIPT ======
         async function processTransaction() {
-            showToast('Menyimpan transaksi ke spreadsheet...');
+            showToast('Menyimpan transaksi ke sistem...');
             
             try {
-                // Simpan data transaksi untuk digunakan nanti
+                // Simpan data transaksi
                 state.lastTransactionData = {
                     ...state.transaction,
                     transactionId: 'TRX-' + Date.now(),
@@ -1984,7 +820,7 @@
                     daysCount: calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo)
                 };
                 
-                // Kirim ke spreadsheet
+                // Kirim ke Apps Script dengan autentikasi
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
@@ -1992,7 +828,8 @@
                     },
                     body: new URLSearchParams({
                         action: 'addTransaksi',
-                        nama: state.transaction.account,
+                        token: API_KEY, // Token autentikasi
+                        nama: state.transaction.nasabah,
                         jenis: state.transaction.type,
                         nominal: state.transaction.amount,
                         keterangan: `Transaksi periode ${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)} (${calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo)} hari)`
@@ -2002,36 +839,41 @@
                 const data = await res.json();
                 
                 if (data.status === 'success') {
-                    showToast('Transaksi berhasil! Membuat struk...');
+                    showToast('Transaksi berhasil disimpan!');
                     
-                    // Generate dan kirim struk
-                    await generateAndSendReceipt();
+                    // Generate struk jika diperlukan
+                    await generateReceipt();
+                    
+                    // Reset form
+                    resetTransactionForm();
+                    
+                    // Refresh data
+                    await loadData();
                     
                 } else {
                     showToast('Gagal: ' + (data.message || 'Error'), true);
-                    // Reset processing state jika gagal
                     state.isProcessing = false;
                     updateTransactionButton();
                 }
             } catch (e) {
-                showToast('Gagal menyimpan transaksi ke spreadsheet', true);
-                // Reset processing state jika error
+                console.error('Error processing transaction:', e);
+                showToast('Gagal menyimpan transaksi', true);
                 state.isProcessing = false;
                 updateTransactionButton();
             }
         }
         
-        // ====== GENERATE DAN KIRIM STRUK ======
-        async function generateAndSendReceipt() {
+        // ====== GENERATE STRUK (OPSIONAL) ======
+        async function generateReceipt() {
             try {
                 state.isGeneratingReceipt = true;
                 
-                // 1. Generate HTML untuk struk
+                // Generate HTML untuk struk
                 const receiptHTML = generateReceiptHTML();
                 const receiptContainer = document.getElementById('receiptContainer');
                 receiptContainer.innerHTML = receiptHTML;
                 
-                // 2. Convert ke PNG menggunakan html2canvas
+                // Convert ke PNG
                 const canvas = await html2canvas(receiptContainer, {
                     scale: 2,
                     backgroundColor: '#ffffff',
@@ -2039,51 +881,22 @@
                     useCORS: true
                 });
                 
-                // 3. Convert canvas ke blob
-                canvas.toBlob(async (blob) => {
-                    try {
-                        // 4. Create FormData untuk upload
-                        const formData = new FormData();
-                        formData.append('receipt', blob, 'struk-Jimpitan.png');
-                        formData.append('transactionData', JSON.stringify(state.lastTransactionData));
-                        
-                        // 5. Upload ke server untuk mendapatkan URL
-                        showToast('Mengupload struk ke server...');
-                        
-                        const uploadRes = await fetch(RECEIPT_SERVER, {
-                            method: 'POST',
-                            body: formData
-                        });
-                        
-                        if (!uploadRes.ok) {
-                            throw new Error('Upload gagal');
-                        }
-                        
-                        const uploadData = await uploadRes.json();
-                        const receiptUrl = uploadData.url;
-                        
-                        // 6. Kirim via WhatsApp
-                        await sendToWhatsApp(receiptUrl);
-                        
-                        // 7. Reset form dan state
-                        resetTransactionForm();
-                        
-                        showToast('Transaksi selesai! Struk terkirim ke WhatsApp.');
-                        
-                    } catch (uploadError) {
-                        console.error('Upload error:', uploadError);
-                        // Fallback: download langsung
-                        showToast('Server penuh, mendownload struk...');
-                        downloadReceipt(canvas);
-                        resetTransactionForm();
-                    }
+                // Download struk
+                canvas.toBlob((blob) => {
+                    const link = document.createElement('a');
+                    link.download = `struk-jimpitan-${Date.now()}.png`;
+                    link.href = URL.createObjectURL(blob);
+                    link.click();
                     
+                    showToast('Struk berhasil di-download');
+                    state.isGeneratingReceipt = false;
                 }, 'image/png');
                 
             } catch (error) {
-                console.error('Generate receipt error:', error);
-                showToast('Gagal membuat struk', true);
-                resetTransactionForm();
+                console.error('Error generating receipt:', error);
+                state.isGeneratingReceipt = false;
+                // Lanjutkan tanpa struk
+                showToast('Transaksi berhasil, gagal generate struk');
             }
         }
         
@@ -2104,9 +917,8 @@
             
             return `
                 <div class="receipt-header">
-                    <div class="receipt-title">JIMPITAN MANG RESTI</div>
+                    <div class="receipt-title">SISTEM JIMPITAN DIGITAL</div>
                     <div class="receipt-subtitle">Digital Jimpitan System</div>
-                    <div style="font-size: 12px; color: #666;">Jl. Raya Desa Padangbulia Gg. Tapuk, Buleleng</div>
                 </div>
                 
                 <div class="receipt-details">
@@ -2124,7 +936,7 @@
                     </div>
                     <div class="receipt-row">
                         <span class="receipt-label">Nasabah:</span>
-                        <span class="receipt-value">${trans.account}</span>
+                        <span class="receipt-value">${trans.nasabah}</span>
                     </div>
                     <div class="receipt-row">
                         <span class="receipt-label">Jenis:</span>
@@ -2146,73 +958,18 @@
                     ${trans.type === 'SETOR' ? 'SETOR' : 'TARIK'}: ${formatRupiah(trans.amount)}
                 </div>
                 
-                <div class="receipt-qr">
-                    <div style="font-size: 12px; margin-bottom: 10px;">Scan untuk verifikasi:</div>
-                    <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px;">
-                        ${transactionId}<br>
-                        Digital Jimpitan Receipt
-                    </div>
-                </div>
-                
                 <div class="receipt-footer">
                     <div style="margin-bottom: 10px;">Terima kasih atas kepercayaan Anda</div>
-                    <div style="font-size: 10px;">* Transaksi ini telah tercatat di sistem</div>
+                    <div style="font-size: 10px;">* Transaksi ini telah tercatat di sistem Jimpitan Digital</div>
                     <div style="font-size: 10px;">** Struk digital sah sebagai bukti transaksi</div>
-                    <div style="margin-top: 15px;">
-                        <a href="#" class="receipt-wa-button" style="display: none;">
-                            <i class="fab fa-whatsapp"></i> Kirim ke WhatsApp
-                        </a>
-                    </div>
                 </div>
             `;
-        }
-        
-        // ====== KIRIM KE WHATSAPP ======
-        async function sendToWhatsApp(receiptUrl) {
-            const trans = state.lastTransactionData;
-            const message = `📋 *STRUK TRANSAKSI JIMPITAN*
-
-🏦 * Digital Jimpitan System*
-📅 *Tanggal:* ${new Date().toLocaleDateString('id-ID')}
-⏰ *Waktu:* ${new Date().toLocaleTimeString('id-ID')}
-
-👤 *Nasabah:* ${trans.account}
-🔢 *ID Transaksi:* ${trans.transactionId}
-📊 *Jenis:* ${trans.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}
-💰 *Nominal:* ${formatRupiah(trans.amount)}
-📅 *Periode:* ${formatDateDisplay(trans.dateFrom)} - ${formatDateDisplay(trans.dateTo)}
-📆 *Durasi:* ${trans.daysCount} Hari
-
-📎 *Struk Digital:* ${receiptUrl}
-
-_Transaksi ini telah tercatat di sistem Jimpitan._
-_Terima kasih atas kepercayaan Anda._`;
-            
-            // Encode message untuk URL
-            const encodedMessage = encodeURIComponent(message);
-            
-            // Buat URL WhatsApp
-            const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
-            
-            // Buka WhatsApp di tab baru (tanpa popup)
-            window.open(whatsappUrl, '_blank');
-            
-            // Tunggu sebentar agar WhatsApp terbuka
-            await new Promise(resolve => setTimeout(resolve, 2000));
-        }
-        
-        // ====== DOWNLOAD STRUK (FALLBACK) ======
-        function downloadReceipt(canvas) {
-            const link = document.createElement('a');
-            link.download = `struk-jimpitan-${Date.now()}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
         }
         
         // ====== RESET FORM TRANSAKSI ======
         function resetTransactionForm() {
             state.transaction = {
-                account: '',
+                nasabah: '',
                 type: 'SETOR',
                 amount: 0,
                 dateFrom: new Date().toISOString().split('T')[0],
@@ -2223,8 +980,37 @@ _Terima kasih atas kepercayaan Anda._`;
             state.isGeneratingReceipt = false;
             state.lastTransactionData = null;
             
-            // Refresh data
-            loadData();
+            renderTab();
+        }
+        
+        // ====== PWA INITIALIZATION ======
+        function initializePWA() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registered');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed:', err);
+                    });
+            }
+            
+            let deferredPrompt;
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+            });
+            
+            window.installPWA = async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        showToast('Aplikasi berhasil diinstall!');
+                    }
+                    deferredPrompt = null;
+                }
+            };
         }
         
         // ====== UTILITY FUNCTIONS ======
@@ -2251,18 +1037,13 @@ _Terima kasih atas kepercayaan Anda._`;
                 const from = new Date(dateFrom);
                 const to = new Date(dateTo);
                 
-                // Validasi tanggal
                 if (isNaN(from.getTime()) || isNaN(to.getTime())) {
                     return 0;
                 }
                 
-                // Hitung selisih dalam milidetik
                 const timeDiff = to.getTime() - from.getTime();
-                
-                // Konversi ke hari
                 const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
                 
-                // Tambah 1 karena termasuk hari pertama
                 return Math.max(0, daysDiff + 1);
             } catch (error) {
                 return 0;
@@ -2293,9 +1074,9 @@ _Terima kasih atas kepercayaan Anda._`;
         // ====== EXPOSE FUNCTIONS TO GLOBAL SCOPE ======
         window.closeModal = closeModal;
         window.processTransaction = processTransaction;
-        window.addNasabah = addNasabah;
+        window.prosesTambahNasabah = prosesTambahNasabah;
         window.startProcessingTransaction = startProcessingTransaction;
-        window.installPWA = () => {};
+        window.installPWA = window.installPWA;
     </script>
 </body>
 </html>
