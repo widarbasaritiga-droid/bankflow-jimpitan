@@ -129,65 +129,154 @@
             setInterval(checkForUpdates, 4 * 60 * 60 * 1000); // 4 jam
         });
         
-        // ====== SERVICE WORKER SETUP (DIPERBAIKI) ======
-        function setupServiceWorker() {
-            if ('serviceWorker' in navigator) {
-                // Hapus registrasi lama untuk debugging
-                navigator.serviceWorker.getRegistrations().then(registrations => {
-                    registrations.forEach(registration => {
-                        console.log('🗑️ Unregistering old SW:', registration.scope);
-                        registration.unregister();
+      // ====== SERVICE WORKER SETUP (DIPERBAIKI UNTUK GITHUB PAGES) ======
+function setupServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        console.log('🔍 Service Worker supported');
+        
+        // Tunggu halaman selesai load
+        window.addEventListener('load', function() {
+            console.log('📄 Page loaded, registering Service Worker...');
+            
+            // Path untuk GitHub Pages
+            const swPath = './sw.js'; // Gunakan relative path untuk GitHub Pages
+            const swScope = './';
+            
+            console.log(`🔧 Registering SW: ${swPath} with scope: ${swScope}`);
+            
+            // Hapus registrasi lama (opsional, untuk debugging)
+            navigator.serviceWorker.getRegistrations()
+                .then(registrations => {
+                    if (registrations.length > 0) {
+                        console.log(`🗑️ Found ${registrations.length} old SW registrations, cleaning up...`);
+                        return Promise.all(
+                            registrations.map(reg => {
+                                console.log('Unregistering:', reg.scope);
+                                return reg.unregister();
+                            })
+                        );
+                    }
+                    return Promise.resolve();
+                })
+                .then(() => {
+                    // Register Service Worker baru
+                    return navigator.serviceWorker.register(swPath, {
+                        scope: swScope
                     });
-                }).then(() => {
-                    // Register baru
-                    navigator.serviceWorker.register('/sw.js', {
-                        scope: '/'
-                    })
-                    .then(registration => {
-                        console.log('✅ Service Worker registered:', registration.scope);
+                })
+                .then(registration => {
+                    console.log('✅ Service Worker registered successfully!');
+                    console.log('Scope:', registration.scope);
+                    console.log('State:', registration.active ? 'Active' : 'Installing');
+                    
+                    // Tampilkan toast sukses
+                    showToast('✅ Aplikasi siap digunakan offline!');
+                    
+                    // Check for Service Worker updates
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        console.log('🔄 Update found for Service Worker:', newWorker.state);
                         
-                        // Check for updates
-                        registration.addEventListener('updatefound', () => {
-                            const newWorker = registration.installing;
-                            console.log('🔄 Update found for Service Worker');
+                        newWorker.addEventListener('statechange', () => {
+                            console.log('SW state changed to:', newWorker.state);
                             
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    console.log('📱 New version available');
-                                    state.updateAvailable = true;
-                                    showUpdateNotification('Versi baru tersedia!');
-                                }
-                            });
-                        });
-                        
-                        // Listen for messages from Service Worker
-                        navigator.serviceWorker.addEventListener('message', event => {
-                            console.log('📨 Message from SW:', event.data);
-                            
-                            if (event.data.type === 'SW_UPDATED') {
-                                showToast(`Aplikasi diperbarui ke v${event.data.version}`);
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('📱 New version available!');
+                                state.updateAvailable = true;
                                 
-                                if (event.data.action === 'reload') {
-                                    setTimeout(() => {
-                                        window.location.reload();
-                                    }, 2000);
+                                // Tampilkan notifikasi update
+                                showUpdateNotification('Versi baru tersedia!');
+                                
+                                // Kirim notifikasi ke semua tabs
+                                if (registration.waiting) {
+                                    registration.waiting.postMessage({type: 'SKIP_WAITING'});
                                 }
                             }
+                            
+                            if (newWorker.state === 'activated') {
+                                console.log('🎉 New Service Worker activated!');
+                            }
                         });
-                        
-                        // Check for updates periodically
-                        setInterval(() => {
-                            registration.update();
-                        }, 60 * 60 * 1000); // Setiap 1 jam
-                        
-                    })
-                    .catch(error => {
-                        console.error('❌ Service Worker registration failed:', error);
-                        showToast(`SW Error: ${error.message}`, true);
                     });
+                    
+                    // Listen for messages from Service Worker
+                    navigator.serviceWorker.addEventListener('message', event => {
+                        console.log('📨 Message from SW:', event.data);
+                        
+                        if (event.data && event.data.type === 'SW_UPDATED') {
+                            showToast(`🔄 Aplikasi diperbarui ke v${event.data.version || 'terbaru'}`);
+                            
+                            if (event.data.action === 'reload') {
+                                setTimeout(() => {
+                                    console.log('Reloading page for update...');
+                                    window.location.reload();
+                                }, 1500);
+                            }
+                        }
+                        
+                        if (event.data && event.data.type === 'SW_READY') {
+                            console.log('✅ Service Worker ready');
+                        }
+                    });
+                    
+                    // Periksa apakah ada update yang menunggu
+                    if (registration.waiting) {
+                        console.log('⏳ Update pending, prompting user...');
+                        state.updateAvailable = true;
+                        showUpdateNotification('Update tersedia! Klik untuk memperbarui.');
+                    }
+                    
+                    // Setup periodic update check
+                    setInterval(() => {
+                        console.log('🔄 Checking for updates...');
+                        registration.update().catch(err => {
+                            console.log('Update check failed:', err);
+                        });
+                    }, 60 * 60 * 1000); // Setiap 1 jam
+                    
+                })
+                .catch(error => {
+                    console.error('❌ Service Worker registration failed:', error);
+                    
+                    // Tampilkan error yang lebih spesifik
+                    let errorMessage = 'Gagal menyiapkan aplikasi offline';
+                    
+                    if (error.message.includes('404')) {
+                        errorMessage = 'File sw.js tidak ditemukan. Pastikan file ada di server.';
+                    } else if (error.message.includes('MIME')) {
+                        errorMessage = 'Tipe file sw.js tidak didukung.';
+                    } else if (error.message.includes('security')) {
+                        errorMessage = 'Service Worker membutuhkan HTTPS atau localhost.';
+                    }
+                    
+                    console.log('Error details:', errorMessage);
+                    
+                    // Jangan tampilkan error ke user untuk UX yang lebih baik
+                    // Aplikasi tetap bisa berjalan tanpa Service Worker
                 });
-            }
-        }
+            
+            // Fallback: coba registrasi lagi setelah 3 detik
+            setTimeout(() => {
+                if (!navigator.serviceWorker.controller) {
+                    console.log('🔄 Retrying Service Worker registration...');
+                    navigator.serviceWorker.register(swPath, { scope: swScope })
+                        .then(reg => console.log('Retry successful:', reg.scope))
+                        .catch(err => console.log('Retry failed:', err));
+                }
+            }, 3000);
+            
+        });
+        
+        // Handle controller change (SW mengambil alih)
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            console.log('🔄 Controller changed, new Service Worker in control');
+        });
+        
+    } else {
+        console.log('⚠️ Service Worker not supported in this browser');
+        // Aplikasi tetap berjalan tanpa offline capability
+    }
+}
         
         // ====== LOAD DATA DARI API ======
         async function loadData() {
