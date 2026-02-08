@@ -19,7 +19,15 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a192f">
-    
+    <!-- Tambahkan ini di dalam <head> -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Jimpitan Digital">
+
+<!-- Tambahkan scope untuk PWA -->
+<link rel="manifest" href="manifest.json" crossorigin="use-credentials">
+<meta name="application-name" content="Sistem Jimpitan Digital">
     <!-- HTML2Canvas untuk render PNG -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
