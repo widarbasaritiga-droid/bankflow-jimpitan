@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Jimpitan System</title>
     
+    <!-- ===== PWA METADATA ===== -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Jimpitan Digital">
+    <meta name="application-name" content="Sistem Jimpitan Digital">
+    <!-- ======================== -->
+    
     <!-- CSS Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -17,21 +25,15 @@
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="manifest" href="manifest.json">
+    
+    <!-- Manifest untuk PWA -->
+    <link rel="manifest" href="manifest.json" crossorigin="use-credentials">
     <meta name="theme-color" content="#0a192f">
-    <!-- Tambahkan ini di dalam <head> -->
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Jimpitan Digital">
-
-<!-- Tambahkan scope untuk PWA -->
-<link rel="manifest" href="manifest.json" crossorigin="use-credentials">
-<meta name="application-name" content="Sistem Jimpitan Digital">
+    
     <!-- HTML2Canvas untuk render PNG -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
-<body>
+    <body>
     <div class="header">
         <h1><i class="fas fa-university"></i> Sistem Jimpitan Digital</h1>
     </div>
