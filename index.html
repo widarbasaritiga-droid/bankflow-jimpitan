@@ -82,10 +82,11 @@
             globalBalance: 0,
             isProcessing: false,
             isGeneratingReceipt: false,
+            dailyAmount: 10000, // Nominal harian default
             transaction: {
                 nasabah: '',
                 type: 'SETOR',
-                amount: 0,
+                dailyAmount: 10000,
                 dateFrom: new Date().toISOString().split('T')[0],
                 dateTo: new Date().toISOString().split('T')[0]
             },
@@ -264,21 +265,22 @@
         
         // ====== RENDER TRANSAKSI ======
         function renderTransaksi() {
+            const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
+            const totalAmount = state.transaction.dailyAmount * daysCount;
+            
             let btnText;
             if (state.isProcessing) {
                 btnText = '<div class="spinner"></div> Memproses...';
-            } else if (state.transaction.nasabah && state.transaction.amount > 0) {
-                btnText = `${state.transaction.type === 'SETOR' ? 'SETOR' : 'TARIK'} ${formatRupiah(state.transaction.amount)} - ${state.transaction.nasabah}`;
+            } else if (state.transaction.nasabah && state.transaction.dailyAmount > 0 && daysCount > 0) {
+                btnText = `${state.transaction.type === 'SETOR' ? 'SETOR' : 'TARIK'} ${formatRupiah(totalAmount)} - ${state.transaction.nasabah}`;
             } else {
                 btnText = '<i class="fas fa-paper-plane"></i> KIRIM PROSES';
             }
             
-            const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
-            
             return `
                 <div class="card">
                     <div class="section-title">
-                        <i class="fas fa-exchange-alt"></i> TRANSAKSI BARU
+                        <i class="fas fa-exchange-alt"></i> TRANSAKSI JIMPITAN
                     </div>
                     
                     <div style="display: flex; gap: 12px; margin-bottom: 20px;">
@@ -293,7 +295,7 @@
                     </div>
                     
                     <div style="margin-bottom: 16px;">
-                        <div class="form-label">Periode Transaksi</div>
+                        <div class="form-label">Periode Jimpitan</div>
                         <div class="date-row">
                             <div class="date-group">
                                 <div class="date-label">Dari Tanggal</div>
@@ -331,16 +333,16 @@
                     
                     <div class="amount-section">
                         <div class="amount-label-row">
-                            <div class="amount-label">Nominal Transaksi</div>
+                            <div class="amount-label">Nominal Harian</div>
                             <div class="amount-currency">IDR (Rupiah)</div>
                         </div>
                         <div class="amount-input-container">
                             <div class="amount-prefix">Rp</div>
                             <input type="text" 
                                    class="amount-input" 
-                                   id="amountInput" 
+                                   id="dailyAmountInput" 
                                    placeholder="0"
-                                   value="${state.transaction.amount > 0 ? formatNumber(state.transaction.amount) : ''}"
+                                   value="${state.transaction.dailyAmount > 0 ? formatNumber(state.transaction.dailyAmount) : ''}"
                                    onfocus="this.select()"
                                    ${state.isProcessing ? 'disabled' : ''}>
                         </div>
@@ -381,7 +383,7 @@
                         </div>
                     </div>
                     
-                    ${state.transaction.nasabah && state.transaction.amount > 0 ? `
+                    ${state.transaction.nasabah && state.transaction.dailyAmount > 0 && daysCount > 0 ? `
                         <div class="transaction-info-container">
                             <div class="transaction-info-row">
                                 <span class="info-label-rounded">Nasabah</span>
@@ -395,8 +397,12 @@
                                 </span>
                             </div>
                             <div class="transaction-info-row">
-                                <span class="info-label-rounded">Nominal</span>
-                                <span class="info-value-rounded">${formatRupiah(state.transaction.amount)}</span>
+                                <span class="info-label-rounded">Nominal Harian</span>
+                                <span class="info-value-rounded">${formatRupiah(state.transaction.dailyAmount)}</span>
+                            </div>
+                            <div class="transaction-info-row">
+                                <span class="info-label-rounded">Total Transaksi</span>
+                                <span class="info-value-rounded" style="color: var(--green-light); font-weight: bold; font-size: 18px;">${formatRupiah(totalAmount)}</span>
                             </div>
                             <div class="transaction-info-row">
                                 <span class="info-label-rounded">Periode</span>
@@ -404,14 +410,14 @@
                             </div>
                             <div class="transaction-info-row">
                                 <span class="info-label-rounded">Durasi</span>
-                                <span class="info-value-rounded">${daysCount} Hari</span>
+                                <span class="info-value-rounded">${daysCount} Hari × ${formatRupiah(state.transaction.dailyAmount)}</span>
                             </div>
                         </div>
                     ` : ''}
                     
                     <button class="btn ${state.isProcessing ? 'processing' : ''}" 
                             id="submitBtn" 
-                            ${!state.transaction.nasabah || state.transaction.amount <= 0 || state.isProcessing ? 'disabled' : ''}>
+                            ${!state.transaction.nasabah || state.transaction.dailyAmount <= 0 || daysCount <= 0 || state.isProcessing ? 'disabled' : ''}>
                         ${btnText}
                     </button>
                     
@@ -637,18 +643,18 @@
                     });
                 });
                 
-                const amountInput = document.getElementById('amountInput');
-                if (amountInput) {
-                    amountInput.addEventListener('input', (e) => {
+                const dailyAmountInput = document.getElementById('dailyAmountInput');
+                if (dailyAmountInput) {
+                    dailyAmountInput.addEventListener('input', (e) => {
                         if (state.isProcessing) return;
                         let value = e.target.value.replace(/\D/g, '');
-                        state.transaction.amount = parseInt(value) || 0;
+                        state.transaction.dailyAmount = parseInt(value) || 0;
                         e.target.value = value ? formatNumber(value) : '';
                         updateTransactionDisplay();
                         updateTransactionButton();
                     });
                     
-                    amountInput.addEventListener('focus', function() {
+                    dailyAmountInput.addEventListener('focus', function() {
                         setTimeout(() => this.select(), 100);
                     });
                 }
@@ -657,8 +663,8 @@
                     btn.addEventListener('click', () => {
                         if (state.isProcessing) return;
                         const amount = parseInt(btn.dataset.amount);
-                        state.transaction.amount = amount;
-                        const input = document.getElementById('amountInput');
+                        state.transaction.dailyAmount = amount;
+                        const input = document.getElementById('dailyAmountInput');
                         if (input) input.value = formatNumber(amount);
                         updateTransactionDisplay();
                         updateTransactionButton();
@@ -742,11 +748,12 @@
         
         // ====== UPDATE TRANSACTION DISPLAY ======
         function updateTransactionDisplay() {
-            if (state.transaction.nasabah && state.transaction.amount > 0) {
+            const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
+            const totalAmount = state.transaction.dailyAmount * daysCount;
+            
+            if (state.transaction.nasabah && state.transaction.dailyAmount > 0 && daysCount > 0) {
                 const transactionInfoContainer = document.querySelector('.transaction-info-container');
                 if (transactionInfoContainer) {
-                    const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
-                    
                     transactionInfoContainer.innerHTML = `
                         <div class="transaction-info-row">
                             <span class="info-label-rounded">Nasabah</span>
@@ -760,8 +767,12 @@
                             </span>
                         </div>
                         <div class="transaction-info-row">
-                            <span class="info-label-rounded">Nominal</span>
-                            <span class="info-value-rounded">${formatRupiah(state.transaction.amount)}</span>
+                            <span class="info-label-rounded">Nominal Harian</span>
+                            <span class="info-value-rounded">${formatRupiah(state.transaction.dailyAmount)}</span>
+                        </div>
+                        <div class="transaction-info-row">
+                            <span class="info-label-rounded">Total Transaksi</span>
+                            <span class="info-value-rounded" style="color: var(--green-light); font-weight: bold; font-size: 18px;">${formatRupiah(totalAmount)}</span>
                         </div>
                         <div class="transaction-info-row">
                             <span class="info-label-rounded">Periode</span>
@@ -769,13 +780,12 @@
                         </div>
                         <div class="transaction-info-row">
                             <span class="info-label-rounded">Durasi</span>
-                            <span class="info-value-rounded">${daysCount} Hari</span>
+                            <span class="info-value-rounded">${daysCount} Hari × ${formatRupiah(state.transaction.dailyAmount)}</span>
                         </div>
                     `;
                 }
                 
                 const daysCountElement = document.querySelector('.days-count');
-                const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
                 if (daysCountElement) {
                     daysCountElement.textContent = `${daysCount} hari`;
                 } else if (daysCount > 0) {
@@ -795,7 +805,10 @@
             const btn = document.getElementById('submitBtn');
             if (!btn) return;
             
-            btn.disabled = !(state.transaction.nasabah && state.transaction.amount > 0) || state.isProcessing;
+            const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
+            const totalAmount = state.transaction.dailyAmount * daysCount;
+            
+            btn.disabled = !(state.transaction.nasabah && state.transaction.dailyAmount > 0 && daysCount > 0) || state.isProcessing;
             
             if (state.isProcessing) {
                 btn.classList.add('processing');
@@ -805,8 +818,8 @@
             
             if (state.isProcessing) {
                 btn.innerHTML = '<div class="spinner"></div> Memproses...';
-            } else if (state.transaction.nasabah && state.transaction.amount > 0) {
-                btn.innerHTML = `${state.transaction.type === 'SETOR' ? 'SETOR' : 'TARIK'} ${formatRupiah(state.transaction.amount)} - ${state.transaction.nasabah}`;
+            } else if (state.transaction.nasabah && state.transaction.dailyAmount > 0 && daysCount > 0) {
+                btn.innerHTML = `${state.transaction.type === 'SETOR' ? 'SETOR' : 'TARIK'} ${formatRupiah(totalAmount)} - ${state.transaction.nasabah}`;
             } else {
                 btn.innerHTML = '<i class="fas fa-paper-plane"></i> KIRIM PROSES';
             }
@@ -818,6 +831,7 @@
             modal.className = 'modal';
             
             const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
+            const totalAmount = state.transaction.dailyAmount * daysCount;
             
             modal.innerHTML = `
                 <div class="modal-content">
@@ -829,8 +843,8 @@
                     </div>
                     <div class="modal-body">
                         <div style="text-align: center; margin-bottom: 24px;">
-                            <div style="font-size: 36px; font-weight: bold; color: ${state.transaction.type === 'SETOR' ? 'var(--green-light)' : 'var(--red)'};">${formatRupiah(state.transaction.amount)}</div>
-                            <div style="color: var(--text-medium); font-size: 14px;">${state.transaction.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}</div>
+                            <div style="font-size: 36px; font-weight: bold; color: ${state.transaction.type === 'SETOR' ? 'var(--green-light)' : 'var(--red)'};">${formatRupiah(totalAmount)}</div>
+                            <div style="color: var(--text-medium); font-size: 14px;">${state.transaction.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'} (${daysCount} hari × ${formatRupiah(state.transaction.dailyAmount)})</div>
                         </div>
                         
                         <div class="transaction-info-container" style="margin-bottom: 20px;">
@@ -846,6 +860,10 @@
                                 </span>
                             </div>
                             <div class="transaction-info-row">
+                                <span class="info-label-rounded">Nominal Harian</span>
+                                <span class="info-value-rounded">${formatRupiah(state.transaction.dailyAmount)}</span>
+                            </div>
+                            <div class="transaction-info-row">
                                 <span class="info-label-rounded">Periode</span>
                                 <span class="info-value-rounded">${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)}</span>
                             </div>
@@ -856,7 +874,7 @@
                         </div>
                         
                         <div style="font-size: 13px; color: var(--text-dim); text-align: center; padding: 12px; background: rgba(255, 193, 7, 0.1); border-radius: 8px;">
-                            <i class="fas fa-exclamation-triangle"></i> Data akan disimpan ke sistem Jimpitan Digital
+                            <i class="fas fa-exclamation-triangle"></i> Total transaksi: ${formatRupiah(totalAmount)} (${daysCount} hari × ${formatRupiah(state.transaction.dailyAmount)})
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -986,14 +1004,18 @@
         
         // ====== PROSES TRANSAKSI KE APPS SCRIPT ======
         async function processTransaction() {
-            showToast('Menyimpan transaksi ke sistem...');
+            const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
+            const totalAmount = state.transaction.dailyAmount * daysCount;
+            
+            showToast(`Memproses ${daysCount} hari × ${formatRupiah(state.transaction.dailyAmount)} = ${formatRupiah(totalAmount)}`);
             
             try {
                 state.lastTransactionData = {
                     ...state.transaction,
+                    totalAmount: totalAmount,
+                    daysCount: daysCount,
                     transactionId: 'TRX-' + Date.now(),
-                    timestamp: new Date().toISOString(),
-                    daysCount: calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo)
+                    timestamp: new Date().toISOString()
                 };
                 
                 const res = await fetch(API_URL, {
@@ -1006,15 +1028,15 @@
                         token: API_KEY,
                         nama: state.transaction.nasabah,
                         jenis: state.transaction.type,
-                        nominal: state.transaction.amount,
-                        keterangan: `Transaksi periode ${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)} (${calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo)} hari)`
+                        nominal: totalAmount,
+                        keterangan: `Jimpitan ${daysCount} hari × ${formatRupiah(state.transaction.dailyAmount)} (${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)})`
                     })
                 });
                 
                 const data = await res.json();
                 
                 if (data.status === 'success') {
-                    showToast('Transaksi berhasil disimpan!');
+                    showToast(`✅ Transaksi berhasil! ${formatRupiah(totalAmount)} (${daysCount} hari)`);
                     
                     await generateReceipt();
                     
@@ -1120,10 +1142,17 @@
                         <span class="receipt-label">Durasi:</span>
                         <span class="receipt-value">${trans.daysCount} Hari</span>
                     </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Nominal Harian:</span>
+                        <span class="receipt-value">${formatRupiah(trans.dailyAmount)}</span>
+                    </div>
                 </div>
                 
                 <div class="receipt-total" style="color: ${trans.type === 'SETOR' ? 'green' : 'red'};">
-                    ${trans.type === 'SETOR' ? 'SETOR' : 'TARIK'}: ${formatRupiah(trans.amount)}
+                    TOTAL: ${formatRupiah(trans.totalAmount)}
+                </div>
+                <div style="text-align: center; font-size: 12px; color: #666; margin-top: 5px;">
+                    (${trans.daysCount} Hari × ${formatRupiah(trans.dailyAmount)})
                 </div>
                 
                 <div class="receipt-footer">
@@ -1139,7 +1168,7 @@
             state.transaction = {
                 nasabah: '',
                 type: 'SETOR',
-                amount: 0,
+                dailyAmount: 10000,
                 dateFrom: new Date().toISOString().split('T')[0],
                 dateTo: new Date().toISOString().split('T')[0]
             };
