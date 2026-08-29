@@ -82,7 +82,7 @@
             globalBalance: 0,
             isProcessing: false,
             isGeneratingReceipt: false,
-            dailyAmount: 10000, // Nominal harian default
+            dailyAmount: 10000,
             transaction: {
                 nasabah: '',
                 type: 'SETOR',
@@ -134,7 +134,6 @@
                     
                     console.log(`🔧 Registering SW: ${swPath} with scope: ${swScope}`);
                     
-                    // Hapus registrasi lama
                     navigator.serviceWorker.getRegistrations()
                         .then(registrations => {
                             if (registrations.length > 0) {
@@ -472,10 +471,6 @@
                         <i class="fas fa-users"></i> DAFTAR NASABAH
                     </div>
                     
-                    <button class="add-account-btn" id="addNasabahBtn">
-                        <i class="fas fa-user-plus"></i> TAMBAH NASABAH BARU
-                    </button>
-                    
                     <div style="display: flex; gap: 12px; margin-bottom: 20px;">
                         <div class="info-card" style="flex: 1;">
                             <div class="info-label">Total Nasabah</div>
@@ -497,13 +492,17 @@
                                         <div style="font-size: 12px; color: var(--text-dim);">
                                             ID: ${nasabah.id_nasabah || 'N/A'} 
                                             ${nasabah.no_hp ? `• ${nasabah.no_hp}` : ''}
+                                            ${nasabah.alamat ? `• ${nasabah.alamat}` : ''}
                                         </div>
+                                        ${nasabah.email ? `<div style="font-size: 12px; color: var(--text-dim);">${nasabah.email}</div>` : ''}
+                                        ${nasabah.tanggal_daftar ? `<div style="font-size: 11px; color: var(--text-dim);">Bergabung: ${formatDateDisplay(nasabah.tanggal_daftar)}</div>` : ''}
                                     </div>
                                 </div>
                             `).join('') : 
                             `<div style="text-align: center; padding: 40px 20px; color: var(--text-dim);">
                                 <i class="fas fa-users" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
                                 <div>Belum ada data nasabah</div>
+                                <div style="font-size: 13px; margin-top: 8px;">Data diambil dari spreadsheet</div>
                             </div>`
                         }
                     </div>
@@ -572,8 +571,24 @@
                         </div>
                     </div>
                     
+                    <div style="margin: 20px 0; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="color: var(--text-light); font-weight: 600; margin-bottom: 12px;">
+                            <i class="fas fa-database"></i> Sumber Data
+                        </div>
+                        <div style="color: var(--text-medium); font-size: 14px;">
+                            Data nasabah diambil dari spreadsheet Google Sheets
+                        </div>
+                        <div style="color: var(--text-dim); font-size: 12px; margin-top: 8px;">
+                            <i class="fas fa-sync-alt"></i> Auto-sync setiap 5 menit
+                        </div>
+                    </div>
+                    
                     <button class="btn" onclick="checkForUpdates()" style="margin-bottom: 12px;">
                         <i class="fas fa-sync-alt"></i> CHECK UPDATE
+                    </button>
+                    
+                    <button class="btn" onclick="refreshData()" style="margin-bottom: 12px; background: linear-gradient(135deg, #1a237e 0%, #283593 100%);">
+                        <i class="fas fa-database"></i> REFRESH DATA NASABAH
                     </button>
                     
                     <button class="btn" onclick="clearAppCache()" style="background: linear-gradient(135deg, var(--red) 0%, #ef5350 100%); margin-bottom: 12px;">
@@ -674,11 +689,6 @@
                 document.getElementById('submitBtn')?.addEventListener('click', confirmTransaction);
             }
             
-            // Events untuk halaman nasabah
-            if (state.tab === 'nasabah') {
-                document.getElementById('addNasabahBtn')?.addEventListener('click', showAddNasabahModal);
-            }
-            
             // Events untuk halaman saldo
             if (state.tab === 'saldo') {
                 document.getElementById('saldoNasabah')?.addEventListener('change', async (e) => {
@@ -741,7 +751,6 @@
             
             // Events untuk halaman settings
             if (state.tab === 'settings') {
-                // Update SW status display
                 setTimeout(updateSWStatusDisplay, 300);
             }
         }
@@ -888,112 +897,6 @@
             document.body.appendChild(modal);
         }
         
-        // ====== TAMBAH NASABAH MODAL ======
-        function showAddNasabahModal() {
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3><i class="fas fa-user-plus"></i> TAMBAH NASABAH BARU</h3>
-                        <button onclick="closeModal()" style="background: none; border: none; color: var(--text-medium); cursor: pointer;">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-label">Nama Lengkap *</div>
-                        <input type="text" id="namaNasabah" placeholder="Masukkan nama lengkap">
-                        
-                        <div class="form-label">Nomor HP *</div>
-                        <input type="tel" id="hpNasabah" placeholder="Contoh: 081234567890">
-                        
-                        <div class="form-label">Alamat</div>
-                        <input type="text" id="alamatNasabah" placeholder="Masukkan alamat lengkap">
-                        
-                        <div class="form-label">Email (opsional)</div>
-                        <input type="email" id="emailNasabah" placeholder="contoh@email.com">
-                        
-                        <div style="font-size: 12px; color: var(--text-dim); margin-top: 16px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 6px;">
-                            <i class="fas fa-info-circle"></i> Data akan disimpan ke spreadsheet setelah dikonfirmasi
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="modal-btn modal-cancel" onclick="closeModal()">BATAL</button>
-                        <button class="modal-btn modal-confirm" onclick="prosesTambahNasabah()">
-                            <i class="fas fa-save"></i> SIMPAN KE SISTEM
-                        </button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            
-            setTimeout(() => {
-                document.getElementById('namaNasabah')?.focus();
-            }, 300);
-        }
-        
-        // ====== PROSES TAMBAH NASABAH ======
-        async function prosesTambahNasabah() {
-            const nama = document.getElementById('namaNasabah')?.value.trim();
-            const hp = document.getElementById('hpNasabah')?.value.trim();
-            const alamat = document.getElementById('alamatNasabah')?.value.trim();
-            const email = document.getElementById('emailNasabah')?.value.trim();
-            
-            if (!nama) {
-                showToast('Nama nasabah wajib diisi', true);
-                document.getElementById('namaNasabah')?.focus();
-                return;
-            }
-            
-            if (!hp) {
-                showToast('Nomor HP wajib diisi', true);
-                document.getElementById('hpNasabah')?.focus();
-                return;
-            }
-            
-            const cleanHP = hp.replace(/\D/g, '');
-            if (cleanHP.length < 10) {
-                showToast('Nomor HP minimal 10 digit', true);
-                document.getElementById('hpNasabah')?.focus();
-                return;
-            }
-            
-            showToast('Menyimpan data nasabah ke sistem...');
-            
-            try {
-                const res = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({
-                        action: 'addNasabah',
-                        token: API_KEY,
-                        nama: nama,
-                        no_hp: cleanHP,
-                        alamat: alamat,
-                        email: email || ''
-                    })
-                });
-                
-                const data = await res.json();
-                
-                if (data.status === 'success') {
-                    showToast(`Nasabah ${nama} berhasil ditambahkan!`);
-                    closeModal();
-                    
-                    await loadData();
-                    loadTab('nasabah');
-                    
-                } else {
-                    showToast('Gagal: ' + (data.message || 'Error'), true);
-                }
-            } catch (e) {
-                console.error('Error adding nasabah:', e);
-                showToast('Gagal menyimpan data ke sistem', true);
-            }
-        }
-        
         // ====== MULAI PROSES TRANSAKSI ======
         function startProcessingTransaction() {
             closeModal();
@@ -1057,7 +960,7 @@
             }
         }
         
-        // ====== GENERATE STRUK (OPSIONAL) ======
+        // ====== GENERATE STRUK ======
         async function generateReceipt() {
             try {
                 state.isGeneratingReceipt = true;
@@ -1180,9 +1083,16 @@
             renderTab();
         }
         
+        // ====== REFRESH DATA ======
+        async function refreshData() {
+            showToast('🔄 Memuat ulang data nasabah...');
+            await loadData();
+            showToast('✅ Data nasabah diperbarui!');
+            renderTab();
+        }
+        
         // ====== AUTO-UPDATE FUNCTIONS ======
         
-        // Check for updates
         async function checkForUpdates() {
             try {
                 console.log('🔄 Checking for updates...');
@@ -1202,7 +1112,6 @@
             }
         }
         
-        // Show update notification
         function showUpdateNotification(newVersion) {
             const modal = document.createElement('div');
             modal.className = 'modal';
@@ -1223,7 +1132,6 @@
                             <ul style="color: var(--text-medium); font-size: 13px; padding-left: 20px;">
                                 <li>Perbaikan cache auto-update</li>
                                 <li>Optimasi performa</li>
-                                <li>Fitur tambah nasabah</li>
                                 <li>Notifikasi update otomatis</li>
                             </ul>
                         </div>
@@ -1241,7 +1149,6 @@
             document.body.appendChild(modal);
         }
         
-        // Install update
         async function installUpdate() {
             closeModal();
             
@@ -1272,7 +1179,6 @@
             }
         }
         
-        // Clear app cache
         async function clearAppCache() {
             if ('serviceWorker' in navigator && 'caches' in window) {
                 try {
@@ -1295,7 +1201,6 @@
             }
         }
         
-        // Test API connection
         async function testAPI() {
             try {
                 showToast('Testing koneksi API...');
@@ -1315,7 +1220,6 @@
         
         // ====== PWA HELPER FUNCTIONS ======
         
-        // Force update Service Worker
         function forceUpdateSW() {
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistration()
@@ -1329,7 +1233,6 @@
             }
         }
         
-        // Unregister all Service Workers
         function unregisterAllSW() {
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistrations()
@@ -1343,7 +1246,6 @@
             }
         }
         
-        // Check SW status
         function checkSWStatus() {
             updateSWStatusDisplay();
             showToast('🔄 Memeriksa status Service Worker...');
@@ -1363,7 +1265,6 @@
             }
         }
         
-        // Update SW status display
         function updateSWStatusDisplay() {
             const statusText = document.getElementById('swStatusText');
             const statusDetail = document.getElementById('swStatusDetail');
@@ -1412,6 +1313,7 @@
         }
         
         function formatDateDisplay(dateStr) {
+            if (!dateStr) return '-';
             const date = new Date(dateStr);
             return date.toLocaleDateString('id-ID', { 
                 day: '2-digit', 
@@ -1462,7 +1364,6 @@
         // ====== EXPOSE FUNCTIONS TO GLOBAL SCOPE ======
         window.closeModal = closeModal;
         window.processTransaction = processTransaction;
-        window.prosesTambahNasabah = prosesTambahNasabah;
         window.startProcessingTransaction = startProcessingTransaction;
         window.checkForUpdates = checkForUpdates;
         window.installUpdate = installUpdate;
@@ -1472,6 +1373,7 @@
         window.unregisterAllSW = unregisterAllSW;
         window.checkSWStatus = checkSWStatus;
         window.updateSWStatusDisplay = updateSWStatusDisplay;
+        window.refreshData = refreshData;
     </script>
 </body>
 </html>
