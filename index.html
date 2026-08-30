@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <!-- ===== META PWA ===== -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Jimpitan">
@@ -14,36 +12,18 @@
     <meta name="msapplication-TileColor" content="#0a1628">
     <meta name="msapplication-TileImage" content="icons/icon-144x144.png">
     
-    <!-- ===== PWA MANIFEST ===== -->
     <link rel="manifest" href="manifest.json">
-    
-    <!-- ===== FAVICON ===== -->
     <link rel="icon" type="image/x-icon" href="icons/favicon.ico">
     <link rel="shortcut icon" href="icons/favicon.ico">
-    
-    <!-- ===== APPLE TOUCH ICON ===== -->
     <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-    
-    <!-- ===== ICON PNG ===== -->
     <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="icons/icon-96x96.png">
-    <link rel="icon" type="image/png" sizes="128x128" href="icons/icon-128x128.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="384x384" href="icons/icon-384x384.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/android-chrome-512x512.png">
     
-    <!-- ===== MASKABLE ICON (untuk Android) ===== -->
-    <link rel="icon" type="image/png" sizes="72x72" href="icons/icon-72x72.png">
-    <link rel="icon" type="image/png" sizes="144x144" href="icons/icon-144x144.png">
-    <link rel="icon" type="image/png" sizes="152x152" href="icons/icon-152x152.png">
-    
-    <!-- ===== TITLE ===== -->
     <title>Jimpitan Digital</title>
     
-    <!-- ===== STYLE ===== -->
     <style>
-        /* ===== RESET & BASE ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -52,11 +32,9 @@
             min-height: 100vh;
             padding: 16px;
             -webkit-tap-highlight-color: transparent;
-            overscroll-behavior: none;
         }
         .container { max-width: 480px; margin: 0 auto; }
         
-        /* ===== HEADER ===== */
         .header { text-align: center; padding: 16px 0 20px; }
         .header h1 { 
             font-size: 22px; 
@@ -80,15 +58,12 @@
         }
         .header p { font-size: 13px; color: #8892b0; margin-top: 4px; }
         
-        /* ===== CARD ===== */
         .card {
             background: rgba(255,255,255,0.04);
             border-radius: 14px;
             padding: 20px;
             margin-bottom: 14px;
             border: 1px solid rgba(255,255,255,0.06);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
         }
         .card-title { 
             font-size: 15px; 
@@ -100,7 +75,6 @@
             justify-content: space-between; 
         }
         
-        /* ===== FORM ===== */
         .form-group { margin-bottom: 12px; }
         .form-label { 
             display: block; 
@@ -124,9 +98,7 @@
         }
         .form-control:focus { border-color: #64ffda; }
         .form-control option { background: #0a1628; }
-        .form-control::placeholder { color: #495670; }
         
-        /* ===== JENIS TOGGLE ===== */
         .jenis-toggle {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -143,8 +115,6 @@
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
         }
         .jenis-btn .icon { display: block; font-size: 18px; margin-bottom: 2px; }
         .jenis-btn.active.bayar {
@@ -158,7 +128,6 @@
             color: #ff6b6b;
         }
         
-        /* ===== INFO BOX ===== */
         .info-box {
             background: rgba(100,255,218,0.05);
             border: 1px solid rgba(100,255,218,0.1);
@@ -171,7 +140,6 @@
         .info-box .value { font-size: 20px; font-weight: 700; color: #64ffda; }
         .info-box .detail { font-size: 12px; color: #ccd6f6; margin-top: 2px; }
         
-        /* ===== KREDIT INFO ===== */
         .kredit-info {
             background: rgba(255,215,0,0.08);
             border: 1px solid rgba(255,215,0,0.15);
@@ -184,7 +152,6 @@
         .kredit-info .value { font-size: 13px; font-weight: 600; color: #ffd700; }
         .kredit-info .value .highlight { color: #64ffda; }
         
-        /* ===== BUTTON ===== */
         .btn {
             width: 100%;
             padding: 12px;
@@ -194,42 +161,19 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
         }
         .btn-bayar {
             background: linear-gradient(135deg, #64ffda, #00b894);
             color: #0a1628;
         }
         .btn-bayar:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(100,255,218,0.2); }
-        .btn-bayar:active { transform: scale(0.98); }
         .btn-ambil {
             background: linear-gradient(135deg, #ff6b6b, #ee5a24);
             color: #fff;
         }
         .btn-ambil:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(255,107,107,0.2); }
-        .btn-ambil:active { transform: scale(0.98); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         
-        /* ===== SALDO RINGKAS ===== */
-        .saldo-ringkas {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin: 10px 0;
-        }
-        .saldo-ringkas .item {
-            background: rgba(255,255,255,0.03);
-            border-radius: 6px;
-            padding: 8px 12px;
-            text-align: center;
-        }
-        .saldo-ringkas .item .label { font-size: 10px; color: #8892b0; }
-        .saldo-ringkas .item .value { font-size: 16px; font-weight: 600; color: #64ffda; }
-        .saldo-ringkas .item .value.gold { color: #ffd700; }
-        .saldo-ringkas .item .value.blue { color: #64b5f6; }
-        
-        /* ===== RESULT CARD ===== */
         .result-card {
             background: rgba(100,255,218,0.04);
             border: 1px solid rgba(100,255,218,0.08);
@@ -252,7 +196,66 @@
         .result-item .value.highlight-bayar { color: #64ffda; font-weight: 700; }
         .result-item .value.highlight-ambil { color: #ff6b6b; font-weight: 700; }
         
-        /* ===== BUTTON GROUP ===== */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 18px;
+            border-radius: 8px;
+            background: rgba(10,22,40,0.95);
+            border: 1px solid rgba(100,255,218,0.15);
+            color: #e6f1ff;
+            font-size: 13px;
+            z-index: 1000;
+            max-width: 90%;
+            text-align: center;
+            animation: slideUp 0.3s ease;
+        }
+        .toast.error { border-color: rgba(255,107,107,0.3); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(16px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-top-color: #0a1628;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            background: rgba(100,255,218,0.12);
+            color: #64ffda;
+        }
+        .saldo-ringkas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .saldo-ringkas .item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 6px;
+            padding: 8px 12px;
+            text-align: center;
+        }
+        .saldo-ringkas .item .label { font-size: 10px; color: #8892b0; }
+        .saldo-ringkas .item .value { font-size: 16px; font-weight: 600; color: #64ffda; }
+        .saldo-ringkas .item .value.gold { color: #ffd700; }
+        .saldo-ringkas .item .value.blue { color: #64b5f6; }
+        
         .btn-group {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -270,62 +273,7 @@
         .btn-group .btn-small:hover {
             background: rgba(255,255,255,0.12);
         }
-        .btn-group .btn-small:active {
-            transform: scale(0.96);
-        }
         
-        /* ===== TOAST ===== */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 10px 18px;
-            border-radius: 8px;
-            background: rgba(10,22,40,0.95);
-            border: 1px solid rgba(100,255,218,0.15);
-            color: #e6f1ff;
-            font-size: 13px;
-            z-index: 1000;
-            max-width: 90%;
-            text-align: center;
-            animation: slideUp 0.3s ease;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-        .toast.error { border-color: rgba(255,107,107,0.3); }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateX(-50%) translateY(16px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-        
-        /* ===== SPINNER ===== */
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255,255,255,0.2);
-            border-top-color: #0a1628;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-right: 6px;
-            vertical-align: middle;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        /* ===== BADGE ===== */
-        .status-badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 600;
-            background: rgba(100,255,218,0.12);
-            color: #64ffda;
-        }
-        
-        /* ===== FOOTER ===== */
         .footer-info {
             text-align: center;
             font-size: 11px;
@@ -342,7 +290,6 @@
             margin-top: 4px;
         }
         
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 480px) {
             .saldo-ringkas { grid-template-columns: 1fr 1fr; }
             .saldo-ringkas .item { padding: 6px 8px; }
@@ -357,72 +304,10 @@
             body { padding: 32px; }
             .container { max-width: 420px; }
         }
-        
-        /* ===== PWA INSTALL BANNER ===== */
-        .install-banner {
-            display: none;
-            background: rgba(100,255,218,0.08);
-            border: 1px solid rgba(100,255,218,0.15);
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin-bottom: 14px;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-        .install-banner.show { display: flex; }
-        .install-banner .text { font-size: 12px; color: #ccd6f6; }
-        .install-banner .btn-install {
-            padding: 6px 16px;
-            border: none;
-            border-radius: 6px;
-            background: linear-gradient(135deg, #64ffda, #00b894);
-            color: #0a1628;
-            font-weight: 600;
-            font-size: 12px;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        .install-banner .btn-install:active { transform: scale(0.96); }
-        .install-banner .btn-close {
-            background: none;
-            border: none;
-            color: #8892b0;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 0 4px;
-        }
-        
-        /* ===== OFFLINE INDICATOR ===== */
-        .offline-indicator {
-            display: none;
-            background: rgba(255,107,107,0.1);
-            border: 1px solid rgba(255,107,107,0.2);
-            border-radius: 6px;
-            padding: 6px 12px;
-            text-align: center;
-            font-size: 12px;
-            color: #ff6b6b;
-            margin-bottom: 12px;
-        }
-        .offline-indicator.show { display: block; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- ===== OFFLINE INDICATOR ===== -->
-        <div class="offline-indicator" id="offlineIndicator">
-            📡 Anda sedang offline. Data mungkin tidak tersimpan.
-        </div>
-        
-        <!-- ===== INSTALL BANNER ===== -->
-        <div class="install-banner" id="installBanner">
-            <span class="text">📱 Install aplikasi untuk akses lebih cepat</span>
-            <button class="btn-install" id="installBtn">Install</button>
-            <button class="btn-close" id="closeInstallBtn">✕</button>
-        </div>
-        
-        <!-- ===== HEADER ===== -->
         <div class="header">
             <h1>
                 <span class="logo">🏦</span>
@@ -431,7 +316,6 @@
             <p>Sistem Iuran Harian dengan Kredit Otomatis</p>
         </div>
 
-        <!-- ===== SALDO RINGKAS ===== -->
         <div class="card" id="saldoCard" style="display:none;">
             <div class="saldo-ringkas">
                 <div class="item">
@@ -453,14 +337,12 @@
             </div>
         </div>
 
-        <!-- ===== FORM TRANSAKSI ===== -->
         <div class="card">
             <div class="card-title">
                 📝 Transaksi
                 <span class="status-badge" id="statusBadge">SIAP</span>
             </div>
 
-            <!-- Pilih Peserta -->
             <div class="form-group">
                 <label class="form-label">👤 Peserta</label>
                 <select class="form-control" id="pesertaSelect">
@@ -468,7 +350,6 @@
                 </select>
             </div>
 
-            <!-- Jenis Transaksi -->
             <div class="form-group">
                 <label class="form-label">📊 Jenis</label>
                 <div class="jenis-toggle">
@@ -481,43 +362,36 @@
                 </div>
             </div>
 
-            <!-- Tanggal -->
             <div class="form-group">
                 <label class="form-label">📅 Tanggal</label>
                 <input type="date" class="form-control" id="tanggalTransaksi">
             </div>
 
-            <!-- Nominal -->
             <div class="form-group">
                 <label class="form-label" id="nominalLabel">💰 Nominal (BAYAR)</label>
                 <input type="text" class="form-control" id="nominalInput" placeholder="Contoh: 100.000" oninput="formatNominal(this)">
             </div>
 
-            <!-- Keterangan -->
             <div class="form-group">
                 <label class="form-label">📝 Keterangan (opsional)</label>
                 <input type="text" class="form-control" id="keteranganInput" placeholder="Contoh: Iuran Agustus 2026">
             </div>
 
-            <!-- Info Ringkasan -->
             <div id="infoBox" class="info-box">
                 <div class="label">💡 Ringkasan</div>
                 <div class="value" id="totalInfo">Rp 0</div>
                 <div class="detail" id="detailInfo">-</div>
             </div>
 
-            <!-- Info Kredit -->
             <div id="kreditInfo" class="kredit-info">
                 <div class="label">📊 Status Kredit</div>
                 <div class="value" id="kreditDetail">-</div>
             </div>
 
-            <!-- Tombol Proses -->
             <button class="btn btn-bayar" id="prosesBtn" onclick="prosesTransaksi()">
                 📤 PROSES
             </button>
 
-            <!-- Button Group -->
             <div class="btn-group">
                 <button onclick="refreshData()" class="btn btn-small">
                     🔄 Refresh
@@ -530,23 +404,19 @@
                 </button>
             </div>
 
-            <!-- Result -->
             <div id="resultCard" class="result-card">
                 <div id="resultContent"></div>
             </div>
         </div>
 
-        <!-- ===== FOOTER ===== -->
         <div class="footer-info">
             <p>💡 Sistem Bayar Mendahului (Kredit) • Auto-Debit Setiap Hari</p>
             <span class="version">Versi 2.0.0</span>
         </div>
     </div>
 
-    <!-- ===== TOAST CONTAINER ===== -->
     <div id="toastContainer"></div>
 
-    <!-- ===== JAVASCRIPT ===== -->
     <script>
         // ============================================
         // KONFIGURASI
@@ -558,14 +428,19 @@
         let pesertaList = [];
         let isProcessing = false;
         let jenisTransaksi = 'BAYAR';
-        let deferredPrompt = null;
 
         // ============================================
-        // INISIALISASI
+        // INISIALISASI - DENGAN PERBAIKAN TANGGAL
         // ============================================
         document.addEventListener('DOMContentLoaded', function() {
-            // Set tanggal default
+            // ===== SET TANGGAL DENGAN BENAR =====
             setDefaultDate();
+            
+            // ===== VALIDASI TANGGAL =====
+            const dateInput = document.getElementById('tanggalTransaksi');
+            dateInput.addEventListener('change', function() {
+                validateDate(this);
+            });
             
             // Load data
             loadData();
@@ -576,21 +451,13 @@
                 loadKreditStatus(this.value);
             });
             document.getElementById('nominalInput').addEventListener('input', updateInfo);
-            document.getElementById('tanggalTransaksi').addEventListener('change', function() {
-                validateDate(this);
-                updateInfo();
-            });
             
             // Register Service Worker
-            registerServiceWorker();
-            
-            // PWA Install
-            setupPWAInstall();
-            
-            // Cek offline status
-            updateOnlineStatus();
-            window.addEventListener('online', updateOnlineStatus);
-            window.addEventListener('offline', updateOnlineStatus);
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('✅ SW registered'))
+                    .catch(err => console.log('❌ SW failed:', err));
+            }
         });
 
         // ============================================
@@ -600,6 +467,7 @@
             const today = new Date();
             const dateInput = document.getElementById('tanggalTransaksi');
             dateInput.value = formatDateInput(today);
+            console.log('📅 Tanggal default:', dateInput.value);
         }
 
         function validateDate(input) {
@@ -727,7 +595,7 @@
         }
 
         // ============================================
-        // REFRESH DATA
+        // REFRESH & AUTO-DEBIT
         // ============================================
         async function refreshData() {
             await loadData();
@@ -736,9 +604,6 @@
             showToast('✅ Data diperbarui');
         }
 
-        // ============================================
-        // AUTO-DEBIT
-        // ============================================
         async function setupTrigger() {
             try {
                 showToast('🔄 Setup trigger...');
@@ -834,7 +699,7 @@
         }
 
         // ============================================
-        // PROSES TRANSAKSI
+        // PROSES TRANSAKSI - DENGAN PERBAIKAN TANGGAL
         // ============================================
         async function prosesTransaksi() {
             if (isProcessing) return;
@@ -845,7 +710,7 @@
             const nominal = getNominalValue();
             const keterangan = document.getElementById('keteranganInput').value.trim();
             
-            // Validasi tanggal
+            // ===== VALIDASI TANGGAL =====
             if (!tanggal || tanggal === '') {
                 setDefaultDate();
                 showToast('⚠️ Tanggal diisi otomatis', true);
@@ -861,6 +726,8 @@
                     return;
                 }
             }
+            
+            console.log('📅 Tanggal yang dikirim:', tanggal);
             
             if (!nama) { showToast('❌ Pilih peserta', true); return; }
             if (nominal <= 0) { showToast('❌ Masukkan nominal', true); return; }
@@ -948,7 +815,7 @@
         }
 
         // ============================================
-        // FORMAT UTILITY
+        // UTILITY
         // ============================================
         function formatRupiah(num) { 
             return 'Rp ' + (num || 0).toLocaleString('id-ID'); 
@@ -958,9 +825,6 @@
             return (num || 0).toLocaleString('id-ID'); 
         }
 
-        // ============================================
-        // TOAST NOTIFICATION
-        // ============================================
         function showToast(message, isError = false) {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -973,68 +837,6 @@
                 toast.style.transform = 'translateX(-50%) translateY(16px)';
                 setTimeout(() => toast.remove(), 400);
             }, 3000);
-        }
-
-        // ============================================
-        // SERVICE WORKER
-        // ============================================
-        function registerServiceWorker() {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('sw.js')
-                    .then(registration => {
-                        console.log('✅ Service Worker registered');
-                        console.log('Scope:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.log('❌ Service Worker registration failed:', error);
-                    });
-            }
-        }
-
-        // ============================================
-        // PWA INSTALL
-        // ============================================
-        function setupPWAInstall() {
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                document.getElementById('installBanner').classList.add('show');
-            });
-            
-            document.getElementById('installBtn').addEventListener('click', async () => {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const result = await deferredPrompt.userChoice;
-                    if (result.outcome === 'accepted') {
-                        showToast('✅ Aplikasi berhasil diinstall!');
-                    } else {
-                        showToast('❌ Install dibatalkan');
-                    }
-                    deferredPrompt = null;
-                    document.getElementById('installBanner').classList.remove('show');
-                }
-            });
-            
-            document.getElementById('closeInstallBtn').addEventListener('click', () => {
-                document.getElementById('installBanner').classList.remove('show');
-            });
-            
-            window.addEventListener('appinstalled', () => {
-                document.getElementById('installBanner').classList.remove('show');
-                showToast('✅ Aplikasi terinstall!');
-            });
-        }
-
-        // ============================================
-        // ONLINE / OFFLINE STATUS
-        // ============================================
-        function updateOnlineStatus() {
-            const indicator = document.getElementById('offlineIndicator');
-            if (!navigator.onLine) {
-                indicator.classList.add('show');
-            } else {
-                indicator.classList.remove('show');
-            }
         }
     </script>
 </body>
