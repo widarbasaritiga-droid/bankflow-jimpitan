@@ -9,21 +9,17 @@
     <meta name="application-name" content="Jimpitan Digital">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#0a1628">
-    <meta name="msapplication-TileColor" content="#0a1628">
-    <meta name="msapplication-TileImage" content="icons/icon-144x144.png">
     
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/x-icon" href="icons/favicon.ico">
-    <link rel="shortcut icon" href="icons/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="icons/android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="icons/android-chrome-512x512.png">
     
     <title>Jimpitan Digital</title>
     
     <style>
+        /* ===== SAMA SEPERTI SEBELUMNYA ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -98,6 +94,7 @@
         }
         .form-control:focus { border-color: #64ffda; }
         .form-control option { background: #0a1628; }
+        .form-control option:disabled { color: #495670; opacity: 0.6; }
         
         .jenis-toggle {
             display: grid;
@@ -290,6 +287,18 @@
             margin-top: 4px;
         }
         
+        /* ===== BADGE UNTUK PESERTA SUDAH BAYAR ===== */
+        .badge-done {
+            display: inline-block;
+            padding: 1px 8px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: 600;
+            background: rgba(100,255,218,0.12);
+            color: #64ffda;
+            margin-left: 6px;
+        }
+        
         @media (max-width: 480px) {
             .saldo-ringkas { grid-template-columns: 1fr 1fr; }
             .saldo-ringkas .item { padding: 6px 8px; }
@@ -327,12 +336,12 @@
                     <div class="value" id="totalPeserta">0</div>
                 </div>
                 <div class="item">
-                    <div class="label">Total Kredit</div>
-                    <div class="value gold" id="totalKredit">Rp 0</div>
+                    <div class="label">Perlu Bayar</div>
+                    <div class="value blue" id="pesertaAktif">0</div>
                 </div>
                 <div class="item">
-                    <div class="label">Peserta Aktif</div>
-                    <div class="value blue" id="pesertaAktif">0</div>
+                    <div class="label">Total Kredit</div>
+                    <div class="value gold" id="totalKredit">Rp 0</div>
                 </div>
             </div>
         </div>
@@ -411,7 +420,7 @@
 
         <div class="footer-info">
             <p>💡 Sistem Bayar Mendahului (Kredit) • Auto-Debit Setiap Hari</p>
-            <span class="version">Versi 2.0.0</span>
+            <span class="version">Versi 2.0.1</span>
         </div>
     </div>
 
@@ -423,20 +432,20 @@
         // ============================================
         const API_URL = 'https://script.google.com/macros/s/AKfycbzfJDn38ZsxjPMajznIHIFPiOYiieDo9SOh-u9xvCvxMeosVvy2td7aKPxq1mqc7mZ5/exec';
         const API_TOKEN = 'JIMPITAN_DIGITAL_2024_SECRET_KEY';
-        const APP_VERSION = '2.0.0';
         
         let pesertaList = [];
         let isProcessing = false;
         let jenisTransaksi = 'BAYAR';
+        let pesertaSudahBayarHariIni = [];
 
         // ============================================
-        // INISIALISASI - DENGAN PERBAIKAN TANGGAL
+        // INISIALISASI
         // ============================================
         document.addEventListener('DOMContentLoaded', function() {
-            // ===== SET TANGGAL DENGAN BENAR =====
+            // Set tanggal default
             setDefaultDate();
             
-            // ===== VALIDASI TANGGAL =====
+            // Validasi tanggal
             const dateInput = document.getElementById('tanggalTransaksi');
             dateInput.addEventListener('change', function() {
                 validateDate(this);
@@ -554,43 +563,106 @@
         }
 
         // ============================================
-        // LOAD DATA
+        // LOAD DATA DENGAN AUTO-HIDE
         // ============================================
         async function loadData() {
             try {
                 showToast('🔄 Memuat data...');
                 
+                // 1. Load peserta
                 const res1 = await fetch(`${API_URL}?action=getPeserta`);
                 const data1 = await res1.json();
                 
                 if (data1.status === 'success') {
                     pesertaList = data1.data || [];
+                    
+                    // 2. Cek peserta yang sudah bayar hari ini
+                    const today = new Date();
+                    const todayStr = formatDateInput(today);
+                    
+                    // Ambil daftar peserta yang sudah bayar hari ini
+                    pesertaSudahBayarHariIni = await getPesertaSudahBayar(todayStr);
+                    
+                    // 3. Filter peserta yang BELUM bayar
+                    const pesertaBelumBayar = pesertaList.filter(p => {
+                        return !pesertaSudahBayarHariIni.some(b => b.nama === p.nama);
+                    });
+                    
+                    // 4. Tampilkan di dropdown
                     const select = document.getElementById('pesertaSelect');
                     select.innerHTML = '<option value="">-- Pilih Peserta --</option>';
-                    pesertaList.forEach(p => {
+                    
+                    // Peserta yang belum bayar (aktif)
+                    pesertaBelumBayar.forEach(p => {
                         const opt = document.createElement('option');
                         opt.value = p.nama;
                         opt.textContent = `${p.nama} (Iuran: ${formatRupiah(p.iuran_harian || 0)}/hari)`;
                         select.appendChild(opt);
                     });
+                    
+                    // Peserta yang sudah bayar (disabled - hanya info)
+                    if (pesertaSudahBayarHariIni.length > 0) {
+                        const optGroup = document.createElement('optgroup');
+                        optGroup.label = `✅ Sudah Bayar Hari Ini (${pesertaSudahBayarHariIni.length})`;
+                        select.appendChild(optGroup);
+                        
+                        pesertaSudahBayarHariIni.forEach(p => {
+                            const opt = document.createElement('option');
+                            opt.value = p.nama;
+                            opt.textContent = `✅ ${p.nama} (${formatRupiah(p.iuran_harian || 0)})`;
+                            opt.disabled = true;
+                            optGroup.appendChild(opt);
+                        });
+                    }
                 }
                 
+                // 5. Load summary
                 const res2 = await fetch(`${API_URL}?action=getSummary`);
                 const data2 = await res2.json();
                 
                 if (data2.status === 'success') {
                     document.getElementById('saldoCard').style.display = 'block';
                     document.getElementById('saldoGlobal').textContent = formatRupiah(data2.data?.saldo_global || 0);
-                    document.getElementById('totalPeserta').textContent = data2.data?.total_peserta || 0;
+                    document.getElementById('totalPeserta').textContent = pesertaList.length || 0;
+                    document.getElementById('pesertaAktif').textContent = pesertaList.length - pesertaSudahBayarHariIni.length || 0;
                     document.getElementById('totalKredit').textContent = formatRupiah(data2.data?.total_kredit || 0);
-                    document.getElementById('pesertaAktif').textContent = data2.data?.peserta_aktif || 0;
                 }
                 
-                showToast(`✅ ${pesertaList.length} peserta dimuat`);
+                const aktif = pesertaList.length - pesertaSudahBayarHariIni.length;
+                showToast(`✅ ${aktif} peserta aktif, ${pesertaSudahBayarHariIni.length} sudah bayar`);
                 updateInfo();
             } catch (error) {
                 console.error('Error:', error);
                 showToast('❌ Gagal memuat data', true);
+            }
+        }
+
+        // ============================================
+        // FUNGSI CEK PESERTA SUDAH BAYAR
+        // ============================================
+        async function getPesertaSudahBayar(tanggal) {
+            try {
+                const sudahBayar = [];
+                
+                for (const p of pesertaList) {
+                    const res = await fetch(`${API_URL}?action=getRiwayat&nama=${encodeURIComponent(p.nama)}&limit=5`);
+                    const data = await res.json();
+                    
+                    if (data.status === 'success') {
+                        const adaBayarHariIni = data.data.some(t => {
+                            return t.jenis === 'BAYAR' && t.tanggal === tanggal;
+                        });
+                        
+                        if (adaBayarHariIni) {
+                            sudahBayar.push(p);
+                        }
+                    }
+                }
+                
+                return sudahBayar;
+            } catch (error) {
+                console.error('Error cek pembayaran:', error);
+                return [];
             }
         }
 
@@ -706,28 +778,39 @@
             
             const nama = document.getElementById('pesertaSelect').value;
             const tanggalInput = document.getElementById('tanggalTransaksi');
-            const tanggal = tanggalInput.value;
-            const nominal = getNominalValue();
-            const keterangan = document.getElementById('keteranganInput').value.trim();
             
-            // ===== VALIDASI TANGGAL =====
+            // ===== PASTIKAN TANGGAL TERISI =====
+            let tanggal = tanggalInput.value;
+            
             if (!tanggal || tanggal === '') {
-                setDefaultDate();
-                showToast('⚠️ Tanggal diisi otomatis', true);
-                return;
+                const today = new Date();
+                const y = today.getFullYear();
+                const m = String(today.getMonth() + 1).padStart(2, '0');
+                const d = String(today.getDate()).padStart(2, '0');
+                tanggal = `${y}-${m}-${d}`;
+                tanggalInput.value = tanggal;
+                showToast('📅 Tanggal diisi otomatis: ' + formatTanggal(tanggal));
             }
             
+            // Validasi tahun
             const parts = tanggal.split('-');
             if (parts.length === 3) {
                 const year = parseInt(parts[0]);
                 if (year < 2000 || year > 2100) {
-                    setDefaultDate();
-                    showToast('⚠️ Tahun tidak valid, direset', true);
-                    return;
+                    const today = new Date();
+                    const y = today.getFullYear();
+                    const m = String(today.getMonth() + 1).padStart(2, '0');
+                    const d = String(today.getDate()).padStart(2, '0');
+                    tanggal = `${y}-${m}-${d}`;
+                    tanggalInput.value = tanggal;
+                    showToast('⚠️ Tahun tidak valid, direset ke: ' + formatTanggal(tanggal));
                 }
             }
             
-            console.log('📅 Tanggal yang dikirim:', tanggal);
+            console.log('📅 Tanggal dikirim:', tanggal);
+            
+            const nominal = getNominalValue();
+            const keterangan = document.getElementById('keteranganInput').value.trim();
             
             if (!nama) { showToast('❌ Pilih peserta', true); return; }
             if (nominal <= 0) { showToast('❌ Masukkan nominal', true); return; }
@@ -800,6 +883,7 @@
                     document.getElementById('infoBox').style.display = 'none';
                     document.getElementById('prosesBtn').disabled = true;
                     
+                    // Refresh data dan hilangkan peserta dari dropdown
                     loadData();
                     loadKreditStatus(nama);
                 } else {
