@@ -193,8 +193,36 @@
         }
         .kredit-info .label { font-size: 11px; color: #8892b0; }
         .kredit-info .value { font-size: 13px; font-weight: 600; color: #ffd700; }
+        .kredit-info .value .highlight { color: #64ffda; }
         @media (max-width: 480px) {
             .saldo-ringkas { grid-template-columns: 1fr; }
+        }
+        .footer-info {
+            text-align: center;
+            font-size: 11px;
+            color: #495670;
+            padding: 10px 0;
+        }
+        .footer-info a {
+            color: #64ffda;
+            text-decoration: none;
+        }
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .btn-group .btn {
+            font-size: 11px;
+            padding: 8px 4px;
+        }
+        .btn-group .btn-small {
+            background: rgba(255,255,255,0.06);
+            color: #ccd6f6;
+        }
+        .btn-group .btn-small:hover {
+            background: rgba(255,255,255,0.12);
         }
     </style>
 </head>
@@ -202,7 +230,7 @@
     <div class="container">
         <div class="header">
             <h1>🏦 Jimpitan Digital</h1>
-            <p>Sistem Iuran Harian</p>
+            <p>Sistem Iuran Harian dengan Kredit Otomatis</p>
         </div>
 
         <div class="card" id="saldoCard" style="display:none;">
@@ -214,6 +242,14 @@
                 <div class="item">
                     <div class="label">Total Peserta</div>
                     <div class="value" id="totalPeserta">0</div>
+                </div>
+                <div class="item">
+                    <div class="label">Total Kredit</div>
+                    <div class="value" id="totalKredit" style="color:#ffd700;">Rp 0</div>
+                </div>
+                <div class="item">
+                    <div class="label">Peserta Aktif</div>
+                    <div class="value" id="pesertaAktif">0</div>
                 </div>
             </div>
         </div>
@@ -273,12 +309,15 @@
                 📤 PROSES
             </button>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;">
-                <button onclick="refreshData()" class="btn btn-bayar" style="font-size:12px; padding:8px;">
+            <div class="btn-group">
+                <button onclick="refreshData()" class="btn btn-small">
                     🔄 Refresh
                 </button>
-                <button onclick="setupTrigger()" class="btn btn-bayar" style="font-size:12px; padding:8px; background:linear-gradient(135deg,#ffd700,#f57c00); color:#0a1628;">
+                <button onclick="setupTrigger()" class="btn btn-small" style="background:rgba(255,215,0,0.1);color:#ffd700;">
                     ⏰ Auto-Debit
+                </button>
+                <button onclick="runAutoDebit()" class="btn btn-small" style="background:rgba(100,255,218,0.05);color:#64ffda;">
+                    ⚡ Jalankan
                 </button>
             </div>
 
@@ -286,12 +325,18 @@
                 <div id="resultContent"></div>
             </div>
         </div>
+
+        <div class="footer-info">
+            <p>💡 Sistem Bayar Mendahului (Kredit) • Auto-Debit Setiap Hari</p>
+            <p style="margin-top:4px;">Versi 2.0.0</p>
+        </div>
     </div>
 
     <div id="toastContainer"></div>
 
     <script>
         // ====== KONFIGURASI ======
+        // GANTI DENGAN URL DEPLOYMENT ANDA
         const API_URL = 'https://script.google.com/macros/s/AKfycbzfJDn38ZsxjPMajznIHIFPiOYiieDo9SOh-u9xvCvxMeosVvy2td7aKPxq1mqc7mZ5/exec';
         const API_TOKEN = 'JIMPITAN_DIGITAL_2024_SECRET_KEY';
         let pesertaList = [];
@@ -301,7 +346,16 @@
         // ====== INISIALISASI ======
         document.addEventListener('DOMContentLoaded', function() {
             const today = new Date();
-            document.getElementById('tanggalTransaksi').value = formatDateInput(today);
+            const dateInput = document.getElementById('tanggalTransaksi');
+            dateInput.value = formatDateInput(today);
+            
+            dateInput.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.value = formatDateInput(new Date());
+                    showToast('⚠️ Tanggal diisi otomatis dengan hari ini');
+                }
+            });
+            
             loadData();
             document.getElementById('pesertaSelect').addEventListener('change', function() {
                 updateInfo();
@@ -368,13 +422,15 @@
                     });
                 }
                 
-                const res2 = await fetch(`${API_URL}?action=getAllSaldo`);
+                const res2 = await fetch(`${API_URL}?action=getSummary`);
                 const data2 = await res2.json();
                 
                 if (data2.status === 'success') {
                     document.getElementById('saldoCard').style.display = 'block';
-                    document.getElementById('saldoGlobal').textContent = formatRupiah(data2.summary?.saldo_global || 0);
-                    document.getElementById('totalPeserta').textContent = data2.summary?.total_peserta || 0;
+                    document.getElementById('saldoGlobal').textContent = formatRupiah(data2.data?.saldo_global || 0);
+                    document.getElementById('totalPeserta').textContent = data2.data?.total_peserta || 0;
+                    document.getElementById('totalKredit').textContent = formatRupiah(data2.data?.total_kredit || 0);
+                    document.getElementById('pesertaAktif').textContent = data2.data?.peserta_aktif || 0;
                 }
                 
                 showToast(`✅ ${pesertaList.length} peserta dimuat`);
@@ -409,6 +465,23 @@
             }
         }
 
+        // ====== RUN AUTO-DEBIT ======
+        async function runAutoDebit() {
+            try {
+                showToast('🔄 Menjalankan auto-debit...');
+                const res = await fetch(`${API_URL}?action=autoDebitKredit`);
+                const data = await res.json();
+                if (data.status === 'success') {
+                    showToast(`✅ Auto-debit selesai! ${data.updated || 0} peserta diupdate`);
+                    loadData();
+                } else {
+                    showToast('❌ ' + data.message, true);
+                }
+            } catch (error) {
+                showToast('❌ Gagal menjalankan auto-debit', true);
+            }
+        }
+
         // ====== LOAD KREDIT STATUS ======
         async function loadKreditStatus(nama) {
             const kreditInfo = document.getElementById('kreditInfo');
@@ -426,7 +499,9 @@
                     if (kredit.kredit > 0) {
                         kreditInfo.style.display = 'block';
                         document.getElementById('kreditDetail').innerHTML = 
-                            `💳 Kredit: ${kredit.kredit_formatted} | Berlaku sampai: ${kredit.tanggal_akhir} | Status: ${kredit.status}`;
+                            `💳 Kredit: <span class="highlight">${kredit.kredit_formatted}</span> | ` +
+                            `Berlaku sampai: <span class="highlight">${kredit.tanggal_akhir}</span> | ` +
+                            `Status: <span style="color:${kredit.status === 'AKTIF' ? '#64ffda' : '#ff6b6b'};">${kredit.status}</span>`;
                     } else {
                         kreditInfo.style.display = 'none';
                     }
@@ -528,6 +603,7 @@
                             <div class="result-item"><span class="label">Kredit</span><span class="value highlight-bayar">${formatRupiah(data.data.kredit.kredit)}</span></div>
                             <div class="result-item"><span class="label">Hari Terbayar</span><span class="value">${data.data.kredit.hari_terbayar} hari</span></div>
                             <div class="result-item"><span class="label">Berlaku Sampai</span><span class="value">${data.data.kredit.tanggal_akhir}</span></div>
+                            <div class="result-item"><span class="label">Iuran Harian</span><span class="value">${formatRupiah(data.data.kredit.iuran_harian)}</span></div>
                         `;
                     }
                     
