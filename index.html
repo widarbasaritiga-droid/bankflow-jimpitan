@@ -268,7 +268,7 @@
 
     <script>
         // ====== KONFIGURASI ======
-        const API_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxZJDHUZTVOp6L3JMk5ryGegqt7gmR2OM9hn_RHMJ0sJWZBmV_0LlYg1CX0BSjoDr-A/exec';
         const API_TOKEN = 'JIMPITAN_DIGITAL_2024_SECRET_KEY';
         let nasabahList = [];
         let isProcessing = false;
@@ -331,6 +331,7 @@
                 if (data1.status === 'success') {
                     nasabahList = data1.data || [];
                     const select = document.getElementById('nasabahSelect');
+                    select.innerHTML = '<option value="">-- Pilih Nasabah --</option>';
                     nasabahList.forEach(n => {
                         const opt = document.createElement('option');
                         opt.value = n.nama;
