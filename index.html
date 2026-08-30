@@ -254,6 +254,7 @@
                 <div class="detail" id="detailInfo">-</div>
             </div>
 
+            <!-- TOMBOL PROSES -->
             <button class="btn btn-setor" id="prosesBtn" onclick="prosesTransaksi()">
                 📤 PROSES
             </button>
@@ -279,8 +280,11 @@
             const today = new Date();
             document.getElementById('tanggalTransaksi').value = formatDateInput(today);
             loadData();
+            
+            // Event listeners untuk update info
             document.getElementById('nasabahSelect').addEventListener('change', updateInfo);
             document.getElementById('nominalInput').addEventListener('input', updateInfo);
+            document.getElementById('tanggalTransaksi').addEventListener('change', updateInfo);
         });
 
         // ====== FUNGSI JENIS TRANSAKSI ======
@@ -338,6 +342,11 @@
                         opt.textContent = n.nama;
                         select.appendChild(opt);
                     });
+                    
+                    // Auto-select nasabah pertama jika ada
+                    if (nasabahList.length > 0) {
+                        // select.value = nasabahList[0].nama;
+                    }
                 }
                 
                 const res2 = await fetch(`${API_URL}?action=getAllSaldo`);
@@ -350,8 +359,10 @@
                 }
                 
                 showToast(`✅ ${nasabahList.length} nasabah dimuat`);
+                updateInfo();
             } catch (error) {
-                showToast('❌ Gagal memuat data', true);
+                console.error('Error:', error);
+                showToast('❌ Gagal memuat data - CORS Error', true);
             }
         }
 
@@ -359,23 +370,44 @@
         function updateInfo() {
             const nama = document.getElementById('nasabahSelect').value;
             const nominal = getNominalValue();
+            const tanggal = document.getElementById('tanggalTransaksi').value;
             const infoBox = document.getElementById('infoBox');
+            const btn = document.getElementById('prosesBtn');
             
-            if (!nama || nominal <= 0) {
+            // Cek semua kondisi
+            if (!nama) {
                 infoBox.style.display = 'none';
-                document.getElementById('prosesBtn').disabled = true;
+                btn.disabled = true;
+                btn.textContent = (jenisTransaksi === 'SETOR' ? '📤' : '📥') + ' PROSES';
                 return;
             }
             
+            if (!tanggal) {
+                infoBox.style.display = 'none';
+                btn.disabled = true;
+                btn.textContent = (jenisTransaksi === 'SETOR' ? '📤' : '📥') + ' PROSES';
+                return;
+            }
+            
+            if (nominal <= 0) {
+                infoBox.style.display = 'none';
+                btn.disabled = true;
+                btn.textContent = (jenisTransaksi === 'SETOR' ? '📤' : '📥') + ' PROSES';
+                return;
+            }
+            
+            // Semua terisi, aktifkan tombol
             const jenis = jenisTransaksi === 'SETOR' ? 'Setoran' : 'Penarikan';
             const highlightClass = jenisTransaksi === 'SETOR' ? 'highlight-setor' : 'highlight-tarik';
             
             infoBox.style.display = 'block';
             document.getElementById('totalInfo').textContent = formatRupiah(nominal);
             document.getElementById('detailInfo').innerHTML = 
-                `${jenis} <span class="${highlightClass}">${formatRupiah(nominal)}</span> oleh ${nama}`;
+                `${jenis} <span class="${highlightClass}">${formatRupiah(nominal)}</span> oleh ${nama}` +
+                `<br><span style="font-size:11px;color:#8892b0;">Tanggal: ${formatTanggal(tanggal)}</span>`;
             
-            document.getElementById('prosesBtn').disabled = false;
+            btn.disabled = false;
+            btn.textContent = (jenisTransaksi === 'SETOR' ? '📤' : '📥') + ' PROSES';
         }
 
         // ====== PROSES TRANSAKSI ======
@@ -387,15 +419,21 @@
             const nominal = getNominalValue();
             const keterangan = document.getElementById('keteranganInput').value.trim();
             
+            // Validasi
             if (!nama) { showToast('❌ Pilih nasabah', true); return; }
             if (!tanggal) { showToast('❌ Pilih tanggal', true); return; }
             if (nominal <= 0) { showToast('❌ Masukkan nominal', true); return; }
             
             const jenisLabel = jenisTransaksi === 'SETOR' ? 'SETORAN' : 'PENARIKAN';
-            const confirmMsg = `Konfirmasi ${jenisLabel}\n\nNasabah: ${nama}\nTanggal: ${formatTanggal(tanggal)}\nNominal: ${formatRupiah(nominal)}\n\nLanjutkan?`;
+            const confirmMsg = `Konfirmasi ${jenisLabel}\n\n` +
+                              `Nasabah: ${nama}\n` +
+                              `Tanggal: ${formatTanggal(tanggal)}\n` +
+                              `Nominal: ${formatRupiah(nominal)}\n\n` +
+                              `Lanjutkan?`;
             
             if (!confirm(confirmMsg)) return;
             
+            // Proses
             isProcessing = true;
             const btn = document.getElementById('prosesBtn');
             btn.innerHTML = '<span class="spinner"></span> Memproses...';
@@ -403,19 +441,22 @@
             
             try {
                 const action = jenisTransaksi === 'SETOR' ? 'addSetoran' : 'addPenarikan';
-                const payload = new URLSearchParams({
-                    action: action,
-                    token: API_TOKEN,
-                    nama: nama,
-                    tanggal: tanggal,
-                    nominal: nominal,
-                    keterangan: keterangan || `${jenisLabel} ${formatTanggal(tanggal)}`
-                });
+                
+                // Kirim data ke API
+                const formData = new URLSearchParams();
+                formData.append('action', action);
+                formData.append('token', API_TOKEN);
+                formData.append('nama', nama);
+                formData.append('tanggal', tanggal);
+                formData.append('nominal', nominal);
+                formData.append('keterangan', keterangan || `${jenisLabel} ${formatTanggal(tanggal)}`);
                 
                 const res = await fetch(API_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: payload
+                    headers: { 
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formData
                 });
                 
                 const data = await res.json();
@@ -423,13 +464,14 @@
                 if (data.status === 'success') {
                     showToast(`✅ ${data.message}`);
                     
+                    // Tampilkan hasil
                     const resultCard = document.getElementById('resultCard');
                     resultCard.classList.add('show');
                     
                     const highlightClass = jenisTransaksi === 'SETOR' ? 'highlight-setor' : 'highlight-tarik';
                     
                     document.getElementById('resultContent').innerHTML = `
-                        <div style="text-align:center;margin-bottom:10px;color:#64ffda;font-weight:600;">✅ Berhasil</div>
+                        <div style="text-align:center;margin-bottom:10px;color:#64ffda;font-weight:600;">✅ Transaksi Berhasil</div>
                         <div class="result-item"><span class="label">ID</span><span class="value">${data.data.id}</span></div>
                         <div class="result-item"><span class="label">Nasabah</span><span class="value">${data.data.nama}</span></div>
                         <div class="result-item"><span class="label">Jenis</span><span class="value ${highlightClass}">${data.data.jenis}</span></div>
@@ -437,14 +479,16 @@
                         <div class="result-item"><span class="label">Nominal</span><span class="value ${highlightClass}">${data.data.nominal_formatted}</span></div>
                     `;
                     
+                    // Reset form
                     document.getElementById('nominalInput').value = '';
                     document.getElementById('keteranganInput').value = '';
                     document.getElementById('infoBox').style.display = 'none';
                     document.getElementById('prosesBtn').disabled = true;
                     
+                    // Refresh data
                     loadData();
                 } else {
-                    throw new Error(data.message || 'Gagal');
+                    throw new Error(data.message || 'Gagal menyimpan transaksi');
                 }
             } catch (error) {
                 showToast(`❌ ${error.message}`, true);
@@ -456,11 +500,21 @@
         }
 
         // ====== UTILITY ======
-        function formatRupiah(num) { return 'Rp ' + (num || 0).toLocaleString('id-ID'); }
-        function formatNumber(num) { return (num || 0).toLocaleString('id-ID'); }
-        function formatDateInput(date) {
-            return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+        function formatRupiah(num) { 
+            return 'Rp ' + (num || 0).toLocaleString('id-ID'); 
         }
+        
+        function formatNumber(num) { 
+            return (num || 0).toLocaleString('id-ID'); 
+        }
+        
+        function formatDateInput(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
         function formatTanggal(tanggalStr) {
             try {
                 const parts = tanggalStr.split('-');
@@ -468,8 +522,14 @@
                     return `${parts[2]}-${parts[1]}-${parts[0]}`;
                 }
                 const date = new Date(tanggalStr);
-                return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
-            } catch { return tanggalStr; }
+                return date.toLocaleDateString('id-ID', { 
+                    day: '2-digit', 
+                    month: 'long', 
+                    year: 'numeric' 
+                });
+            } catch { 
+                return tanggalStr; 
+            }
         }
 
         function showToast(message, isError = false) {
@@ -478,6 +538,7 @@
             toast.className = 'toast' + (isError ? ' error' : '');
             toast.textContent = message;
             container.appendChild(toast);
+            
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transform = 'translateX(-50%) translateY(16px)';
