@@ -1,6 +1,11 @@
+# ============================================
+# ROBOTS.TXT - JIMPITAN DIGITAL
+# ============================================
+
 User-agent: *
 Allow: /
+Disallow: /api/
 Disallow: /admin/
 Disallow: /private/
 
-Sitemap: https://widarbasaritiga-droid.github.io/sitemap.xml
+Sitemap: https://widarbasaritiga-droid.github.io/jimpitan-digital/sitemap.xml
