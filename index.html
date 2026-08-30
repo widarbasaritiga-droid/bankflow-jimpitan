@@ -59,12 +59,12 @@
             text-align: center;
         }
         .jenis-btn .icon { display: block; font-size: 18px; margin-bottom: 2px; }
-        .jenis-btn.active.setor {
+        .jenis-btn.active.bayar {
             border-color: #64ffda;
             background: rgba(100,255,218,0.1);
             color: #64ffda;
         }
-        .jenis-btn.active.tarik {
+        .jenis-btn.active.ambil {
             border-color: #ff6b6b;
             background: rgba(255,107,107,0.1);
             color: #ff6b6b;
@@ -92,16 +92,16 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        .btn-setor {
+        .btn-bayar {
             background: linear-gradient(135deg, #64ffda, #00b894);
             color: #0a1628;
         }
-        .btn-setor:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(100,255,218,0.2); }
-        .btn-tarik {
+        .btn-bayar:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(100,255,218,0.2); }
+        .btn-ambil {
             background: linear-gradient(135deg, #ff6b6b, #ee5a24);
             color: #fff;
         }
-        .btn-tarik:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(255,107,107,0.2); }
+        .btn-ambil:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(255,107,107,0.2); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         
         .result-card {
@@ -123,8 +123,8 @@
         .result-item:last-child { border-bottom: none; }
         .result-item .label { color: #8892b0; }
         .result-item .value { color: #e6f1ff; font-weight: 500; }
-        .result-item .value.highlight-setor { color: #64ffda; font-weight: 700; }
-        .result-item .value.highlight-tarik { color: #ff6b6b; font-weight: 700; }
+        .result-item .value.highlight-bayar { color: #64ffda; font-weight: 700; }
+        .result-item .value.highlight-ambil { color: #ff6b6b; font-weight: 700; }
         
         .toast {
             position: fixed;
@@ -183,6 +183,16 @@
         }
         .saldo-ringkas .item .label { font-size: 10px; color: #8892b0; }
         .saldo-ringkas .item .value { font-size: 16px; font-weight: 600; color: #64ffda; }
+        .kredit-info {
+            background: rgba(255,215,0,0.08);
+            border: 1px solid rgba(255,215,0,0.15);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin: 10px 0;
+            display: none;
+        }
+        .kredit-info .label { font-size: 11px; color: #8892b0; }
+        .kredit-info .value { font-size: 14px; font-weight: 600; color: #ffd700; }
         @media (max-width: 480px) {
             .saldo-ringkas { grid-template-columns: 1fr; }
         }
@@ -192,7 +202,7 @@
     <div class="container">
         <div class="header">
             <h1>🏦 Jimpitan Digital</h1>
-            <p>Sistem Setoran & Penarikan</p>
+            <p>Sistem Iuran Harian</p>
         </div>
 
         <div class="card" id="saldoCard" style="display:none;">
@@ -202,8 +212,8 @@
                     <div class="value" id="saldoGlobal">Rp 0</div>
                 </div>
                 <div class="item">
-                    <div class="label">Total Nasabah</div>
-                    <div class="value" id="totalNasabah">0</div>
+                    <div class="label">Total Peserta</div>
+                    <div class="value" id="totalPeserta">0</div>
                 </div>
             </div>
         </div>
@@ -215,20 +225,20 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label">👤 Nasabah</label>
-                <select class="form-control" id="nasabahSelect">
-                    <option value="">-- Pilih Nasabah --</option>
+                <label class="form-label">👤 Peserta</label>
+                <select class="form-control" id="pesertaSelect">
+                    <option value="">-- Pilih Peserta --</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="form-label">📊 Jenis</label>
                 <div class="jenis-toggle">
-                    <button class="jenis-btn active setor" id="btnSetor" onclick="setJenis('SETOR')">
-                        <span class="icon">📥</span> SETOR
+                    <button class="jenis-btn active bayar" id="btnBayar" onclick="setJenis('BAYAR')">
+                        <span class="icon">📥</span> BAYAR
                     </button>
-                    <button class="jenis-btn tarik" id="btnTarik" onclick="setJenis('TARIK')">
-                        <span class="icon">📤</span> TARIK
+                    <button class="jenis-btn ambil" id="btnAmbil" onclick="setJenis('AMBIL')">
+                        <span class="icon">📤</span> AMBIL
                     </button>
                 </div>
             </div>
@@ -239,13 +249,13 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label" id="nominalLabel">💰 Nominal (SETOR)</label>
+                <label class="form-label" id="nominalLabel">💰 Nominal (BAYAR)</label>
                 <input type="text" class="form-control" id="nominalInput" placeholder="Contoh: 100.000" oninput="formatNominal(this)">
             </div>
 
             <div class="form-group">
                 <label class="form-label">📝 Keterangan (opsional)</label>
-                <input type="text" class="form-control" id="keteranganInput" placeholder="Contoh: Jimpitan Agustus 2026">
+                <input type="text" class="form-control" id="keteranganInput" placeholder="Contoh: Iuran Agustus 2026">
             </div>
 
             <div id="infoBox" class="info-box">
@@ -254,7 +264,12 @@
                 <div class="detail" id="detailInfo">-</div>
             </div>
 
-            <button class="btn btn-setor" id="prosesBtn" onclick="prosesTransaksi()">
+            <div id="kreditInfo" class="kredit-info">
+                <div class="label">📊 Status Kredit</div>
+                <div class="value" id="kreditDetail">-</div>
+            </div>
+
+            <button class="btn btn-bayar" id="prosesBtn" onclick="prosesTransaksi()">
                 📤 PROSES
             </button>
 
@@ -268,19 +283,22 @@
 
     <script>
         // ====== KONFIGURASI ======
-        // URL DEPLOYMENT SUDAH DIISI
+        // GANTI DENGAN URL DEPLOYMENT ANDA
         const API_URL = 'https://script.google.com/macros/s/AKfycbw_7VNFo2ERl2IvxMmLG9AfpXH1lFLkrxgWWVqdOY_-m36d8H2zwXCsjA6CG7kYmXhk/exec';
         const API_TOKEN = 'JIMPITAN_DIGITAL_2024_SECRET_KEY';
-        let nasabahList = [];
+        let pesertaList = [];
         let isProcessing = false;
-        let jenisTransaksi = 'SETOR';
+        let jenisTransaksi = 'BAYAR';
 
         // ====== INISIALISASI ======
         document.addEventListener('DOMContentLoaded', function() {
             const today = new Date();
             document.getElementById('tanggalTransaksi').value = formatDateInput(today);
             loadData();
-            document.getElementById('nasabahSelect').addEventListener('change', updateInfo);
+            document.getElementById('pesertaSelect').addEventListener('change', function() {
+                updateInfo();
+                loadKreditStatus(this.value);
+            });
             document.getElementById('nominalInput').addEventListener('input', updateInfo);
             document.getElementById('tanggalTransaksi').addEventListener('change', updateInfo);
         });
@@ -289,21 +307,21 @@
         function setJenis(jenis) {
             jenisTransaksi = jenis;
             
-            document.getElementById('btnSetor').className = 'jenis-btn' + (jenis === 'SETOR' ? ' active setor' : '');
-            document.getElementById('btnTarik').className = 'jenis-btn' + (jenis === 'TARIK' ? ' active tarik' : '');
+            document.getElementById('btnBayar').className = 'jenis-btn' + (jenis === 'BAYAR' ? ' active bayar' : '');
+            document.getElementById('btnAmbil').className = 'jenis-btn' + (jenis === 'AMBIL' ? ' active ambil' : '');
             
             const label = document.getElementById('nominalLabel');
-            if (jenis === 'SETOR') {
-                label.innerHTML = '💰 Nominal (SETOR)';
+            if (jenis === 'BAYAR') {
+                label.innerHTML = '💰 Nominal (BAYAR)';
                 label.style.color = '#64ffda';
             } else {
-                label.innerHTML = '💰 Nominal (TARIK)';
+                label.innerHTML = '💰 Nominal (AMBIL)';
                 label.style.color = '#ff6b6b';
             }
             
             const btn = document.getElementById('prosesBtn');
-            btn.className = 'btn ' + (jenis === 'SETOR' ? 'btn-setor' : 'btn-tarik');
-            btn.innerHTML = (jenis === 'SETOR' ? '📤' : '📥') + ' PROSES';
+            btn.className = 'btn ' + (jenis === 'BAYAR' ? 'btn-bayar' : 'btn-ambil');
+            btn.innerHTML = (jenis === 'BAYAR' ? '📤' : '📥') + ' PROSES';
             
             updateInfo();
         }
@@ -327,17 +345,17 @@
             try {
                 showToast('🔄 Memuat data...');
                 
-                const res1 = await fetch(`${API_URL}?action=getNasabah`);
+                const res1 = await fetch(`${API_URL}?action=getPeserta`);
                 const data1 = await res1.json();
                 
                 if (data1.status === 'success') {
-                    nasabahList = data1.data || [];
-                    const select = document.getElementById('nasabahSelect');
-                    select.innerHTML = '<option value="">-- Pilih Nasabah --</option>';
-                    nasabahList.forEach(n => {
+                    pesertaList = data1.data || [];
+                    const select = document.getElementById('pesertaSelect');
+                    select.innerHTML = '<option value="">-- Pilih Peserta --</option>';
+                    pesertaList.forEach(p => {
                         const opt = document.createElement('option');
-                        opt.value = n.nama;
-                        opt.textContent = n.nama;
+                        opt.value = p.nama;
+                        opt.textContent = `${p.nama} (Iuran: ${formatRupiah(p.iuran_harian || 0)}/hari)`;
                         select.appendChild(opt);
                     });
                 }
@@ -348,10 +366,10 @@
                 if (data2.status === 'success') {
                     document.getElementById('saldoCard').style.display = 'block';
                     document.getElementById('saldoGlobal').textContent = formatRupiah(data2.summary?.saldo_global || 0);
-                    document.getElementById('totalNasabah').textContent = data2.summary?.total_nasabah || 0;
+                    document.getElementById('totalPeserta').textContent = data2.summary?.total_peserta || 0;
                 }
                 
-                showToast(`✅ ${nasabahList.length} nasabah dimuat`);
+                showToast(`✅ ${pesertaList.length} peserta dimuat`);
                 updateInfo();
             } catch (error) {
                 console.error('Error:', error);
@@ -359,9 +377,38 @@
             }
         }
 
+        // ====== LOAD KREDIT STATUS ======
+        async function loadKreditStatus(nama) {
+            const kreditInfo = document.getElementById('kreditInfo');
+            if (!nama) {
+                kreditInfo.style.display = 'none';
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}?action=getKreditStatus&nama=${encodeURIComponent(nama)}`);
+                const data = await res.json();
+                
+                if (data.status === 'success' && data.data) {
+                    const kredit = data.data;
+                    if (kredit.kredit > 0) {
+                        kreditInfo.style.display = 'block';
+                        document.getElementById('kreditDetail').innerHTML = 
+                            `💳 Kredit: ${kredit.kredit_formatted} | Berlaku sampai: ${kredit.tanggal_akhir} | Status: ${kredit.status}`;
+                    } else {
+                        kreditInfo.style.display = 'none';
+                    }
+                } else {
+                    kreditInfo.style.display = 'none';
+                }
+            } catch (error) {
+                kreditInfo.style.display = 'none';
+            }
+        }
+
         // ====== UPDATE INFO ======
         function updateInfo() {
-            const nama = document.getElementById('nasabahSelect').value;
+            const nama = document.getElementById('pesertaSelect').value;
             const nominal = getNominalValue();
             const tanggal = document.getElementById('tanggalTransaksi').value;
             const infoBox = document.getElementById('infoBox');
@@ -370,12 +417,12 @@
             if (!nama || !tanggal || nominal <= 0) {
                 infoBox.style.display = 'none';
                 btn.disabled = true;
-                btn.textContent = (jenisTransaksi === 'SETOR' ? '📤' : '📥') + ' PROSES';
+                btn.textContent = (jenisTransaksi === 'BAYAR' ? '📤' : '📥') + ' PROSES';
                 return;
             }
             
-            const jenis = jenisTransaksi === 'SETOR' ? 'Setoran' : 'Penarikan';
-            const highlightClass = jenisTransaksi === 'SETOR' ? 'highlight-setor' : 'highlight-tarik';
+            const jenis = jenisTransaksi === 'BAYAR' ? 'Bayar' : 'Ambil';
+            const highlightClass = jenisTransaksi === 'BAYAR' ? 'highlight-bayar' : 'highlight-ambil';
             
             infoBox.style.display = 'block';
             document.getElementById('totalInfo').textContent = formatRupiah(nominal);
@@ -384,25 +431,25 @@
                 `<br><span style="font-size:11px;color:#8892b0;">Tanggal: ${formatTanggal(tanggal)}</span>`;
             
             btn.disabled = false;
-            btn.textContent = (jenisTransaksi === 'SETOR' ? '📤' : '📥') + ' PROSES';
+            btn.textContent = (jenisTransaksi === 'BAYAR' ? '📤' : '📥') + ' PROSES';
         }
 
         // ====== PROSES TRANSAKSI ======
         async function prosesTransaksi() {
             if (isProcessing) return;
             
-            const nama = document.getElementById('nasabahSelect').value;
+            const nama = document.getElementById('pesertaSelect').value;
             const tanggal = document.getElementById('tanggalTransaksi').value;
             const nominal = getNominalValue();
             const keterangan = document.getElementById('keteranganInput').value.trim();
             
-            if (!nama) { showToast('❌ Pilih nasabah', true); return; }
+            if (!nama) { showToast('❌ Pilih peserta', true); return; }
             if (!tanggal) { showToast('❌ Pilih tanggal', true); return; }
             if (nominal <= 0) { showToast('❌ Masukkan nominal', true); return; }
             
-            const jenisLabel = jenisTransaksi === 'SETOR' ? 'SETORAN' : 'PENARIKAN';
+            const jenisLabel = jenisTransaksi === 'BAYAR' ? 'BAYAR' : 'AMBIL';
             const confirmMsg = `Konfirmasi ${jenisLabel}\n\n` +
-                              `Nasabah: ${nama}\n` +
+                              `Peserta: ${nama}\n` +
                               `Tanggal: ${formatTanggal(tanggal)}\n` +
                               `Nominal: ${formatRupiah(nominal)}\n\n` +
                               `Lanjutkan?`;
@@ -415,7 +462,7 @@
             btn.disabled = true;
             
             try {
-                const action = jenisTransaksi === 'SETOR' ? 'addSetoran' : 'addPenarikan';
+                const action = jenisTransaksi === 'BAYAR' ? 'bayar' : 'ambil';
                 
                 const formData = new URLSearchParams();
                 formData.append('action', action);
@@ -441,15 +488,25 @@
                     const resultCard = document.getElementById('resultCard');
                     resultCard.classList.add('show');
                     
-                    const highlightClass = jenisTransaksi === 'SETOR' ? 'highlight-setor' : 'highlight-tarik';
+                    const highlightClass = jenisTransaksi === 'BAYAR' ? 'highlight-bayar' : 'highlight-ambil';
+                    
+                    let kreditHtml = '';
+                    if (data.data.kredit) {
+                        kreditHtml = `
+                            <div class="result-item"><span class="label">Kredit</span><span class="value highlight-bayar">${formatRupiah(data.data.kredit.kredit)}</span></div>
+                            <div class="result-item"><span class="label">Hari Terbayar</span><span class="value">${data.data.kredit.hari_terbayar} hari</span></div>
+                            <div class="result-item"><span class="label">Berlaku Sampai</span><span class="value">${data.data.kredit.tanggal_akhir}</span></div>
+                        `;
+                    }
                     
                     document.getElementById('resultContent').innerHTML = `
                         <div style="text-align:center;margin-bottom:10px;color:#64ffda;font-weight:600;">✅ Transaksi Berhasil</div>
                         <div class="result-item"><span class="label">ID</span><span class="value">${data.data.id}</span></div>
-                        <div class="result-item"><span class="label">Nasabah</span><span class="value">${data.data.nama}</span></div>
+                        <div class="result-item"><span class="label">Peserta</span><span class="value">${data.data.nama}</span></div>
                         <div class="result-item"><span class="label">Jenis</span><span class="value ${highlightClass}">${data.data.jenis}</span></div>
                         <div class="result-item"><span class="label">Tanggal</span><span class="value">${data.data.tanggal}</span></div>
                         <div class="result-item"><span class="label">Nominal</span><span class="value ${highlightClass}">${data.data.nominal_formatted}</span></div>
+                        ${kreditHtml}
                     `;
                     
                     document.getElementById('nominalInput').value = '';
@@ -458,6 +515,7 @@
                     document.getElementById('prosesBtn').disabled = true;
                     
                     loadData();
+                    loadKreditStatus(nama);
                 } else {
                     throw new Error(data.message || 'Gagal menyimpan transaksi');
                 }
@@ -466,7 +524,7 @@
             }
             
             isProcessing = false;
-            btn.innerHTML = (jenisTransaksi === 'SETOR' ? '📤' : '📥') + ' PROSES';
+            btn.innerHTML = (jenisTransaksi === 'BAYAR' ? '📤' : '📥') + ' PROSES';
             btn.disabled = false;
         }
 
