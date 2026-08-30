@@ -345,41 +345,6 @@
                                    onfocus="this.select()"
                                    ${state.isProcessing ? 'disabled' : ''}>
                         </div>
-                        
-                        <div class="amount-grid">
-                            <button class="amount-btn" data-amount="3000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">3K</span>
-                                3.000
-                            </button>
-                            <button class="amount-btn" data-amount="5000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">5K</span>
-                                5.000
-                            </button>
-                            <button class="amount-btn" data-amount="7000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">7K</span>
-                                7.000
-                            </button>
-                            <button class="amount-btn" data-amount="10000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">10K</span>
-                                10.000
-                            </button>
-                            <button class="amount-btn" data-amount="12000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">12K</span>
-                                12.000
-                            </button>
-                            <button class="amount-btn" data-amount="15000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">15K</span>
-                                15.000
-                            </button>
-                            <button class="amount-btn" data-amount="20000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">20K</span>
-                                20.000
-                            </button>
-                            <button class="amount-btn" data-amount="25000" ${state.isProcessing ? 'disabled' : ''}>
-                                <span class="amount-btn-label">25K</span>
-                                25.000
-                            </button>
-                        </div>
                     </div>
                     
                     ${state.transaction.nasabah && state.transaction.dailyAmount > 0 && daysCount > 0 ? `
@@ -435,7 +400,6 @@
         
         // ====== RENDER DASHBOARD ======
         function renderDashboard() {
-            // Hitung total nasabah dan saldo saja
             return `
                 <div class="card">
                     <div class="section-title">
@@ -491,12 +455,10 @@
                                     <div>
                                         <div style="font-weight: 600; color: var(--text-light);">${nasabah.nama}</div>
                                         <div style="font-size: 12px; color: var(--text-dim);">
-                                            ID: ${nasabah.id_nasabah || 'N/A'} 
-                                            ${nasabah.no_hp ? `• ${nasabah.no_hp}` : ''}
-                                            ${nasabah.alamat ? `• ${nasabah.alamat}` : ''}
+                                            ID: ${nasabah.id_nasabah || 'N/A'}
                                         </div>
-                                        ${nasabah.email ? `<div style="font-size: 12px; color: var(--text-dim);">${nasabah.email}</div>` : ''}
-                                        ${nasabah.jumlah_harian ? `<div style="font-size: 12px; color: var(--green-light); font-weight: 600;">Jumlah Harian: ${formatRupiah(nasabah.jumlah_harian)}</div>` : ''}
+                                        ${nasabah.jumlah_harian ? `<div style="font-size: 12px; color: var(--green-light); font-weight: 600;">Jumlah Harian: ${formatRupiah(nasabah.jumlah_harian)}</div>` : 
+                                        `<div style="font-size: 12px; color: var(--text-dim);">Jumlah Harian: Belum diatur</div>`}
                                     </div>
                                 </div>
                             `).join('') : 
@@ -674,18 +636,6 @@
                         setTimeout(() => this.select(), 100);
                     });
                 }
-                
-                document.querySelectorAll('.amount-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        if (state.isProcessing) return;
-                        const amount = parseInt(btn.dataset.amount);
-                        state.transaction.dailyAmount = amount;
-                        const input = document.getElementById('dailyAmountInput');
-                        if (input) input.value = formatNumber(amount);
-                        updateTransactionDisplay();
-                        updateTransactionButton();
-                    });
-                });
                 
                 document.getElementById('submitBtn')?.addEventListener('click', confirmTransaction);
             }
