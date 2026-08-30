@@ -254,7 +254,6 @@
                 <div class="detail" id="detailInfo">-</div>
             </div>
 
-            <!-- TOMBOL PROSES -->
             <button class="btn btn-setor" id="prosesBtn" onclick="prosesTransaksi()">
                 📤 PROSES
             </button>
@@ -269,7 +268,8 @@
 
     <script>
         // ====== KONFIGURASI ======
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxZJDHUZTVOp6L3JMk5ryGegqt7gmR2OM9hn_RHMJ0sJWZBmV_0LlYg1CX0BSjoDr-A/exec';
+        // URL DEPLOYMENT SUDAH DIISI
+        const API_URL = 'https://script.google.com/macros/s/AKfycbw_7VNFo2ERl2IvxMmLG9AfpXH1lFLkrxgWWVqdOY_-m36d8H2zwXCsjA6CG7kYmXhk/exec';
         const API_TOKEN = 'JIMPITAN_DIGITAL_2024_SECRET_KEY';
         let nasabahList = [];
         let isProcessing = false;
@@ -280,8 +280,6 @@
             const today = new Date();
             document.getElementById('tanggalTransaksi').value = formatDateInput(today);
             loadData();
-            
-            // Event listeners untuk update info
             document.getElementById('nasabahSelect').addEventListener('change', updateInfo);
             document.getElementById('nominalInput').addEventListener('input', updateInfo);
             document.getElementById('tanggalTransaksi').addEventListener('change', updateInfo);
@@ -342,11 +340,6 @@
                         opt.textContent = n.nama;
                         select.appendChild(opt);
                     });
-                    
-                    // Auto-select nasabah pertama jika ada
-                    if (nasabahList.length > 0) {
-                        // select.value = nasabahList[0].nama;
-                    }
                 }
                 
                 const res2 = await fetch(`${API_URL}?action=getAllSaldo`);
@@ -362,7 +355,7 @@
                 updateInfo();
             } catch (error) {
                 console.error('Error:', error);
-                showToast('❌ Gagal memuat data - CORS Error', true);
+                showToast('❌ Gagal memuat data', true);
             }
         }
 
@@ -374,29 +367,13 @@
             const infoBox = document.getElementById('infoBox');
             const btn = document.getElementById('prosesBtn');
             
-            // Cek semua kondisi
-            if (!nama) {
+            if (!nama || !tanggal || nominal <= 0) {
                 infoBox.style.display = 'none';
                 btn.disabled = true;
                 btn.textContent = (jenisTransaksi === 'SETOR' ? '📤' : '📥') + ' PROSES';
                 return;
             }
             
-            if (!tanggal) {
-                infoBox.style.display = 'none';
-                btn.disabled = true;
-                btn.textContent = (jenisTransaksi === 'SETOR' ? '📤' : '📥') + ' PROSES';
-                return;
-            }
-            
-            if (nominal <= 0) {
-                infoBox.style.display = 'none';
-                btn.disabled = true;
-                btn.textContent = (jenisTransaksi === 'SETOR' ? '📤' : '📥') + ' PROSES';
-                return;
-            }
-            
-            // Semua terisi, aktifkan tombol
             const jenis = jenisTransaksi === 'SETOR' ? 'Setoran' : 'Penarikan';
             const highlightClass = jenisTransaksi === 'SETOR' ? 'highlight-setor' : 'highlight-tarik';
             
@@ -419,7 +396,6 @@
             const nominal = getNominalValue();
             const keterangan = document.getElementById('keteranganInput').value.trim();
             
-            // Validasi
             if (!nama) { showToast('❌ Pilih nasabah', true); return; }
             if (!tanggal) { showToast('❌ Pilih tanggal', true); return; }
             if (nominal <= 0) { showToast('❌ Masukkan nominal', true); return; }
@@ -433,7 +409,6 @@
             
             if (!confirm(confirmMsg)) return;
             
-            // Proses
             isProcessing = true;
             const btn = document.getElementById('prosesBtn');
             btn.innerHTML = '<span class="spinner"></span> Memproses...';
@@ -442,7 +417,6 @@
             try {
                 const action = jenisTransaksi === 'SETOR' ? 'addSetoran' : 'addPenarikan';
                 
-                // Kirim data ke API
                 const formData = new URLSearchParams();
                 formData.append('action', action);
                 formData.append('token', API_TOKEN);
@@ -464,7 +438,6 @@
                 if (data.status === 'success') {
                     showToast(`✅ ${data.message}`);
                     
-                    // Tampilkan hasil
                     const resultCard = document.getElementById('resultCard');
                     resultCard.classList.add('show');
                     
@@ -479,13 +452,11 @@
                         <div class="result-item"><span class="label">Nominal</span><span class="value ${highlightClass}">${data.data.nominal_formatted}</span></div>
                     `;
                     
-                    // Reset form
                     document.getElementById('nominalInput').value = '';
                     document.getElementById('keteranganInput').value = '';
                     document.getElementById('infoBox').style.display = 'none';
                     document.getElementById('prosesBtn').disabled = true;
                     
-                    // Refresh data
                     loadData();
                 } else {
                     throw new Error(data.message || 'Gagal menyimpan transaksi');
