@@ -192,7 +192,7 @@
             display: none;
         }
         .kredit-info .label { font-size: 11px; color: #8892b0; }
-        .kredit-info .value { font-size: 14px; font-weight: 600; color: #ffd700; }
+        .kredit-info .value { font-size: 13px; font-weight: 600; color: #ffd700; }
         @media (max-width: 480px) {
             .saldo-ringkas { grid-template-columns: 1fr; }
         }
@@ -273,6 +273,15 @@
                 📤 PROSES
             </button>
 
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;">
+                <button onclick="refreshData()" class="btn btn-bayar" style="font-size:12px; padding:8px;">
+                    🔄 Refresh
+                </button>
+                <button onclick="setupTrigger()" class="btn btn-bayar" style="font-size:12px; padding:8px; background:linear-gradient(135deg,#ffd700,#f57c00); color:#0a1628;">
+                    ⏰ Auto-Debit
+                </button>
+            </div>
+
             <div id="resultCard" class="result-card">
                 <div id="resultContent"></div>
             </div>
@@ -283,7 +292,6 @@
 
     <script>
         // ====== KONFIGURASI ======
-        // GANTI DENGAN URL DEPLOYMENT ANDA
         const API_URL = 'https://script.google.com/macros/s/AKfycbw_7VNFo2ERl2IvxMmLG9AfpXH1lFLkrxgWWVqdOY_-m36d8H2zwXCsjA6CG7kYmXhk/exec';
         const API_TOKEN = 'JIMPITAN_DIGITAL_2024_SECRET_KEY';
         let pesertaList = [];
@@ -374,6 +382,30 @@
             } catch (error) {
                 console.error('Error:', error);
                 showToast('❌ Gagal memuat data', true);
+            }
+        }
+
+        // ====== REFRESH DATA ======
+        async function refreshData() {
+            await loadData();
+            const nama = document.getElementById('pesertaSelect').value;
+            if (nama) loadKreditStatus(nama);
+            showToast('✅ Data diperbarui');
+        }
+
+        // ====== SETUP TRIGGER ======
+        async function setupTrigger() {
+            try {
+                showToast('🔄 Setup trigger...');
+                const res = await fetch(`${API_URL}?action=setupTrigger`);
+                const data = await res.json();
+                if (data.status === 'success') {
+                    showToast('✅ Trigger auto-debit berhasil dibuat!');
+                } else {
+                    showToast('❌ ' + data.message, true);
+                }
+            } catch (error) {
+                showToast('❌ Gagal setup trigger', true);
             }
         }
 
