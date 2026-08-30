@@ -3,1328 +3,486 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Jimpitan System</title>
-    
-    <!-- ===== PWA METADATA ===== -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Jimpitan Digital">
-    <meta name="application-name" content="Sistem Jimpitan Digital">
-    <!-- ======================== -->
-    
-    <!-- CSS Libraries -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Custom CSS Files -->
-    <link rel="stylesheet" href="styles.css?v=2.0.1">
-    <link rel="stylesheet" href="shimmer-effects.css?v=2.0.1">
-    
-    <!-- Favicon dan PWA Icons -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    
-    <!-- Manifest untuk PWA -->
-    <link rel="manifest" href="manifest.json" crossorigin="use-credentials">
-    <meta name="theme-color" content="#0a192f">
-    
-    <!-- HTML2Canvas untuk render PNG -->
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <title>Jimpitan Digital</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a1628;
+            color: #e6f1ff;
+            min-height: 100vh;
+            padding: 16px;
+        }
+        .container { max-width: 480px; margin: 0 auto; }
+        .header { text-align: center; padding: 16px 0 20px; }
+        .header h1 { font-size: 22px; color: #64ffda; }
+        .header p { font-size: 13px; color: #8892b0; }
+        .card {
+            background: rgba(255,255,255,0.04);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .card-title { font-size: 15px; font-weight: 600; color: #64ffda; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; }
+        .form-group { margin-bottom: 12px; }
+        .form-label { display: block; font-size: 12px; color: #8892b0; margin-bottom: 4px; font-weight: 500; }
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            color: #e6f1ff;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .form-control:focus { border-color: #64ffda; }
+        .form-control option { background: #0a1628; }
+        
+        .jenis-toggle {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .jenis-btn {
+            padding: 10px;
+            border: 2px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.03);
+            color: #8892b0;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .jenis-btn .icon { display: block; font-size: 18px; margin-bottom: 2px; }
+        .jenis-btn.active.setor {
+            border-color: #64ffda;
+            background: rgba(100,255,218,0.1);
+            color: #64ffda;
+        }
+        .jenis-btn.active.tarik {
+            border-color: #ff6b6b;
+            background: rgba(255,107,107,0.1);
+            color: #ff6b6b;
+        }
+        
+        .info-box {
+            background: rgba(100,255,218,0.05);
+            border: 1px solid rgba(100,255,218,0.1);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            display: none;
+        }
+        .info-box .label { font-size: 11px; color: #8892b0; }
+        .info-box .value { font-size: 20px; font-weight: 700; color: #64ffda; }
+        .info-box .detail { font-size: 12px; color: #ccd6f6; margin-top: 2px; }
+        
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-setor {
+            background: linear-gradient(135deg, #64ffda, #00b894);
+            color: #0a1628;
+        }
+        .btn-setor:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(100,255,218,0.2); }
+        .btn-tarik {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: #fff;
+        }
+        .btn-tarik:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(255,107,107,0.2); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        .result-card {
+            background: rgba(100,255,218,0.04);
+            border: 1px solid rgba(100,255,218,0.08);
+            border-radius: 8px;
+            padding: 14px;
+            margin-top: 12px;
+            display: none;
+        }
+        .result-card.show { display: block; }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .result-item:last-child { border-bottom: none; }
+        .result-item .label { color: #8892b0; }
+        .result-item .value { color: #e6f1ff; font-weight: 500; }
+        .result-item .value.highlight-setor { color: #64ffda; font-weight: 700; }
+        .result-item .value.highlight-tarik { color: #ff6b6b; font-weight: 700; }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 18px;
+            border-radius: 8px;
+            background: rgba(10,22,40,0.95);
+            border: 1px solid rgba(100,255,218,0.15);
+            color: #e6f1ff;
+            font-size: 13px;
+            z-index: 1000;
+            max-width: 90%;
+            text-align: center;
+            animation: slideUp 0.3s ease;
+        }
+        .toast.error { border-color: rgba(255,107,107,0.3); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(16px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-top-color: #0a1628;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            background: rgba(100,255,218,0.12);
+            color: #64ffda;
+        }
+        .saldo-ringkas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .saldo-ringkas .item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 6px;
+            padding: 8px 12px;
+            text-align: center;
+        }
+        .saldo-ringkas .item .label { font-size: 10px; color: #8892b0; }
+        .saldo-ringkas .item .value { font-size: 16px; font-weight: 600; color: #64ffda; }
+        @media (max-width: 480px) {
+            .saldo-ringkas { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-    <div class="header">
-        <h1><i class="fas fa-university"></i> Sistem Jimpitan Digital</h1>
-    </div>
-    
-    <div class="content" id="content">
-        <!-- Content loaded here -->
-    </div>
-    
-    <div class="nav">
-        <button class="nav-btn active" data-tab="transaksi">
-            <i class="fas fa-exchange-alt"></i>
-            <span>Transaksi</span>
-        </button>
-        <button class="nav-btn" data-tab="dashboard">
-            <i class="fas fa-chart-line"></i>
-            <span>Dashboard</span>
-        </button>
-        <button class="nav-btn" data-tab="nasabah">
-            <i class="fas fa-users"></i>
-            <span>Nasabah</span>
-        </button>
-        <button class="nav-btn" data-tab="saldo">
-            <i class="fas fa-wallet"></i>
-            <span>Saldo</span>
-        </button>
-        <button class="nav-btn" data-tab="settings">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
-        </button>
+    <div class="container">
+        <div class="header">
+            <h1>🏦 Jimpitan Digital</h1>
+            <p>Sistem Setoran & Penarikan</p>
+        </div>
+
+        <div class="card" id="saldoCard" style="display:none;">
+            <div class="saldo-ringkas">
+                <div class="item">
+                    <div class="label">Saldo Global</div>
+                    <div class="value" id="saldoGlobal">Rp 0</div>
+                </div>
+                <div class="item">
+                    <div class="label">Total Nasabah</div>
+                    <div class="value" id="totalNasabah">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                📝 Transaksi
+                <span class="status-badge" id="statusBadge">SIAP</span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">👤 Nasabah</label>
+                <select class="form-control" id="nasabahSelect">
+                    <option value="">-- Pilih Nasabah --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">📊 Jenis</label>
+                <div class="jenis-toggle">
+                    <button class="jenis-btn active setor" id="btnSetor" onclick="setJenis('SETOR')">
+                        <span class="icon">📥</span> SETOR
+                    </button>
+                    <button class="jenis-btn tarik" id="btnTarik" onclick="setJenis('TARIK')">
+                        <span class="icon">📤</span> TARIK
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">📅 Tanggal</label>
+                <input type="date" class="form-control" id="tanggalTransaksi">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" id="nominalLabel">💰 Nominal (SETOR)</label>
+                <input type="text" class="form-control" id="nominalInput" placeholder="Contoh: 100.000" oninput="formatNominal(this)">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">📝 Keterangan (opsional)</label>
+                <input type="text" class="form-control" id="keteranganInput" placeholder="Contoh: Jimpitan Agustus 2026">
+            </div>
+
+            <div id="infoBox" class="info-box">
+                <div class="label">💡 Ringkasan</div>
+                <div class="value" id="totalInfo">Rp 0</div>
+                <div class="detail" id="detailInfo">-</div>
+            </div>
+
+            <button class="btn btn-setor" id="prosesBtn" onclick="prosesTransaksi()">
+                📤 PROSES
+            </button>
+
+            <div id="resultCard" class="result-card">
+                <div id="resultContent"></div>
+            </div>
+        </div>
     </div>
 
-    <!-- Hidden receipt container for PNG generation -->
-    <div id="receiptContainer" class="receipt-container"></div>
+    <div id="toastContainer"></div>
 
     <script>
-        // ====== KONFIGURASI API ======
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzg2VbfzX6Wdmo0DJkPY9noOhBZlRmXvgzuhLMpqfseste6Yi2P1KeLOFSvf-HM0Fn3/exec';
-        const API_KEY = 'JIMPITAN_DIGITAL_2024_SECRET_KEY';
-        const APP_VERSION = '2.0.1';
-        const RECEIPT_SERVER = 'https://bankflow-receipt.vercel.app/api/generate';
-        
-        // ====== STATE GLOBAL ======
-        let state = {
-            tab: 'transaksi',
-            nasabahList: [],
-            globalBalance: 0,
-            isProcessing: false,
-            isGeneratingReceipt: false,
-            dailyAmount: 10000,
-            transaction: {
-                nasabah: '',
-                type: 'SETOR',
-                dailyAmount: 10000,
-                dateFrom: new Date().toISOString().split('T')[0],
-                dateTo: new Date().toISOString().split('T')[0]
-            },
-            lastTransactionData: null,
-            updateAvailable: false,
-            newVersion: ''
-        };
-        
-        // ====== INISIALISASI APLIKASI ======
-        document.addEventListener('DOMContentLoaded', async () => {
-            console.log(`🚀 Aplikasi Jimpitan v${APP_VERSION} dimulai`);
-            
-            // Setup navigation
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const tab = btn.dataset.tab;
-                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    loadTab(tab);
-                });
-            });
-            
-            // Setup Service Worker
-            setupServiceWorker();
-            
-            // Load initial data
-            await loadData();
-            loadTab('transaksi');
-            
-            // Check for updates
-            setTimeout(checkForUpdates, 3000);
-            setInterval(checkForUpdates, 4 * 60 * 60 * 1000);
+        // ====== KONFIGURASI ======
+        const API_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+        const API_TOKEN = 'JIMPITAN_DIGITAL_2024_SECRET_KEY';
+        let nasabahList = [];
+        let isProcessing = false;
+        let jenisTransaksi = 'SETOR';
+
+        // ====== INISIALISASI ======
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            document.getElementById('tanggalTransaksi').value = formatDateInput(today);
+            loadData();
+            document.getElementById('nasabahSelect').addEventListener('change', updateInfo);
+            document.getElementById('nominalInput').addEventListener('input', updateInfo);
         });
-        
-        // ====== SERVICE WORKER SETUP ======
-        function setupServiceWorker() {
-            if ('serviceWorker' in navigator) {
-                console.log('🔍 Service Worker supported');
-                
-                window.addEventListener('load', function() {
-                    console.log('📄 Page loaded, registering Service Worker...');
-                    
-                    const swPath = './sw.js';
-                    const swScope = './';
-                    
-                    console.log(`🔧 Registering SW: ${swPath} with scope: ${swScope}`);
-                    
-                    navigator.serviceWorker.getRegistrations()
-                        .then(registrations => {
-                            if (registrations.length > 0) {
-                                console.log(`🗑️ Found ${registrations.length} old SW registrations`);
-                                return Promise.all(
-                                    registrations.map(reg => reg.unregister())
-                                );
-                            }
-                            return Promise.resolve();
-                        })
-                        .then(() => {
-                            return navigator.serviceWorker.register(swPath, { scope: swScope });
-                        })
-                        .then(registration => {
-                            console.log('✅ Service Worker registered!');
-                            console.log('Scope:', registration.scope);
-                            
-                            showToast('✅ Aplikasi siap digunakan !');
-                            
-                            registration.addEventListener('updatefound', () => {
-                                const newWorker = registration.installing;
-                                console.log('🔄 Update found for Service Worker');
-                                
-                                newWorker.addEventListener('statechange', () => {
-                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                        console.log('📱 New version available!');
-                                        state.updateAvailable = true;
-                                        showUpdateNotification('Versi baru tersedia!');
-                                    }
-                                });
-                            });
-                            
-                            navigator.serviceWorker.addEventListener('message', event => {
-                                console.log('📨 Message from SW:', event.data);
-                                
-                                if (event.data && event.data.type === 'SW_UPDATED') {
-                                    showToast(`🔄 Aplikasi diperbarui ke v${event.data.version || 'terbaru'}`);
-                                    
-                                    if (event.data.action === 'reload') {
-                                        setTimeout(() => {
-                                            window.location.reload();
-                                        }, 1500);
-                                    }
-                                }
-                            });
-                            
-                            setInterval(() => {
-                                registration.update().catch(err => {
-                                    console.log('Update check failed:', err);
-                                });
-                            }, 60 * 60 * 1000);
-                            
-                        })
-                        .catch(error => {
-                            console.error('❌ ServiceWorker registration failed:', error);
-                            console.log('Aplikasi tetap berjalan tanpa offline support');
-                        });
-                    
-                    setTimeout(() => {
-                        if (!navigator.serviceWorker.controller) {
-                            console.log('🔄 Retrying Service Worker registration...');
-                            navigator.serviceWorker.register(swPath, { scope: swScope })
-                                .then(reg => console.log('Retry successful:', reg.scope))
-                                .catch(err => console.log('Retry failed:', err));
-                        }
-                    }, 3000);
-                    
-                });
-                
+
+        // ====== FUNGSI JENIS TRANSAKSI ======
+        function setJenis(jenis) {
+            jenisTransaksi = jenis;
+            
+            document.getElementById('btnSetor').className = 'jenis-btn' + (jenis === 'SETOR' ? ' active setor' : '');
+            document.getElementById('btnTarik').className = 'jenis-btn' + (jenis === 'TARIK' ? ' active tarik' : '');
+            
+            const label = document.getElementById('nominalLabel');
+            if (jenis === 'SETOR') {
+                label.innerHTML = '💰 Nominal (SETOR)';
+                label.style.color = '#64ffda';
             } else {
-                console.log('⚠️ Service Worker not supported in this browser');
+                label.innerHTML = '💰 Nominal (TARIK)';
+                label.style.color = '#ff6b6b';
             }
+            
+            const btn = document.getElementById('prosesBtn');
+            btn.className = 'btn ' + (jenis === 'SETOR' ? 'btn-setor' : 'btn-tarik');
+            btn.innerHTML = (jenis === 'SETOR' ? '📤' : '📥') + ' PROSES';
+            
+            updateInfo();
         }
-        
-        // ====== LOAD DATA DARI API ======
+
+        // ====== FORMAT NOMINAL ======
+        function formatNominal(input) {
+            let value = input.value.replace(/[^\d]/g, '');
+            if (value) {
+                input.value = new Intl.NumberFormat('id-ID').format(parseInt(value));
+            }
+            updateInfo();
+        }
+
+        function getNominalValue() {
+            const input = document.getElementById('nominalInput');
+            return parseInt(input.value.replace(/[^\d]/g, '')) || 0;
+        }
+
+        // ====== LOAD DATA ======
         async function loadData() {
             try {
-                console.log('📥 Load from API...');
+                showToast('🔄 Memuat data...');
                 
-                const res = await fetch(`${API_URL}?action=getNasabah`);
-                const data = await res.json();
-                state.nasabahList = data.data || [];
+                const res1 = await fetch(`${API_URL}?action=getNasabah`);
+                const data1 = await res1.json();
                 
-                const balanceRes = await fetch(`${API_URL}?action=getAllSaldo`);
-                const balanceData = await balanceRes.json();
-                state.globalBalance = balanceData.saldo_global || 0;
-                
-                console.log(`✅ Data loaded: ${state.nasabahList.length} nasabah, saldo: ${formatRupiah(state.globalBalance)}`);
-                
-                renderTab();
-                
-            } catch (e) {
-                console.error('❌ Load error:', e);
-                showToast('Gagal memuat data dari server', true);
-            }
-        }
-        
-        // ====== LOAD TAB ======
-        async function loadTab(tab) {
-            state.tab = tab;
-            renderTab();
-        }
-        
-        // ====== RENDER TAB ======
-        function renderTab() {
-            const content = document.getElementById('content');
-            
-            switch(state.tab) {
-                case 'transaksi':
-                    content.innerHTML = renderTransaksi();
-                    break;
-                case 'dashboard':
-                    content.innerHTML = renderDashboard();
-                    break;
-                case 'nasabah':
-                    content.innerHTML = renderNasabah();
-                    break;
-                case 'saldo':
-                    content.innerHTML = renderSaldo();
-                    break;
-                case 'settings':
-                    content.innerHTML = renderSettings();
-                    break;
-            }
-            
-            attachEvents();
-        }
-        
-        // ====== RENDER TRANSAKSI ======
-        function renderTransaksi() {
-            const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
-            const totalAmount = state.transaction.dailyAmount * daysCount;
-            
-            let btnText;
-            if (state.isProcessing) {
-                btnText = '<div class="spinner"></div> Memproses...';
-            } else if (state.transaction.nasabah && state.transaction.dailyAmount > 0 && daysCount > 0) {
-                btnText = `${state.transaction.type === 'SETOR' ? 'SETOR' : 'TARIK'} ${formatRupiah(totalAmount)} - ${state.transaction.nasabah}`;
-            } else {
-                btnText = '<i class="fas fa-paper-plane"></i> KIRIM PROSES';
-            }
-            
-            return `
-                <div class="card">
-                    <div class="section-title">
-                        <i class="fas fa-exchange-alt"></i> TRANSAKSI JIMPITAN
-                    </div>
-                    
-                    <div style="display: flex; gap: 12px; margin-bottom: 20px;">
-                        <div class="info-card" style="flex: 1;">
-                            <div class="info-label">Total Saldo Sistem</div>
-                            <div class="info-value">${formatRupiah(state.globalBalance)}</div>
-                        </div>
-                        <div class="info-card" style="flex: 1;">
-                            <div class="info-label">Jumlah Nasabah</div>
-                            <div class="info-value">${state.nasabahList.length}</div>
-                        </div>
-                    </div>
-                    
-                    <div style="margin-bottom: 16px;">
-                        <div class="form-label">Periode Jimpitan</div>
-                        <div class="date-row">
-                            <div class="date-group">
-                                <div class="date-label">Dari Tanggal</div>
-                                <input type="date" class="date-input" id="dateFrom" value="${state.transaction.dateFrom}" ${state.isProcessing ? 'disabled' : ''}>
-                                ${daysCount > 0 ? `<div class="days-count">${daysCount} hari</div>` : ''}
-                            </div>
-                            <div class="date-group">
-                                <div class="date-label">Sampai Tanggal</div>
-                                <input type="date" class="date-input" id="dateTo" value="${state.transaction.dateTo}" ${state.isProcessing ? 'disabled' : ''}>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="margin-bottom: 16px;">
-                        <div class="form-label">Pilih Nasabah</div>
-                        <select id="selectNasabah" ${state.isProcessing ? 'disabled' : ''}>
-                            <option value="">-- Pilih Nasabah --</option>
-                            ${state.nasabahList.map(n => `<option value="${n.nama}" ${state.transaction.nasabah === n.nama ? 'selected' : ''}>${n.nama}${n.id_nasabah ? ` (${n.id_nasabah})` : ''}</option>`).join('')}
-                        </select>
-                    </div>
-                    
-                    <div style="margin-bottom: 16px;">
-                        <div class="form-label">Jenis Transaksi</div>
-                        <div class="type-selector">
-                            <button class="type-btn setor ${state.transaction.type === 'SETOR' ? 'active' : ''}" 
-                                    data-type="SETOR" ${state.isProcessing ? 'disabled' : ''}>
-                                <i class="fas fa-arrow-down" style="margin-right: 6px;"></i> SETOR
-                            </button>
-                            <button class="type-btn tarik ${state.transaction.type === 'TARIK' ? 'active' : ''}" 
-                                    data-type="TARIK" ${state.isProcessing ? 'disabled' : ''}>
-                                <i class="fas fa-arrow-up" style="margin-right: 6px;"></i> TARIK
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="amount-section">
-                        <div class="amount-label-row">
-                            <div class="amount-label">Nominal Harian</div>
-                            <div class="amount-currency">IDR (Rupiah)</div>
-                        </div>
-                        <div class="amount-input-container">
-                            <div class="amount-prefix">Rp</div>
-                            <input type="text" 
-                                   class="amount-input" 
-                                   id="dailyAmountInput" 
-                                   placeholder="0"
-                                   value="${state.transaction.dailyAmount > 0 ? formatNumber(state.transaction.dailyAmount) : ''}"
-                                   onfocus="this.select()"
-                                   ${state.isProcessing ? 'disabled' : ''}>
-                        </div>
-                    </div>
-                    
-                    ${state.transaction.nasabah && state.transaction.dailyAmount > 0 && daysCount > 0 ? `
-                        <div class="transaction-info-container">
-                            <div class="transaction-info-row">
-                                <span class="info-label-rounded">Nasabah</span>
-                                <span class="info-value-rounded">${state.transaction.nasabah}</span>
-                            </div>
-                            <div class="transaction-info-row">
-                                <span class="info-label-rounded">Jenis Transaksi</span>
-                                <span class="transaction-type-badge ${state.transaction.type === 'TARIK' ? 'withdraw' : ''}">
-                                    <i class="fas fa-${state.transaction.type === 'SETOR' ? 'arrow-down' : 'arrow-up'}"></i>
-                                    ${state.transaction.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}
-                                </span>
-                            </div>
-                            <div class="transaction-info-row">
-                                <span class="info-label-rounded">Nominal Harian</span>
-                                <span class="info-value-rounded">${formatRupiah(state.transaction.dailyAmount)}</span>
-                            </div>
-                            <div class="transaction-info-row">
-                                <span class="info-label-rounded">Total Transaksi</span>
-                                <span class="info-value-rounded" style="color: var(--green-light); font-weight: bold; font-size: 18px;">${formatRupiah(totalAmount)}</span>
-                            </div>
-                            <div class="transaction-info-row">
-                                <span class="info-label-rounded">Periode</span>
-                                <span class="info-value-rounded">${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)}</span>
-                            </div>
-                            <div class="transaction-info-row">
-                                <span class="info-label-rounded">Durasi</span>
-                                <span class="info-value-rounded">${daysCount} Hari × ${formatRupiah(state.transaction.dailyAmount)}</span>
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    <button class="btn ${state.isProcessing ? 'processing' : ''}" 
-                            id="submitBtn" 
-                            ${!state.transaction.nasabah || state.transaction.dailyAmount <= 0 || daysCount <= 0 || state.isProcessing ? 'disabled' : ''}>
-                        ${btnText}
-                    </button>
-                    
-                    ${state.updateAvailable ? `
-                        <div style="margin-top: 16px; padding: 12px; background: rgba(255, 193, 7, 0.1); border-radius: 8px; text-align: center;">
-                            <i class="fas fa-sync-alt" style="color: #ff9800;"></i>
-                            <span style="color: #ff9800; font-weight: 600;">Update tersedia!</span>
-                            <button onclick="installUpdate()" style="background: #ff9800; color: white; border: none; padding: 6px 12px; border-radius: 6px; margin-left: 10px; font-weight: 600; cursor: pointer;">
-                                Update Sekarang
-                            </button>
-                        </div>
-                    ` : ''}
-                </div>
-            `;
-        }
-        
-        // ====== RENDER DASHBOARD ======
-        function renderDashboard() {
-            return `
-                <div class="card">
-                    <div class="section-title">
-                        <i class="fas fa-chart-line"></i> DASHBOARD SISTEM
-                    </div>
-                    
-                    <div class="info-card">
-                        <div class="info-label">SALDO GLOBAL SISTEM</div>
-                        <div class="info-value">${formatRupiah(state.globalBalance)}</div>
-                        <div style="font-size: 13px; color: var(--text-medium); margin-top: 8px;">
-                            Total dari ${state.nasabahList.length} nasabah
-                        </div>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 20px;">
-                        <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
-                            <div style="font-size: 28px; font-weight: 700; color: #00e676;">${state.nasabahList.length}</div>
-                            <div style="font-size: 13px; color: var(--text-medium); margin-top: 6px;">Total Nasabah</div>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
-                            <div style="font-size: 28px; font-weight: 700; color: #00e676;">${formatRupiah(state.nasabahList.length > 0 ? Math.round(state.globalBalance/state.nasabahList.length) : 0)}</div>
-                            <div style="font-size: 13px; color: var(--text-medium); margin-top: 6px;">Rata-rata Saldo</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // ====== RENDER DAFTAR NASABAH ======
-        function renderNasabah() {
-            return `
-                <div class="card">
-                    <div class="section-title">
-                        <i class="fas fa-users"></i> DAFTAR NASABAH
-                    </div>
-                    
-                    <div style="display: flex; gap: 12px; margin-bottom: 20px;">
-                        <div class="info-card" style="flex: 1;">
-                            <div class="info-label">Total Nasabah</div>
-                            <div class="info-value">${state.nasabahList.length}</div>
-                        </div>
-                        <div class="info-card" style="flex: 1;">
-                            <div class="info-label">Total Saldo</div>
-                            <div class="info-value">${formatRupiah(state.globalBalance)}</div>
-                        </div>
-                    </div>
-                    
-                    <div style="max-height: 400px; overflow-y: auto; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
-                        ${state.nasabahList.length > 0 ? 
-                            state.nasabahList.map(nasabah => `
-                                <div class="account-item">
-                                    <div class="account-avatar">${nasabah.nama.charAt(0).toUpperCase()}</div>
-                                    <div>
-                                        <div style="font-weight: 600; color: var(--text-light);">${nasabah.nama}</div>
-                                        <div style="font-size: 12px; color: var(--text-dim);">
-                                            ID: ${nasabah.id_nasabah || 'N/A'}
-                                        </div>
-                                        ${nasabah.jumlah_harian ? `<div style="font-size: 12px; color: var(--green-light); font-weight: 600;">Jumlah Harian: ${formatRupiah(nasabah.jumlah_harian)}</div>` : 
-                                        `<div style="font-size: 12px; color: var(--text-dim);">Jumlah Harian: Belum diatur</div>`}
-                                    </div>
-                                </div>
-                            `).join('') : 
-                            `<div style="text-align: center; padding: 40px 20px; color: var(--text-dim);">
-                                <i class="fas fa-users" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
-                                <div>Belum ada data nasabah</div>
-                                <div style="font-size: 13px; margin-top: 8px;">Data diambil dari spreadsheet</div>
-                            </div>`
-                        }
-                    </div>
-                </div>
-            `;
-        }
-        
-        // ====== RENDER SALDO ======
-        function renderSaldo() {
-            return `
-                <div class="card">
-                    <div class="section-title">
-                        <i class="fas fa-wallet"></i> CEK SALDO NASABAH
-                    </div>
-                    
-                    <div class="info-card">
-                        <div class="info-label">SALDO GLOBAL SISTEM</div>
-                        <div class="info-value">${formatRupiah(state.globalBalance)}</div>
-                        <div style="font-size: 13px; color: var(--text-medium); margin-top: 8px;">
-                            Akumulasi semua nasabah
-                        </div>
-                    </div>
-                    
-                    <div style="margin: 20px 0;">
-                        <div class="form-label">Pilih Nasabah</div>
-                        <select id="saldoNasabah">
-                            <option value="">-- Pilih Nasabah --</option>
-                            ${state.nasabahList.map(n => `<option value="${n.nama}">${n.nama}${n.id_nasabah ? ` (${n.id_nasabah})` : ''}</option>`).join('')}
-                        </select>
-                    </div>
-                    
-                    <div id="saldoResult" style="text-align: center; padding: 40px 20px; color: var(--text-dim);">
-                        <i class="fas fa-wallet" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
-                        <div>Pilih nasabah untuk melihat saldo</div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // ====== RENDER SETTINGS ======
-        function renderSettings() {
-            return `
-                <div class="card">
-                    <div class="section-title">
-                        <i class="fas fa-cog"></i> PENGATURAN SISTEM
-                    </div>
-                    
-                    <div class="info-card">
-                        <div class="info-label">VERSI APLIKASI</div>
-                        <div class="info-value">${APP_VERSION}</div>
-                        <div style="font-size: 13px; color: var(--text-medium); margin-top: 8px;">
-                            Sistem Jimpitan Digital
-                        </div>
-                    </div>
-                    
-                    <div style="margin: 20px 0;">
-                        <div class="form-label">Status Service Worker</div>
-                        <div id="swStatus" style="padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
-                            <div style="display: flex; align-items: center; justify-content: space-between;">
-                                <span>Service Worker</span>
-                                <span style="color: #00e676; font-weight: 600;" id="swStatusText">Loading...</span>
-                            </div>
-                            <div style="font-size: 12px; color: var(--text-dim); margin-top: 8px;" id="swStatusDetail">
-                                Memeriksa status...
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="margin: 20px 0; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
-                        <div style="color: var(--text-light); font-weight: 600; margin-bottom: 12px;">
-                            <i class="fas fa-database"></i> Sumber Data
-                        </div>
-                        <div style="color: var(--text-medium); font-size: 14px;">
-                            Data nasabah diambil dari spreadsheet Google Sheets
-                        </div>
-                        <div style="color: var(--text-dim); font-size: 12px; margin-top: 8px;">
-                            <i class="fas fa-sync-alt"></i> Auto-sync setiap 5 menit
-                        </div>
-                    </div>
-                    
-                    <button class="btn" onclick="checkForUpdates()" style="margin-bottom: 12px;">
-                        <i class="fas fa-sync-alt"></i> CHECK UPDATE
-                    </button>
-                    
-                    <button class="btn" onclick="refreshData()" style="margin-bottom: 12px; background: linear-gradient(135deg, #1a237e 0%, #283593 100%);">
-                        <i class="fas fa-database"></i> REFRESH DATA NASABAH
-                    </button>
-                    
-                    <button class="btn" onclick="clearAppCache()" style="background: linear-gradient(135deg, var(--red) 0%, #ef5350 100%); margin-bottom: 12px;">
-                        <i class="fas fa-broom"></i> CLEAR CACHE & RELOAD
-                    </button>
-                    
-                    <button class="btn" onclick="checkSWStatus()" style="background: linear-gradient(135deg, #5d4037 0%, #795548 100%); margin-bottom: 12px;">
-                        <i class="fas fa-search"></i> CHECK SW STATUS
-                    </button>
-                    
-                    <button class="btn" onclick="unregisterAllSW()" style="background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%); margin-bottom: 12px;">
-                        <i class="fas fa-trash-alt"></i> UNREGISTER ALL SW
-                    </button>
-                    
-                    <button class="btn" onclick="testAPI()" style="background: linear-gradient(135deg, #283593 0%, #3949ab 100%);">
-                        <i class="fas fa-plug"></i> TEST KONEKSI API
-                    </button>
-                    
-                    <div style="margin-top: 20px; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
-                        <div style="color: var(--text-light); font-weight: 600; margin-bottom: 12px;">Informasi Sistem</div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                            <span style="color: var(--text-medium); font-size: 13px;">Jumlah Nasabah:</span>
-                            <span style="color: var(--text-light); font-weight: 600;">${state.nasabahList.length}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                            <span style="color: var(--text-medium); font-size: 13px;">Total Saldo:</span>
-                            <span style="color: var(--text-light); font-weight: 600;">${formatRupiah(state.globalBalance)}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: var(--text-medium); font-size: 13px;">API Status:</span>
-                            <span style="color: #00e676; font-weight: 600;">Online</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // ====== ATTACH EVENTS ======
-        function attachEvents() {
-            // Events untuk halaman transaksi
-            if (state.tab === 'transaksi') {
-                document.getElementById('dateFrom')?.addEventListener('change', (e) => {
-                    state.transaction.dateFrom = e.target.value;
-                    updateTransactionDisplay();
-                    updateTransactionButton();
-                });
-                document.getElementById('dateTo')?.addEventListener('change', (e) => {
-                    state.transaction.dateTo = e.target.value;
-                    updateTransactionDisplay();
-                    updateTransactionButton();
-                });
-                
-                document.getElementById('selectNasabah')?.addEventListener('change', (e) => {
-                    state.transaction.nasabah = e.target.value;
-                    updateTransactionDisplay();
-                    updateTransactionButton();
-                });
-                
-                document.querySelectorAll('.type-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        if (state.isProcessing) return;
-                        state.transaction.type = btn.dataset.type;
-                        document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        updateTransactionDisplay();
-                        updateTransactionButton();
-                    });
-                });
-                
-                const dailyAmountInput = document.getElementById('dailyAmountInput');
-                if (dailyAmountInput) {
-                    dailyAmountInput.addEventListener('input', (e) => {
-                        if (state.isProcessing) return;
-                        let value = e.target.value.replace(/\D/g, '');
-                        state.transaction.dailyAmount = parseInt(value) || 0;
-                        e.target.value = value ? formatNumber(value) : '';
-                        updateTransactionDisplay();
-                        updateTransactionButton();
-                    });
-                    
-                    dailyAmountInput.addEventListener('focus', function() {
-                        setTimeout(() => this.select(), 100);
+                if (data1.status === 'success') {
+                    nasabahList = data1.data || [];
+                    const select = document.getElementById('nasabahSelect');
+                    nasabahList.forEach(n => {
+                        const opt = document.createElement('option');
+                        opt.value = n.nama;
+                        opt.textContent = n.nama;
+                        select.appendChild(opt);
                     });
                 }
                 
-                document.getElementById('submitBtn')?.addEventListener('click', confirmTransaction);
-            }
-            
-            // Events untuk halaman saldo
-            if (state.tab === 'saldo') {
-                document.getElementById('saldoNasabah')?.addEventListener('change', async (e) => {
-                    const nasabah = e.target.value;
-                    const resultDiv = document.getElementById('saldoResult');
-                    
-                    if (!nasabah) {
-                        resultDiv.innerHTML = `
-                            <i class="fas fa-wallet" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
-                            <div>Pilih nasabah untuk melihat saldo</div>
-                        `;
-                        return;
-                    }
-                    
-                    resultDiv.innerHTML = `
-                        <div style="width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--green-light); border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
-                        <div>Memuat saldo nasabah...</div>
-                    `;
-                    
-                    try {
-                        const res = await fetch(`${API_URL}?action=getSaldo&nama=${encodeURIComponent(nasabah)}`);
-                        const data = await res.json();
-                        
-                        if (data.status === 'success') {
-                            const saldo = data.data.saldo_akhir || 0;
-                            const totalSetor = data.data.total_setor || 0;
-                            const totalTarik = data.data.total_tarik || 0;
-                            
-                            resultDiv.innerHTML = `
-                                <div class="info-card" style="background: linear-gradient(135deg, rgba(27, 94, 32, 0.4) 0%, rgba(76, 175, 80, 0.4) 100%); margin-bottom: 16px;">
-                                    <div class="info-label">SALDO ${nasabah.toUpperCase()}</div>
-                                    <div class="info-value">${formatRupiah(saldo)}</div>
-                                    <div style="font-size: 13px; color: var(--text-medium); margin-top: 8px;">Status: Aktif</div>
-                                </div>
-                                
-                                <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                        <span style="color: var(--text-medium); font-size: 13px;">Total Setor:</span>
-                                        <span style="color: #00e676; font-weight: 600;">${formatRupiah(totalSetor)}</span>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="color: var(--text-medium); font-size: 13px;">Total Tarik:</span>
-                                        <span style="color: #ff5252; font-weight: 600;">${formatRupiah(totalTarik)}</span>
-                                    </div>
-                                </div>
-                            `;
-                        } else {
-                            throw new Error(data.message || 'Gagal memuat saldo');
-                        }
-                    } catch (e) {
-                        resultDiv.innerHTML = `
-                            <div style="color: var(--red); text-align: center;">
-                                <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 16px;"></i>
-                                <div>Gagal memuat saldo nasabah</div>
-                            </div>
-                        `;
-                    }
-                });
-            }
-            
-            // Events untuk halaman settings
-            if (state.tab === 'settings') {
-                setTimeout(updateSWStatusDisplay, 300);
-            }
-        }
-        
-        // ====== UPDATE TRANSACTION DISPLAY ======
-        function updateTransactionDisplay() {
-            const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
-            const totalAmount = state.transaction.dailyAmount * daysCount;
-            
-            if (state.transaction.nasabah && state.transaction.dailyAmount > 0 && daysCount > 0) {
-                const transactionInfoContainer = document.querySelector('.transaction-info-container');
-                if (transactionInfoContainer) {
-                    transactionInfoContainer.innerHTML = `
-                        <div class="transaction-info-row">
-                            <span class="info-label-rounded">Nasabah</span>
-                            <span class="info-value-rounded">${state.transaction.nasabah}</span>
-                        </div>
-                        <div class="transaction-info-row">
-                            <span class="info-label-rounded">Jenis Transaksi</span>
-                            <span class="transaction-type-badge ${state.transaction.type === 'TARIK' ? 'withdraw' : ''}">
-                                <i class="fas fa-${state.transaction.type === 'SETOR' ? 'arrow-down' : 'arrow-up'}"></i>
-                                ${state.transaction.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}
-                            </span>
-                        </div>
-                        <div class="transaction-info-row">
-                            <span class="info-label-rounded">Nominal Harian</span>
-                            <span class="info-value-rounded">${formatRupiah(state.transaction.dailyAmount)}</span>
-                        </div>
-                        <div class="transaction-info-row">
-                            <span class="info-label-rounded">Total Transaksi</span>
-                            <span class="info-value-rounded" style="color: var(--green-light); font-weight: bold; font-size: 18px;">${formatRupiah(totalAmount)}</span>
-                        </div>
-                        <div class="transaction-info-row">
-                            <span class="info-label-rounded">Periode</span>
-                            <span class="info-value-rounded">${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)}</span>
-                        </div>
-                        <div class="transaction-info-row">
-                            <span class="info-label-rounded">Durasi</span>
-                            <span class="info-value-rounded">${daysCount} Hari × ${formatRupiah(state.transaction.dailyAmount)}</span>
-                        </div>
-                    `;
+                const res2 = await fetch(`${API_URL}?action=getAllSaldo`);
+                const data2 = await res2.json();
+                
+                if (data2.status === 'success') {
+                    document.getElementById('saldoCard').style.display = 'block';
+                    document.getElementById('saldoGlobal').textContent = formatRupiah(data2.summary?.saldo_global || 0);
+                    document.getElementById('totalNasabah').textContent = data2.summary?.total_nasabah || 0;
                 }
                 
-                const daysCountElement = document.querySelector('.days-count');
-                if (daysCountElement) {
-                    daysCountElement.textContent = `${daysCount} hari`;
-                } else if (daysCount > 0) {
-                    const dateFromGroup = document.querySelector('.date-group:first-child');
-                    if (dateFromGroup) {
-                        const daysBadge = document.createElement('div');
-                        daysBadge.className = 'days-count';
-                        daysBadge.textContent = `${daysCount} hari`;
-                        dateFromGroup.appendChild(daysBadge);
-                    }
-                }
+                showToast(`✅ ${nasabahList.length} nasabah dimuat`);
+            } catch (error) {
+                showToast('❌ Gagal memuat data', true);
             }
         }
-        
-        // ====== UPDATE TRANSACTION BUTTON ======
-        function updateTransactionButton() {
-            const btn = document.getElementById('submitBtn');
-            if (!btn) return;
+
+        // ====== UPDATE INFO ======
+        function updateInfo() {
+            const nama = document.getElementById('nasabahSelect').value;
+            const nominal = getNominalValue();
+            const infoBox = document.getElementById('infoBox');
             
-            const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
-            const totalAmount = state.transaction.dailyAmount * daysCount;
-            
-            btn.disabled = !(state.transaction.nasabah && state.transaction.dailyAmount > 0 && daysCount > 0) || state.isProcessing;
-            
-            if (state.isProcessing) {
-                btn.classList.add('processing');
-            } else {
-                btn.classList.remove('processing');
+            if (!nama || nominal <= 0) {
+                infoBox.style.display = 'none';
+                document.getElementById('prosesBtn').disabled = true;
+                return;
             }
             
-            if (state.isProcessing) {
-                btn.innerHTML = '<div class="spinner"></div> Memproses...';
-            } else if (state.transaction.nasabah && state.transaction.dailyAmount > 0 && daysCount > 0) {
-                btn.innerHTML = `${state.transaction.type === 'SETOR' ? 'SETOR' : 'TARIK'} ${formatRupiah(totalAmount)} - ${state.transaction.nasabah}`;
-            } else {
-                btn.innerHTML = '<i class="fas fa-paper-plane"></i> KIRIM PROSES';
-            }
-        }
-        
-        // ====== KONFIRMASI TRANSAKSI ======
-        function confirmTransaction() {
-            const modal = document.createElement('div');
-            modal.className = 'modal';
+            const jenis = jenisTransaksi === 'SETOR' ? 'Setoran' : 'Penarikan';
+            const highlightClass = jenisTransaksi === 'SETOR' ? 'highlight-setor' : 'highlight-tarik';
             
-            const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
-            const totalAmount = state.transaction.dailyAmount * daysCount;
+            infoBox.style.display = 'block';
+            document.getElementById('totalInfo').textContent = formatRupiah(nominal);
+            document.getElementById('detailInfo').innerHTML = 
+                `${jenis} <span class="${highlightClass}">${formatRupiah(nominal)}</span> oleh ${nama}`;
             
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3><i class="fas fa-check-circle"></i> KONFIRMASI TRANSAKSI</h3>
-                        <button onclick="closeModal()" style="background: none; border: none; color: var(--text-medium); cursor: pointer;">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div style="text-align: center; margin-bottom: 24px;">
-                            <div style="font-size: 36px; font-weight: bold; color: ${state.transaction.type === 'SETOR' ? 'var(--green-light)' : 'var(--red)'};">${formatRupiah(totalAmount)}</div>
-                            <div style="color: var(--text-medium); font-size: 14px;">${state.transaction.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'} (${daysCount} hari × ${formatRupiah(state.transaction.dailyAmount)})</div>
-                        </div>
-                        
-                        <div class="transaction-info-container" style="margin-bottom: 20px;">
-                            <div class="transaction-info-row">
-                                <span class="info-label-rounded">Nasabah</span>
-                                <span class="info-value-rounded">${state.transaction.nasabah}</span>
-                            </div>
-                            <div class="transaction-info-row">
-                                <span class="info-label-rounded">Jenis Transaksi</span>
-                                <span class="transaction-type-badge ${state.transaction.type === 'TARIK' ? 'withdraw' : ''}">
-                                    <i class="fas fa-${state.transaction.type === 'SETOR' ? 'arrow-down' : 'arrow-up'}"></i>
-                                    ${state.transaction.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}
-                                </span>
-                            </div>
-                            <div class="transaction-info-row">
-                                <span class="info-label-rounded">Nominal Harian</span>
-                                <span class="info-value-rounded">${formatRupiah(state.transaction.dailyAmount)}</span>
-                            </div>
-                            <div class="transaction-info-row">
-                                <span class="info-label-rounded">Periode</span>
-                                <span class="info-value-rounded">${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)}</span>
-                            </div>
-                            <div class="transaction-info-row">
-                                <span class="info-label-rounded">Durasi</span>
-                                <span class="info-value-rounded">${daysCount} Hari</span>
-                            </div>
-                        </div>
-                        
-                        <div style="font-size: 13px; color: var(--text-dim); text-align: center; padding: 12px; background: rgba(255, 193, 7, 0.1); border-radius: 8px;">
-                            <i class="fas fa-exclamation-triangle"></i> Total transaksi: ${formatRupiah(totalAmount)} (${daysCount} hari × ${formatRupiah(state.transaction.dailyAmount)})
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="modal-btn modal-cancel" onclick="closeModal()" id="cancelBtn">BATAL</button>
-                        <button class="modal-btn modal-confirm" onclick="startProcessingTransaction()" id="confirmBtn">
-                            <i class="fas fa-check"></i> SIMPAN TRANSAKSI
-                        </button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
+            document.getElementById('prosesBtn').disabled = false;
         }
-        
-        // ====== MULAI PROSES TRANSAKSI ======
-        function startProcessingTransaction() {
-            closeModal();
-            state.isProcessing = true;
-            updateTransactionButton();
-            processTransaction();
-        }
-        
-        // ====== PROSES TRANSAKSI KE APPS SCRIPT ======
-        async function processTransaction() {
-            const daysCount = calculateDaysBetweenDates(state.transaction.dateFrom, state.transaction.dateTo);
-            const totalAmount = state.transaction.dailyAmount * daysCount;
+
+        // ====== PROSES TRANSAKSI ======
+        async function prosesTransaksi() {
+            if (isProcessing) return;
             
-            showToast(`Memproses ${daysCount} hari × ${formatRupiah(state.transaction.dailyAmount)} = ${formatRupiah(totalAmount)}`);
+            const nama = document.getElementById('nasabahSelect').value;
+            const tanggal = document.getElementById('tanggalTransaksi').value;
+            const nominal = getNominalValue();
+            const keterangan = document.getElementById('keteranganInput').value.trim();
+            
+            if (!nama) { showToast('❌ Pilih nasabah', true); return; }
+            if (!tanggal) { showToast('❌ Pilih tanggal', true); return; }
+            if (nominal <= 0) { showToast('❌ Masukkan nominal', true); return; }
+            
+            const jenisLabel = jenisTransaksi === 'SETOR' ? 'SETORAN' : 'PENARIKAN';
+            const confirmMsg = `Konfirmasi ${jenisLabel}\n\nNasabah: ${nama}\nTanggal: ${formatTanggal(tanggal)}\nNominal: ${formatRupiah(nominal)}\n\nLanjutkan?`;
+            
+            if (!confirm(confirmMsg)) return;
+            
+            isProcessing = true;
+            const btn = document.getElementById('prosesBtn');
+            btn.innerHTML = '<span class="spinner"></span> Memproses...';
+            btn.disabled = true;
             
             try {
-                state.lastTransactionData = {
-                    ...state.transaction,
-                    totalAmount: totalAmount,
-                    daysCount: daysCount,
-                    transactionId: 'TRX-' + Date.now(),
-                    timestamp: new Date().toISOString()
-                };
+                const action = jenisTransaksi === 'SETOR' ? 'addSetoran' : 'addPenarikan';
+                const payload = new URLSearchParams({
+                    action: action,
+                    token: API_TOKEN,
+                    nama: nama,
+                    tanggal: tanggal,
+                    nominal: nominal,
+                    keterangan: keterangan || `${jenisLabel} ${formatTanggal(tanggal)}`
+                });
                 
                 const res = await fetch(API_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({
-                        action: 'addTransaksi',
-                        token: API_KEY,
-                        nama: state.transaction.nasabah,
-                        jenis: state.transaction.type,
-                        nominal: totalAmount,
-                        keterangan: `Jimpitan ${daysCount} hari × ${formatRupiah(state.transaction.dailyAmount)} (${formatDateDisplay(state.transaction.dateFrom)} - ${formatDateDisplay(state.transaction.dateTo)})`
-                    })
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: payload
                 });
                 
                 const data = await res.json();
                 
                 if (data.status === 'success') {
-                    showToast(`✅ Transaksi berhasil! ${formatRupiah(totalAmount)} (${daysCount} hari)`);
+                    showToast(`✅ ${data.message}`);
                     
-                    await generateReceipt();
+                    const resultCard = document.getElementById('resultCard');
+                    resultCard.classList.add('show');
                     
-                    resetTransactionForm();
+                    const highlightClass = jenisTransaksi === 'SETOR' ? 'highlight-setor' : 'highlight-tarik';
                     
-                    await loadData();
+                    document.getElementById('resultContent').innerHTML = `
+                        <div style="text-align:center;margin-bottom:10px;color:#64ffda;font-weight:600;">✅ Berhasil</div>
+                        <div class="result-item"><span class="label">ID</span><span class="value">${data.data.id}</span></div>
+                        <div class="result-item"><span class="label">Nasabah</span><span class="value">${data.data.nama}</span></div>
+                        <div class="result-item"><span class="label">Jenis</span><span class="value ${highlightClass}">${data.data.jenis}</span></div>
+                        <div class="result-item"><span class="label">Tanggal</span><span class="value">${data.data.tanggal}</span></div>
+                        <div class="result-item"><span class="label">Nominal</span><span class="value ${highlightClass}">${data.data.nominal_formatted}</span></div>
+                    `;
                     
+                    document.getElementById('nominalInput').value = '';
+                    document.getElementById('keteranganInput').value = '';
+                    document.getElementById('infoBox').style.display = 'none';
+                    document.getElementById('prosesBtn').disabled = true;
+                    
+                    loadData();
                 } else {
-                    showToast('Gagal: ' + (data.message || 'Error'), true);
-                    state.isProcessing = false;
-                    updateTransactionButton();
-                }
-            } catch (e) {
-                console.error('Error processing transaction:', e);
-                showToast('Gagal menyimpan transaksi', true);
-                state.isProcessing = false;
-                updateTransactionButton();
-            }
-        }
-        
-        // ====== GENERATE STRUK ======
-        async function generateReceipt() {
-            try {
-                state.isGeneratingReceipt = true;
-                
-                const receiptHTML = generateReceiptHTML();
-                const receiptContainer = document.getElementById('receiptContainer');
-                receiptContainer.innerHTML = receiptHTML;
-                
-                const canvas = await html2canvas(receiptContainer, {
-                    scale: 2,
-                    backgroundColor: '#ffffff',
-                    logging: false,
-                    useCORS: true
-                });
-                
-                canvas.toBlob((blob) => {
-                    const link = document.createElement('a');
-                    link.download = `struk-jimpitan-${Date.now()}.png`;
-                    link.href = URL.createObjectURL(blob);
-                    link.click();
-                    
-                    showToast('Struk berhasil di-download');
-                    state.isGeneratingReceipt = false;
-                }, 'image/png');
-                
-            } catch (error) {
-                console.error('Error generating receipt:', error);
-                state.isGeneratingReceipt = false;
-                showToast('Transaksi berhasil, gagal generate struk');
-            }
-        }
-        
-        // ====== GENERATE HTML STRUK ======
-        function generateReceiptHTML() {
-            const trans = state.lastTransactionData;
-            const transactionId = trans.transactionId || 'TRX-' + Date.now();
-            const now = new Date();
-            const receiptDate = now.toLocaleDateString('id-ID', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric'
-            });
-            const receiptTime = now.toLocaleTimeString('id-ID', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            return `
-                <div class="receipt-header">
-                    <div class="receipt-title">SISTEM JIMPITAN DIGITAL</div>
-                    <div class="receipt-subtitle">Digital Jimpitan System</div>
-                </div>
-                
-                <div class="receipt-details">
-                    <div class="receipt-row">
-                        <span class="receipt-label">ID Transaksi:</span>
-                        <span class="receipt-value">${transactionId}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Tanggal:</span>
-                        <span class="receipt-value">${receiptDate}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Waktu:</span>
-                        <span class="receipt-value">${receiptTime}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Nasabah:</span>
-                        <span class="receipt-value">${trans.nasabah}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Jenis:</span>
-                        <span class="receipt-value" style="color: ${trans.type === 'SETOR' ? 'green' : 'red'}; font-weight: bold;">
-                            ${trans.type === 'SETOR' ? 'SETORAN' : 'PENARIKAN'}
-                        </span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Periode:</span>
-                        <span class="receipt-value">${formatDateDisplay(trans.dateFrom)} - ${formatDateDisplay(trans.dateTo)}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Durasi:</span>
-                        <span class="receipt-value">${trans.daysCount} Hari</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Nominal Harian:</span>
-                        <span class="receipt-value">${formatRupiah(trans.dailyAmount)}</span>
-                    </div>
-                </div>
-                
-                <div class="receipt-total" style="color: ${trans.type === 'SETOR' ? 'green' : 'red'};">
-                    TOTAL: ${formatRupiah(trans.totalAmount)}
-                </div>
-                <div style="text-align: center; font-size: 12px; color: #666; margin-top: 5px;">
-                    (${trans.daysCount} Hari × ${formatRupiah(trans.dailyAmount)})
-                </div>
-                
-                <div class="receipt-footer">
-                    <div style="margin-bottom: 10px;">Terima kasih atas kepercayaan Anda</div>
-                    <div style="font-size: 10px;">* Transaksi ini telah tercatat di sistem Jimpitan Digital</div>
-                    <div style="font-size: 10px;">** Struk digital sah sebagai bukti transaksi</div>
-                </div>
-            `;
-        }
-        
-        // ====== RESET FORM TRANSAKSI ======
-        function resetTransactionForm() {
-            state.transaction = {
-                nasabah: '',
-                type: 'SETOR',
-                dailyAmount: 10000,
-                dateFrom: new Date().toISOString().split('T')[0],
-                dateTo: new Date().toISOString().split('T')[0]
-            };
-            
-            state.isProcessing = false;
-            state.isGeneratingReceipt = false;
-            state.lastTransactionData = null;
-            
-            renderTab();
-        }
-        
-        // ====== REFRESH DATA ======
-        async function refreshData() {
-            showToast('🔄 Memuat ulang data nasabah...');
-            await loadData();
-            showToast('✅ Data nasabah diperbarui!');
-            renderTab();
-        }
-        
-        // ====== AUTO-UPDATE FUNCTIONS ======
-        
-        async function checkForUpdates() {
-            try {
-                console.log('🔄 Checking for updates...');
-                
-                const response = await fetch('/version.json');
-                const data = await response.json();
-                
-                if (data.version !== APP_VERSION) {
-                    state.updateAvailable = true;
-                    state.newVersion = data.version;
-                    showUpdateNotification(data.version);
-                } else {
-                    console.log('✅ App is up to date');
+                    throw new Error(data.message || 'Gagal');
                 }
             } catch (error) {
-                console.log('Version check failed:', error);
+                showToast(`❌ ${error.message}`, true);
             }
-        }
-        
-        function showUpdateNotification(newVersion) {
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3><i class="fas fa-sync-alt"></i> UPDATE TERSEDIA</h3>
-                    </div>
-                    <div class="modal-body">
-                        <div style="text-align: center; margin-bottom: 20px;">
-                            <i class="fas fa-download" style="font-size: 48px; color: var(--green-light); margin-bottom: 16px;"></i>
-                            <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Versi ${newVersion} tersedia!</div>
-                            <div style="color: var(--text-medium); font-size: 14px;">Update untuk mendapatkan fitur terbaru</div>
-                        </div>
-                        
-                        <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px; margin-bottom: 20px;">
-                            <div style="color: var(--text-light); font-weight: 600; margin-bottom: 8px;">Apa yang baru:</div>
-                            <ul style="color: var(--text-medium); font-size: 13px; padding-left: 20px;">
-                                <li>Perbaikan cache auto-update</li>
-                                <li>Optimasi performa</li>
-                                <li>Notifikasi update otomatis</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="modal-btn modal-cancel" onclick="closeModal()" id="laterBtn">
-                            <i class="fas fa-clock"></i> NANTI
-                        </button>
-                        <button class="modal-btn modal-confirm" onclick="installUpdate()" id="updateBtn">
-                            <i class="fas fa-download"></i> UPDATE SEKARANG
-                        </button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        }
-        
-        async function installUpdate() {
-            closeModal();
             
-            showToast('Memperbarui aplikasi...');
-            
-            if ('serviceWorker' in navigator) {
-                try {
-                    const registration = await navigator.serviceWorker.ready;
-                    
-                    if (registration.waiting) {
-                        registration.waiting.postMessage({type: 'SKIP_WAITING'});
-                    }
-                    
-                    await registration.update();
-                    
-                    await clearAppCache();
-                    
-                    showToast('Aplikasi berhasil diperbarui!');
-                    
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
-                    
-                } catch (error) {
-                    console.error('Error installing update:', error);
-                    showToast('Gagal memperbarui aplikasi', true);
-                }
-            }
+            isProcessing = false;
+            btn.innerHTML = (jenisTransaksi === 'SETOR' ? '📤' : '📥') + ' PROSES';
+            btn.disabled = false;
         }
-        
-        async function clearAppCache() {
-            if ('serviceWorker' in navigator && 'caches' in window) {
-                try {
-                    const cacheNames = await caches.keys();
-                    await Promise.all(
-                        cacheNames.map(cacheName => caches.delete(cacheName))
-                    );
-                    
-                    const registration = await navigator.serviceWorker.getRegistration();
-                    if (registration) {
-                        await registration.unregister();
-                    }
-                    
-                    console.log('✅ Cache cleared successfully');
-                    
-                } catch (error) {
-                    console.error('Error clearing cache:', error);
-                    throw error;
-                }
-            }
+
+        // ====== UTILITY ======
+        function formatRupiah(num) { return 'Rp ' + (num || 0).toLocaleString('id-ID'); }
+        function formatNumber(num) { return (num || 0).toLocaleString('id-ID'); }
+        function formatDateInput(date) {
+            return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
         }
-        
-        async function testAPI() {
+        function formatTanggal(tanggalStr) {
             try {
-                showToast('Testing koneksi API...');
-                
-                const res = await fetch(`${API_URL}?action=testConnection`);
-                const data = await res.json();
-                
-                if (data.status === 'success') {
-                    showToast('✅ Koneksi API berhasil!');
-                } else {
-                    showToast('❌ Koneksi API gagal', true);
+                const parts = tanggalStr.split('-');
+                if (parts.length === 3) {
+                    return `${parts[2]}-${parts[1]}-${parts[0]}`;
                 }
-            } catch (error) {
-                showToast('❌ Koneksi API error', true);
-            }
+                const date = new Date(tanggalStr);
+                return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+            } catch { return tanggalStr; }
         }
-        
-        // ====== PWA HELPER FUNCTIONS ======
-        
-        function forceUpdateSW() {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistration()
-                    .then(registration => {
-                        if (registration) {
-                            registration.update().then(() => {
-                                showToast('✅ Update diperiksa');
-                            });
-                        }
-                    });
-            }
-        }
-        
-        function unregisterAllSW() {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations()
-                    .then(registrations => {
-                        registrations.forEach(registration => {
-                            registration.unregister();
-                        });
-                        showToast('🗑️ Semua Service Worker di-unregister');
-                        setTimeout(() => location.reload(), 1000);
-                    });
-            }
-        }
-        
-        function checkSWStatus() {
-            updateSWStatusDisplay();
-            showToast('🔄 Memeriksa status Service Worker...');
-            
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistration()
-                    .then(registration => {
-                        if (registration) {
-                            const status = navigator.serviceWorker.controller ? 'Aktif' : 'Terdaftar';
-                            showToast(`✅ SW ${status}: ${registration.scope}`);
-                        } else {
-                            showToast('❌ SW tidak terdaftar', true);
-                        }
-                    });
-            } else {
-                showToast('❌ Browser tidak mendukung SW', true);
-            }
-        }
-        
-        function updateSWStatusDisplay() {
-            const statusText = document.getElementById('swStatusText');
-            const statusDetail = document.getElementById('swStatusDetail');
-            
-            if (!statusText || !statusDetail) return;
-            
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistration()
-                    .then(registration => {
-                        if (registration) {
-                            if (navigator.serviceWorker.controller) {
-                                statusText.textContent = 'Aktif';
-                                statusText.style.color = '#00e676';
-                                statusDetail.textContent = `Scope: ${registration.scope}`;
-                            } else {
-                                statusText.textContent = 'Terdaftar';
-                                statusText.style.color = '#ff9800';
-                                statusDetail.textContent = 'Menunggu aktivasi...';
-                            }
-                        } else {
-                            statusText.textContent = 'Tidak Aktif';
-                            statusText.style.color = '#ff5252';
-                            statusDetail.textContent = 'Service Worker belum terdaftar';
-                        }
-                    })
-                    .catch(error => {
-                        statusText.textContent = 'Error';
-                        statusText.style.color = '#ff5252';
-                        statusDetail.textContent = error.message;
-                    });
-            } else {
-                statusText.textContent = 'Tidak Didukung';
-                statusText.style.color = '#ff5252';
-                statusDetail.textContent = 'Browser tidak mendukung Service Worker';
-            }
-        }
-        
-        // ====== UTILITY FUNCTIONS ======
-        function formatRupiah(amount) {
-            return 'Rp ' + (amount || 0).toLocaleString('id-ID');
-        }
-        
-        function formatNumber(num) {
-            const n = parseInt(num) || 0;
-            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-        
-        function formatDateDisplay(dateStr) {
-            if (!dateStr) return '-';
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('id-ID', { 
-                day: '2-digit', 
-                month: 'short', 
-                year: 'numeric' 
-            });
-        }
-        
-        function calculateDaysBetweenDates(dateFrom, dateTo) {
-            try {
-                const from = new Date(dateFrom);
-                const to = new Date(dateTo);
-                
-                if (isNaN(from.getTime()) || isNaN(to.getTime())) {
-                    return 0;
-                }
-                
-                const timeDiff = to.getTime() - from.getTime();
-                const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
-                
-                return Math.max(0, daysDiff + 1);
-            } catch (error) {
-                return 0;
-            }
-        }
-        
+
         function showToast(message, isError = false) {
+            const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = 'toast' + (isError ? ' error' : '');
-            toast.innerHTML = `
-                <i class="fas fa-${isError ? 'exclamation-circle' : 'check-circle'}"></i>
-                ${message}
-            `;
-            document.body.appendChild(toast);
-            
+            toast.textContent = message;
+            container.appendChild(toast);
             setTimeout(() => {
                 toast.style.opacity = '0';
-                toast.style.transform = 'translateX(100%)';
-                setTimeout(() => toast.remove(), 300);
+                toast.style.transform = 'translateX(-50%) translateY(16px)';
+                setTimeout(() => toast.remove(), 400);
             }, 3000);
         }
-        
-        function closeModal() {
-            const modal = document.querySelector('.modal');
-            if (modal) modal.remove();
-        }
-        
-        // ====== EXPOSE FUNCTIONS TO GLOBAL SCOPE ======
-        window.closeModal = closeModal;
-        window.processTransaction = processTransaction;
-        window.startProcessingTransaction = startProcessingTransaction;
-        window.checkForUpdates = checkForUpdates;
-        window.installUpdate = installUpdate;
-        window.clearAppCache = clearAppCache;
-        window.testAPI = testAPI;
-        window.forceUpdateSW = forceUpdateSW;
-        window.unregisterAllSW = unregisterAllSW;
-        window.checkSWStatus = checkSWStatus;
-        window.updateSWStatusDisplay = updateSWStatusDisplay;
-        window.refreshData = refreshData;
     </script>
 </body>
 </html>
